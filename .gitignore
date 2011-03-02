@@ -1,0 +1,9 @@
+*.pyc
+local_settings.py
+
+db.sqlite
+
+# Sub-apps with their own git repositories
+datadict
+
+# OS/editor specific files
