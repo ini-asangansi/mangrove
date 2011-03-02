@@ -7,3 +7,4 @@ db.sqlite
 datadict
 
 # OS/editor specific files
+ve/
