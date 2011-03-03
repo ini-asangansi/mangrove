@@ -8,7 +8,7 @@ import sys
 import os
 
 class TestExample:
-	def test_ab(self):
-		assert 'ab'=='ab'
+	def test_abb(self):
+		assert 'abb'=='abb'
 	def test_true(self):
 		assert True
