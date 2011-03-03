@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Mangrove documentation build configuration file, created by
-# sphinx-quickstart on Thu Mar  3 10:32:58 2011.
+# sphinx-quickstart on Thu Mar  3 07:52:45 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -16,13 +16,13 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.append(''.join((os.path.abspath('..'), os.sep, 'src')))
+#sys.path.append(os.path.abspath('.'))
 
 # -- General configuration -----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.pngmath']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx', 'sphinx.ext.todo']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -192,3 +192,7 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_use_modindex = True
+
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {'http://docs.python.org/': None}
