@@ -5,3 +5,5 @@ db.sqlite
 
 # OS/editor specific files
 ve/
+build/*
+pip-log.txt
