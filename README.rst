@@ -24,4 +24,4 @@ nosetests
 
 Push to GitHub
 =====================
-And hopefully hudson will run tests.
+And hopefully hudson will run tests, and they will pass.
