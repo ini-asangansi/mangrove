@@ -10,3 +10,5 @@ import os
 class TestExample:
 	def test_b(self):
 		assert 'b'=='b'
+	def test_true(self):
+		assert True
