@@ -8,3 +8,5 @@ ve/
 build/*
 pip-log.txt
 xunit.xml
+.coverage
+coverage.xml
