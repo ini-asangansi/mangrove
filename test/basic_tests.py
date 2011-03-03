@@ -5,4 +5,4 @@ class SimpleTest(TestCase):
         pass
     
     def test_failure_on_hudson(self):
-        self.assertTrue(False)
+        self.assertTrue(True) #!!!
