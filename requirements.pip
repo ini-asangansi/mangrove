@@ -1,3 +1,2 @@
 Fabric==0.9.4
 Django==1.2.5
--e git+git://github.com/mangroveorg/datadict.git@develop#egg=mangrove-datadict
