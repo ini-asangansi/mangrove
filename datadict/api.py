@@ -9,9 +9,9 @@ API to query the data dictionary.
 import datetime
 from uuid import uuid4
 
-from couchdb.client import Document
 from couchdb.mapping import (TextField, IntegerField, DateField, 
-                             DictField, ListField, Mapping, DateTimeField)
+                             DictField, ListField, Mapping, DateTimeField,
+                             Document)
 
 from connection import Connection
 
@@ -21,15 +21,33 @@ class DataDictDocument(Document):
         CouchDb for the datadict.
     """
     
-    
     def __init__(self, *args, **kwargs):
         Document.__init__(self, *args, **kwargs)
-        if '_id' not in self:
-            self['_id'] = uuid4().hex
-            self['_rev'] = 0
+        if not getattr(self, 'id', None):
+            self.id = uuid4().hex
+    
+    @classmethod
+    def load(cls, *args, **kwargs):
+       return Document.load(Connection().db, *args, **kwargs) 
+    
     
     def save(self):
-        self.store(Connection().db)
+        return self.store(Connection().db)
+    
+    
+    @classmethod 
+    def create(cls, *args, **kwargs):
+        obj = cls(*args, **kwargs)
+        obj.save()
+        return obj
+        
+        
+    @classmethod
+    def query(cls, map_function, reduce_func="", 
+              *args, **kwargs):
+        return Document.query(Connection().db, map_function, 
+                              reduce_func, *args, **kwargs)
+        
     
 
 class Tags(DataDictDocument):
@@ -68,15 +86,47 @@ class DataType(DataDictDocument):
     def to_fdjsqkfjqsdlkf()
     """
     
-
     name = TextField()
-    constraints = DictField(Mapping.build(
-        name = TextField(),
-        value = TextField()
-    ))
-    tags = ListField(DictField(TextField()))
+    constraints = DictField()
+    tags = ListField(TextField())
     type = TextField()
-    version = DateTimeField(default=datetime.datetime.now)
+    version = DateTimeField()
+    description = TextField()
 
 
+    def __init__(self, *args, **kwargs):
+        DataDictDocument.__init__(self, *args, **kwargs)
+        if not hasattr(self, 'version'):
+            self.version = datetime.datetime.now()
+
+    # todo: escape this
+    # I can't believe there is no better way to do this. Please somebody
+    # tell me that I'm completly wrong and that couchdb does let me pass
+    # parameters in some ways other than just the key in get
+    @classmethod
+    def with_tags(cls, *tags):
+        """
+            Return document with that have all these tags
+        """
+        
+        query = """
+                function(doc) {
+
+                    var expected_tags = ['%s'],
+                        tags = doc.tags,
+                        ecount = expected_tags.length;
+
+                    for(var i = 0; i < ecount; i++) {
+                        if(tags.indexOf(expected_tags[i]) == -1) {
+                            return false;
+                        }
+                    }
+
+                    emit(tags, doc);
+
+                }
+        """ % "', '".join(tags)
+        
+        return cls.query(query)
+        
 
