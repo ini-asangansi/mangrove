@@ -1,7 +1,16 @@
 *.pyc
 local_settings.py
 
+*.orig
+*.db
+*.egg
+*~
+*.tmp
+*.egg-info
+
 db.sqlite
 
 # OS/editor specific files
 ve/
+
+
