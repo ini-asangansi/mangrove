@@ -1,0 +1,7 @@
+versioning = date
+booltype
+constraints = choice list
+cron to check for changes and alert subscribber
+validation should be on the database side as well. python validation only
+for ease of use
+load fixtures
