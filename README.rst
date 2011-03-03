@@ -21,3 +21,7 @@ And edit the contents for your development environment
 Run tests!
 =====================
 nosetests
+
+Push to GitHub
+=====================
+And hopefully hudson will run tests.
