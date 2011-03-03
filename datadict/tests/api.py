@@ -27,7 +27,12 @@ class TestApi(unittest.TestCase):
         self.assertTrue(hasattr(dt, 'constraints'))
         self.assertTrue(hasattr(dt, 'tags'))
         self.assertTrue(hasattr(dt, 'type'))
-       
+        self.assertTrue(hasattr(dt, 'version'))
+      
+    
+    def test_create_datatype(self):
+        dt = DataType("test", {'gt', }, "", "")
+     
         
     def test_datatype_should_be_getable_by_name(self):
         self.assertEqual(DataType.get(name='name'),
