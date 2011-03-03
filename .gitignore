@@ -7,3 +7,4 @@ db.sqlite
 ve/
 build/*
 pip-log.txt
+xunit.xml
