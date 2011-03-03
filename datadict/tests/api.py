@@ -20,7 +20,7 @@ class TestApi(unittest.TestCase):
     def setUp(self):
         pass
 
-
+"""
     def test_datatype_attributes(self):
         dt = DataType("", "", "", "")
         self.assertTrue(hasattr(dt, 'name'))
@@ -31,8 +31,7 @@ class TestApi(unittest.TestCase):
       
     
     def test_create_datatype(self):
-#        dt = DataType("test", {'gt', }, "", "")
-        pass
+        dt = DataType("test", {'gt', }, "", "")
      
         
     def test_datatype_should_be_getable_by_name(self):
@@ -96,7 +95,7 @@ class TestApi(unittest.TestCase):
     def test_incompatible_constraints_saving_should_raise_an_error(self):
         pass
     
-        
+       """ 
         
 if __name__ == '__main__':
     unittest.main()
