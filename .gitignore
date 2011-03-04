@@ -40,3 +40,23 @@ Thumbs.db
 # backup files #
 ################
 *~
+
+local_settings.py
+
+*.orig
+*.db
+*.egg
+*~
+*.tmp
+*.egg-info
+
+db.sqlite
+
+# OS/editor specific files #
+############################
+ve/
+build/*
+pip-log.txt
+xunit.xml
+.coverage
+coverage.xml
