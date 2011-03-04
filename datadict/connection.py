@@ -22,19 +22,25 @@ class Connection(object):
 
     _inst = None
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, address=None, port=None, db_name=None,  *args, **kwargs):
         """
             Ensure we have only one instance for the connection.
         """
-        return cls._inst or object.__new__(cls, *args, **kwargs)
+        if not cls._inst:
+            cls._inst = object.__new__(cls, *args, **kwargs)
+            cls._inst.connect(address, port, db_name)
+        return cls._inst
+        
+        
+    def close(self):
+        Connection._inst = None
 
 
-    def __init__(self, address=None, port=None, db_name=None):
+    def connect(self, address=None, port=None, db_name=None):
         """
             Connect to the CouchDB server and work on the databse mentioned in
             the settngs.
         """
-
         address = address or settings.SERVER_ADDRESS
 
         self.url = "%s:%s/" % (address.rstrip("/"), port or settings.SERVER_PORT)
@@ -45,6 +51,7 @@ class Connection(object):
             self.db = self.server.create(db_name)
         except PreconditionFailed:
             self.db = self.server[db_name]
+
 
     def __unicode__(self):
         return u"Connected on %s - working on %s" % (self.url, self.db.name)
