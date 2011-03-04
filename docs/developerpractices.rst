@@ -2,6 +2,7 @@ Developer Practices
 ===================
 
 * We are using Git_ as the Source Control Manager (SCM)
+* We are using GitFlow_ for better version control and branching
 * Our Documentation style is restructuredtext_ (RST)
 * Our python coding style guide is PEP8_
  	
@@ -19,8 +20,13 @@ Other important links
 ---------------------
 * Our transport layer is managed by VUMI_
 
+Contact us
+----------
+IRC chat: freenode.net#mangrove
+
 .. _VUMI: https://github.com/praekelt/vumi 
 .. _Git: http://git-scm.com/
+.. _GitFlow: https://github.com/nvie/gitflow
 .. _restructuredtext: http://docutils.sourceforge.net/rst.html
 .. _PEP8: http://www.python.org/dev/peps/pep-0008/
 .. _hudson: http://hudson-ci.org/
