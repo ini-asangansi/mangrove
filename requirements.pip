@@ -1,0 +1,5 @@
+Fabric==0.9.4
+Django==1.2.5
+nose==1.0.0
+CouchDB==0.8
+coverage==3.4
