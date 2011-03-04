@@ -49,7 +49,7 @@ local_settings.py
 *~
 *.tmp
 *.egg-info
-
+*.swp
 db.sqlite
 
 # OS/editor specific files #
