@@ -25,7 +25,7 @@ Contact us
 ----------
 IRC chat: freenode.net#mangrove
 
-.. _`Django 1.3` http://www.djangoproject.com
+.. _Django 1.3: http://www.djangoproject.com
 .. _VUMI: https://github.com/praekelt/vumi 
 .. _Git: http://git-scm.com/
 .. _GitFlow: https://github.com/nvie/gitflow
