@@ -5,6 +5,7 @@
 import unittest
 import os
 import sys
+import datetime
 
 test_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.dirname(test_dir)
@@ -13,23 +14,66 @@ upper_dir = os.path.dirname(project_dir)
 sys.path.insert(0, upper_dir)
 
 from datadict.api import DataType
+from datadict.connection import Connection
 
 class TestApi(unittest.TestCase):
 
 
     def setUp(self):
-        pass
+        Connection(db_name="datadict_test")
+        
+        
+    def tearDown(self):
+        Connection().server.delete("datadict_test")
+        Connection().close()
 
-"""
+
     def test_datatype_attributes(self):
-        dt = DataType("", "", "", "")
+    
+        dt = DataType(name="", contraints="", tags="", type="",
+                      version=datetime.datetime.now(), description="")
+        
         self.assertTrue(hasattr(dt, 'name'))
         self.assertTrue(hasattr(dt, 'constraints'))
         self.assertTrue(hasattr(dt, 'tags'))
         self.assertTrue(hasattr(dt, 'type'))
         self.assertTrue(hasattr(dt, 'version'))
-      
+        self.assertTrue(hasattr(dt, 'description'))
+   
+
+    def test_save_datatype(self):
     
+        dt = DataType(name="test", contraints={'gt':4}, tags=['foo', 'bar'], 
+                      type="int", version=datetime.datetime.now(), 
+                      description="Super dupper type")
+           
+        old_dt = dict(dt.items())   
+            
+        dt.save()
+        
+        dt = DataType.load(dt.id)
+        new_dt = dict(dt.items())
+        del new_dt['_rev']
+        
+        self.assertEqual(old_dt, new_dt)
+    
+    
+    def test_search_by_tag(self):
+
+        DataType.create(name="test", contraints={'gt':4}, tags=['foo', 'bar'], 
+                      type="int", description="Super a type")
+         
+        DataType.create(name="a", contraints={'gt':4}, tags=['b', 'c'], 
+                      type="int", description="Super b type")
+     
+        DataType.create(name="1", contraints={'gt':4}, tags=['b', 'bar'], 
+                      type="int", description="Super dupper type")     
+           
+
+        self.assertEqual(len(DataType.with_tags('foo', 'bar')), 1)
+    
+      
+"""    
     def test_create_datatype(self):
         dt = DataType("test", {'gt', }, "", "")
      

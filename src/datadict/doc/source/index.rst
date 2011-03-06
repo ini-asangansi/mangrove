@@ -1,9 +1,9 @@
-.. Mangrove documentation master file, created by
-   sphinx-quickstart on Thu Mar  3 10:32:58 2011.
+.. datadict documentation master file, created by
+   sphinx-quickstart on Fri Mar  4 10:47:25 2011.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Mangrove Docs
+Welcome to datadict's documentation!
 ====================================
 
 Contents:
@@ -11,8 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   developerpractices    
-   ...
+   definition.rst
+   datadict_in_mangrove.rst
+
 
 Indices and tables
 ==================
