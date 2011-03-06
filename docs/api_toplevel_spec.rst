@@ -7,14 +7,14 @@ Top Level Format:
 Each API response shall have a dictonaty with 4 items.  When responding via HTTP
 the status filed shall match the HTTP response status code.
 
-=========       ============    ================================================
+=========       ============    ===============================================================
 FIELD           TYPE            DESCRIPTION
-=========       ============    ================================================
+=========       ============    ===============================================================
 status          int             HTTP status 2xx, 3xx, 4xx, 5xx
 message         str             A string containing a message about the response
 num_results     int             The number of results <=0
 results         list            A list of results of length num_results. If 0, then empty list
-=========       ============    ================================================
+=========       ============    ===============================================================
 
 
 An example of an Error response in JSON.
