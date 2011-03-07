@@ -1,7 +1,7 @@
 Data Store Modeling
 ===================
 
-* Entity::
+* Entity
 
   {
 
@@ -27,7 +27,7 @@ Data Store Modeling
 
   }
 
-* Data_Record::
+* Data_Record
 
   {
 
