@@ -11,7 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   developerpractices    
+   developerpractices
+   data_store_modeling    
    ...
 
 Indices and tables
