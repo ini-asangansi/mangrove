@@ -1,6 +1,7 @@
 class MangroveException(Exception): pass
 class DataDictionaryFormatException(MangroveException):pass
 class StoreException(MangroveException):pass
+class TypeException(MangroveException):pass
 class FieldValidationException(MangroveException):pass
 class FormValidationException(MangroveException):pass
 class FormBuilderException(MangroveException):pass
