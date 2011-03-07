@@ -4,6 +4,7 @@ Developer Practices
 * We are using Git_ as the Source Control Manager (SCM)
 * We are using GitFlow_ for better version control and branching
 * Our Documentation style is restructuredtext_ (RST)
+    - We can try out RST text with the online tool reSTrenderer_
 * Our python coding style guide is PEP8_
  	
 	- 4 spaces per indentation level
@@ -37,3 +38,4 @@ IRC chat: freenode.net#mangrove
 .. _fabric: http://docs.fabfile.org/0.9.4/
 .. _virtualenv: http://pypi.python.org/pypi/virtualenv
 .. _pip: http://pypi.python.org/pypi/pip
+.. _reSTrenderer: http://www.tele3.cz/jbar/rest/rest.html
