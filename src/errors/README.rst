@@ -33,7 +33,7 @@ The example illustrates how one might use the Mangrove exception hierarchy.
     def validate_age(age):
         if type(age) != int and not age.isdigit():
             """
-               If age neither an int or a string that can be
+               If age is neither an int,  nor a string that can be
                converted to an int
             """
             raise TypeException("Age is not a whole number.")
