@@ -12,7 +12,8 @@ Contents:
    :maxdepth: 2
 
    developerpractices
-   data_store_modeling    
+   data_store_modeling
+   terminology
    ...
 
 Indices and tables
