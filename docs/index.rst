@@ -13,6 +13,8 @@ Contents:
 
    developerpractices
    data_store_modeling
+   datadict_concept
+   datadict_api
    terminology
    ...
 
