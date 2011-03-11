@@ -22,8 +22,9 @@ class DataRecord2(Document):
     updated_at = DateTimeField()
     entity_uuid = TextField()
     field_name = TextField()
-    value = IntegerField()
+    value = Field()
 
+    
 #// Data record schema
 #{
 #	"type": "DataRecord",
