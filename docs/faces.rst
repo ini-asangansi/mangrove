@@ -6,6 +6,10 @@ Pune Kickoff Workshop Feb-2011
 ------------------------------
 
 
+:Akshay Naval: |akshay_naval|
+:organization: ThoughtWorks
+:location: Pune, India
+
 :Alan Viars: |alan_viars|
 :organization: Videntity
 :location: Baltimore, MD, US
@@ -13,10 +17,6 @@ Pune Kickoff Workshop Feb-2011
 :Alex Dorey: |alex_dorey|
 :organization: Columbia University
 :location: New York, US
-
-:Akshay Naval: |akshay_naval|
-:organization: ThoughtWorks
-:location: Pune, India
 
 :Aroj Georganizatione: |aroj_georganizatione|
 :organization: ThoughtWorks
@@ -61,8 +61,6 @@ Pune Kickoff Workshop Feb-2011
 :Simon de Haan: |simon_de_haan|
 :organization: Praekelt Foundation
 :location: Cape Town, South Africa
-
-
 
 .. |matt_berg| image:: http://farm6.static.flickr.com/5214/5519481492_e64075b475_m.jpg
 .. |kedar_bapat| image:: http://farm6.static.flickr.com/5137/5518889139_5d696e8b16_m.jpg
