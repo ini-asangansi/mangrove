@@ -2,7 +2,6 @@
 Faces of Mangrove
 -----------------
 
-<<<<<<< HEAD
 Kick-off team as of Feb-2011
 ----------------------------
 
