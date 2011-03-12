@@ -11,6 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   faces
    developerpractices
    data_store_modeling
    datadict_concept
