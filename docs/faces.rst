@@ -30,6 +30,10 @@ Pune Kickoff Workshop Feb-2011
 :organization: HNI
 :location: Antananarivo, Madagascar
 
+:Diptanu Choudhury: |diptanu_choudhury|
+:organization: ThoughtWorks
+:location: Bangalore, India
+
 :Jeff Wishnie: |jeff_wishnie|
 :organization: ThoughtWorks
 :location: Portland, OR, US
@@ -70,6 +74,7 @@ Pune Kickoff Workshop Feb-2011
 .. |kedar_bapat| image:: http://farm6.static.flickr.com/5137/5518889139_5d696e8b16_m.jpg
 .. |kevin_samuel| image:: http://farm6.static.flickr.com/5137/5519481728_740a435e2d_m.jpg
 .. |david_mcafee| image:: http://farm6.static.flickr.com/5093/5518889577_36187cd339_m.jpg
+.. |diptanu_choudhury| image:: http://farm6.static.flickr.com/5093/5519657426_db6309cd54_m.jpg
 .. |jeff_wishnie| image:: http://farm6.static.flickr.com/5060/5518890389_3a23c83168_m.jpg
 .. |aroj_georganizatione| image:: http://farm6.static.flickr.com/5093/5519482290_a6769a1c94_m.jpg
 .. |alan_viars| image:: http://farm6.static.flickr.com/5214/5519482526_eb5eb15024_m.jpg
