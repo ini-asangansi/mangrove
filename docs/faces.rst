@@ -18,7 +18,7 @@ Pune Kickoff Workshop Feb-2011
 :organization: Columbia University
 :location: New York, US
 
-:Aroj Georganizatione: |aroj_georganizatione|
+:Aroj George: |aroj_georganizatione|
 :organization: ThoughtWorks
 :location: Pune, India
 
