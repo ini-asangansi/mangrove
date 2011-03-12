@@ -2,6 +2,7 @@
 Faces of Mangrove
 -----------------
 
+<<<<<<< HEAD
 Kick-off team as of Feb-2011
 ----------------------------
 
@@ -46,7 +47,7 @@ Kick-off team as of Feb-2011
     :organization: ThoughtWorks
     :location: Pune, India
     
--   :Kevin samuel: |kevin_samuel|
+-   :Kevin Samuel: |kevin_samuel|
     :organization: 
     :location: Nice, France
 
@@ -80,6 +81,7 @@ Kick-off team as of Feb-2011
 .. |kedar_bapat| image:: http://farm6.static.flickr.com/5137/5518889139_5d696e8b16_m.jpg
 .. |kevin_samuel| image:: http://farm6.static.flickr.com/5137/5519481728_740a435e2d_m.jpg
 .. |david_mcafee| image:: http://farm6.static.flickr.com/5093/5518889577_36187cd339_m.jpg
+.. |diptanu_choudhury| image:: http://farm6.static.flickr.com/5093/5519657426_db6309cd54_m.jpg
 .. |jeff_wishnie| image:: http://farm6.static.flickr.com/5060/5518890389_3a23c83168_m.jpg
 .. |aroj_george| image:: http://farm6.static.flickr.com/5093/5519482290_a6769a1c94_m.jpg
 .. |alan_viars| image:: http://farm6.static.flickr.com/5214/5519482526_eb5eb15024_m.jpg
