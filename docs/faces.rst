@@ -6,69 +6,69 @@ Kick-off team as of Feb-2011
 ----------------------------
 
 
--   :Akshay Naval: |akshay_naval|
-    :organization: ThoughtWorks
-    :location: Pune, India
-    
--   :Alan Viars: |alan_viars|
-    :organization: Videntity
-    :location: Baltimore, MD, US
-    
--   :Alex Dorey: |alex_dorey|
-    :organization: Columbia University
-    :location: New York, US
-    
--   :Andrew Marder: |andrew_marder|
-    :organization: Earth Institute/Columbia University
-    :location: New York, US 
-        
--   :Aroj George: |aroj_george|
-    :organization: ThoughtWorks
-    :location: Pune, India
-    
--   :Asif Momin: |asif_momin|
-    :organization: ThoughtWorks
-    :location: Pune, India
-    
--   :David McAfee: |david_mcafee|
-    :organization: HNI
-    :location: Antananarivo, Madagascar
-    
--   :Diptanu Choudhury: |diptanu_choudhury|
-    :organization: ThoughtWorks
-    :location: Bangalore, India
-        
--   :Jeff Wishnie: |jeff_wishnie|
-    :organization: ThoughtWorks
-    :location: Portland, OR, US
-    
--   :Kedar Bapat: |kedar_bapat|
-    :organization: ThoughtWorks
-    :location: Pune, India
-    
--   :Kevin Samuel: |kevin_samuel|
-    :organization: 
-    :location: Nice, France
+:Akshay Naval: |akshay_naval|
+:organization: ThoughtWorks
+:location: Pune, India
 
--   :Mamy Dafy: |mamy_dafy|
-    :organization: HNI
-    :location: Antananarivo, Madagascar
+:Alan Viars: |alan_viars|
+:organization: Videntity
+:location: Baltimore, MD, US
 
--   :Matt Berg: |matt_berg|
-    :organization: Columbia University
-    :location: New York, US
+:Alex Dorey: |alex_dorey|
+:organization: Columbia University
+:location: New York, US
 
--   :Shweta Shetty: |shweta_shetty|
-    :organization: ThoughtWorks
-    :location: Pune, India
+:Andrew Marder: |andrew_marder|
+:organization: Earth Institute/Columbia University
+:location: New York, US 
+    
+:Aroj George: |aroj_george|
+:organization: ThoughtWorks
+:location: Pune, India
 
--   :Ravi Kumar: |ravi_kumar|
-    :organization: ThoughtWorks
-    :location: Pune, India
+:Asif Momin: |asif_momin|
+:organization: ThoughtWorks
+:location: Pune, India
 
--   :Simon de Haan: |simon_de_haan|
-    :organization: Praekelt Foundation
-    :location: Cape Town, South Africa
+:David McAfee: |david_mcafee|
+:organization: HNI
+:location: Antananarivo, Madagascar
+
+:Diptanu Choudhury: |diptanu_choudhury|
+:organization: ThoughtWorks
+:location: Bangalore, India
+    
+:Jeff Wishnie: |jeff_wishnie|
+:organization: ThoughtWorks
+:location: Portland, OR, US
+
+:Kedar Bapat: |kedar_bapat|
+:organization: ThoughtWorks
+:location: Pune, India
+
+:Kevin Samuel: |kevin_samuel|
+:organization: 
+:location: Nice, France
+
+:Mamy Dafy: |mamy_dafy|
+:organization: HNI
+:location: Antananarivo, Madagascar
+
+:Matt Berg: |matt_berg|
+:organization: Columbia University
+:location: New York, US
+
+:Shweta Shetty: |shweta_shetty|
+:organization: ThoughtWorks
+:location: Pune, India
+
+:Ravi Kumar: |ravi_kumar|
+:organization: ThoughtWorks
+:location: Pune, India
+
+:Simon de Haan: |simon_de_haan|
+:organization: Praekelt Foundation
+:location: Cape Town, South Africa
 
 `Photos hosted here on Flickr`_
 
