@@ -45,11 +45,15 @@ function(doc,results,rereduce){
 function(doc) {
  for(i in doc.attr){
   field_dict = doc.attr[i];
-  emit([doc.namespace, field_dict.field],field_dict.value);
+  if (field_dict.type == "Number")
+  emit([doc.namespace, field_dict.field],parseInt(field_dict.value));
  }
 }
 
 //reduce
+
+//_stats
+
 function(doc,results,rereduce){
 	r = {};
 	max = results[0];
