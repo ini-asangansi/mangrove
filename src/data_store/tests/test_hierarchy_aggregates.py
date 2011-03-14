@@ -13,6 +13,7 @@ class TestHierarchyAggregate:
             self.db = self.server[DATA_STORE]
         except couchdb.http.ResourceNotFound:
             self.db = self.server.create(DATA_STORE)
+            
     
 
     def test_check_averages_across_entities(self):
@@ -93,14 +94,17 @@ class TestHierarchyAggregate:
             for a in emp.attr:
                 if a["field"] == "Name":
                     a["value"] = name
+                    a["type"] = "Text"
                 if a["field"] == "Location":
                     a["value"] = location
+                    a["type"] = "Text"
                 if a["field"] == "Salary":
                     a["value"] = salary
+                    a["type"] = "Number"
         else:
-            emp.attr.append(dict(field="Name",value=name))
-            emp.attr.append(dict(field="Location",value=location))
-            emp.attr.append(dict(field="Salary",value=salary))
+            emp.attr.append(dict(field="Name",value=name,type = "Text"))
+            emp.attr.append(dict(field="Location",value=location,type = "Text"))
+            emp.attr.append(dict(field="Salary",value=salary,type = "Number"))
         emp.store(self.db)
 
     def fetch_emp_count(self, location):
@@ -119,17 +123,22 @@ class TestHierarchyAggregate:
             for a in clinic.attr:
                 if a["field"] == "beds":
                     a["value"] = beds
+                    a["type"] = "Number"
                 if a["field"] == "arv":
                     a["value"] = arv
+                    a["type"] = "Number"
         else:
-            clinic.attr.append(dict(field="beds",value=beds))
-            clinic.attr.append(dict(field="arv",value=arv))
+            clinic.attr.append(dict(field="beds",value=beds,type = "Number"))
+            clinic.attr.append(dict(field="arv",value=arv, type = "Number"))
         clinic.store(self.db)
 
     def create_entity(self,id,loc,namespace):
         e =  Entity(entity_id = id,location=loc,namespace= namespace)
         e.store(self.db)
         return e
+
+    def fetch_average_num_of_beds(self):
+        return 0
 
 
 class Entity(Document):
@@ -145,5 +154,6 @@ class Entity(Document):
                     timestamp = DateTimeField(),
                     field = TextField(),
                     value = Field(),
+                    type = TextField()
                 )
             ))
