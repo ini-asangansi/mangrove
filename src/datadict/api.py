@@ -14,6 +14,8 @@ from couchdb.mapping import (TextField, IntegerField, DateField,
                              Document)
 
 from connection import Connection
+from basic_types import BasicType
+
 
 class DataDictDocument(Document):
     """
@@ -27,11 +29,22 @@ class DataDictDocument(Document):
             self.id = uuid4().hex
     
     @classmethod
-    def load(cls, *args, **kwargs):
-       return Document.load(Connection().db, *args, **kwargs) 
+    def load(cls, id):
+        """
+            Override the native one to remove the db as 
+            an argument and use the singleton
+        """
+        doc = Connection().db.get(id)
+        if doc is None:
+            return None
+        return cls.wrap(doc)
     
     
     def save(self):
+        """
+            Override the native one to remove the db as 
+            an argument and use the singleton
+        """
         return self.store(Connection().db)
     
     
@@ -58,10 +71,6 @@ class Contraint(DataDictDocument):
     name = TextField()
     value = TextField()
 
-
-class BasicType(DataDictDocument):
-
-    name = TextField()
 
 
 class DataType(DataDictDocument):
@@ -98,11 +107,25 @@ class DataType(DataDictDocument):
         DataDictDocument.__init__(self, *args, **kwargs)
         if not hasattr(self, 'version'):
             self.version = datetime.datetime.now()
+        
+        # set the type manually since we by pass the normal behavior
+        self._data['type'] = BasicType.clean(kwargs.get('type', ''))
+        
+            
+    # this ensure that type is casted from a string to a BasicType instance
+    @property
+    def type(self):
+        return BasicType(self._data['type'])
+
+    @type.setter
+    def type(self, value):
+        self._data['type'] = BasicType.clean(value)
+
 
     # todo: escape this
     # I can't believe there is no better way to do this. Please somebody
     # tell me that I'm completly wrong and that couchdb does let me pass
-    # parameters in some ways other than just the key in get
+    # parameters in some ways other than just the key in GET
     @classmethod
     def with_tags(cls, *tags):
         """
@@ -128,5 +151,17 @@ class DataType(DataDictDocument):
         """ % "', '".join(tags)
         
         return cls.query(query)
-        
-
+       
+       
+    @classmethod
+    def load(cls, id):
+        """
+            Override the parent method to allow type checking.
+        """
+        doc = Connection().db.get(id)
+        if doc is None:
+            return None
+        instance = cls(type=doc['type'])
+        instance._data.update(doc)
+        return instance  
+         

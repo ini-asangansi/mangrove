@@ -15,12 +15,19 @@ sys.path.insert(0, upper_dir)
 
 from datadict.api import DataType
 from datadict.connection import Connection
+from datadict.basic_types import TypeBase, IntegerType, StringType
+from datadict.exceptions import IntegrityError
+
 
 class TestApi(unittest.TestCase):
 
 
     def setUp(self):
         Connection(db_name="datadict_test")
+        self.int = DataType.create(name="int", contraints={'gt': 0}, 
+                                  tags=['int', 'test'], 
+                                   type="int", description="Integer type")
+        
         
         
     def tearDown(self):
@@ -30,7 +37,7 @@ class TestApi(unittest.TestCase):
 
     def test_datatype_attributes(self):
     
-        dt = DataType(name="", contraints="", tags="", type="",
+        dt = DataType(name="", contraints="", tags="", type="str",
                       version=datetime.datetime.now(), description="")
         
         self.assertTrue(hasattr(dt, 'name'))
@@ -72,6 +79,28 @@ class TestApi(unittest.TestCase):
 
         self.assertEqual(len(DataType.with_tags('foo', 'bar')), 1)
     
+  
+    def test_type_is_a_type_base_instance(self):
+        dt = DataType.load(self.int.id)
+        self.assertTrue(isinstance(dt.type, TypeBase))
+        dt.type = 'str'
+        self.assertTrue(isinstance(dt.type, TypeBase))
+  
+
+    def test_basic_types_instances_type_match_the_name(self):
+        dt = DataType.load(self.int.id)
+        self.assertTrue(isinstance(dt.type, IntegerType))
+        dt.type = 'str'
+        self.assertTrue(isinstance(dt.type, StringType))  
+    
+  
+    def test_you_cant_assign_a_non_compatible_type(self):
+        try:
+            self.int.type = "test" 
+            self.fail()
+        except IntegrityError:
+            pass
+      
       
 """    
     def test_create_datatype(self):
