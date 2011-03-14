@@ -11,8 +11,12 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   faces
    developerpractices
-   data_store_modeling    
+   data_store_modeling
+   datadict_concept
+   datadict_api
+   terminology
    ...
 
 Indices and tables
