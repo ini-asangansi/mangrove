@@ -1,19 +1,4 @@
-from couchdb.mapping import Document, TextField, DateTimeField, ListField, DictField, Mapping, Field, IntegerField
-
-class DataRecord(Document):
-    type = TextField(default="Data_Record")
-    namespace = TextField()
-    created_at = DateTimeField()
-    updated_at = DateTimeField()
-    entity_uuid = TextField()
-    payload = ListField(DictField(
-                Mapping.build(
-                    timestamp = DateTimeField(),
-                    field = TextField(),
-                    value = Field(),
-                )
-            ))
-
+from couchdb.mapping import Document, TextField, DateTimeField, ListField, DictField, Mapping, Field, IntegerField, FloatField
 
 class DataRecord2(Document):
     type = TextField(default="Data_Record2")
@@ -23,8 +8,21 @@ class DataRecord2(Document):
     entity_uuid = TextField()
     field_name = TextField()
     value = Field()
+    event_time = DateTimeField()
+    field_type = TextField(default="Text")
 
-    
+class IntDataRecord2(DataRecord2):
+    value = IntegerField()
+    field_type = TextField(default="Number")
+
+class FloatDataRecord2(DataRecord2):
+    value = FloatField()
+    field_type = TextField(default="Number")
+
+class DateTimeDataRecord2(DataRecord2):
+    value = DateTimeField()
+    field_type = TextField(default="DateTime")
+
 #// Data record schema
 #{
 #	"type": "DataRecord",

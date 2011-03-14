@@ -6,7 +6,7 @@ from couchdb import Server
 
 #Given a python data_record, store the same in couchdb as a json doc.
 from paste.script.util.uuid import uuid1
-from src.data_record.data_record import DataRecord, DataRecord2
+from src.data_record.data_record import IntDataRecord2
 
 
 class TestDataRecord:
@@ -24,19 +24,10 @@ class TestDataRecord:
         assert_is_not_none(self.db)
         # E.g. REG PATIENT NAME Pat Age 10
         # PATID 1234 BP 128 PULSE 80
-        d = self.create_data_record("?",bp=129,pulse=80)
+        d = self.create_data_record2("1",bp=129,pulse=80)
         d.store(self.db)
         saved_record = DataRecord.load(self.db,d.id)
         assert saved_record.id
-
-    def test_fetch_latest_value_for_a_field(self):
-        a = self.create_data_record("?",bp=129,pulse=80)
-        a.store(self.db)
-        b = self.create_data_record("?",bp=139,pulse=80)
-        b.store(self.db)
-        c = self.create_data_record("?",bp=149,pulse=80)
-        c.store(self.db)
-        self.fetch_latest_value_for(field="BP")
 
     def test_fetch_latest_value_for_data_record2(self):
         self.create_data_record2("12",bp=123,pulse=45)
@@ -47,30 +38,11 @@ class TestDataRecord:
 #        assert latest_bp == 193
 #        assert latest_pulse == 95
 
-        
-
-    def create_data_record(self,entity_id,bp,pulse):
-        d = DataRecord()
-        d.namespace = "org.global.ClinicRecord"
-        now = datetime.now()
-        d.created_at = now
-        d.updated_at = now
-        d.entity_uuid = entity_id
-        d.payload = [{
-                         "timestamp": now,
-                         "field": "BP",
-                         "value": bp
-                     },
-                     {
-                         "timestamp": now,
-                         "field": "PULSE",
-                         "value": pulse
-                     }]
-        return d
-
+    def test_create_int_data_record(self):
+        self.create_data_record2("1",bp=123,pulse=45)
 
     def create_data_record2(self,entity_id,bp,pulse):
-        d = DataRecord2()
+        d = IntDataRecord2()
         d.namespace = "org.global.ClinicRecord"
         now = datetime.now()
         d.created_at = now
@@ -78,7 +50,7 @@ class TestDataRecord:
         d.entity_uuid = entity_id
         d.field_name = "BP"
         d.value = bp
-        e = DataRecord2()
+        e = IntDataRecord2()
         e.namespace = "org.global.ClinicRecord"
         now = datetime.now()
         e.created_at = now

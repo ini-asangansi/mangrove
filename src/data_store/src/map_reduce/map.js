@@ -40,3 +40,32 @@ function(doc,results,rereduce){
         return r;
 }
 
+
+//map
+function(doc) {
+ for(i in doc.attr){
+  field_dict = doc.attr[i];
+  emit([doc.namespace, field_dict.field],field_dict.value);
+ }
+}
+
+//reduce
+function(doc,results,rereduce){
+	r = {};
+	max = results[0];
+	min = results[0];
+	total = 0;
+	for(i in results){
+		d = results[i];
+		if (d > max) max = d;
+		if (d < min) min = d;
+		total = total + d;
+	}
+	count = results.length;
+	r.max = max;
+	r.min = min;
+        r.count = count;
+        r.sum = total;
+	r.avg = r.sum/r.count;
+	return r;
+}

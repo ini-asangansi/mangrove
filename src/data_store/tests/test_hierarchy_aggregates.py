@@ -3,19 +3,46 @@ import couchdb
 from couchdb.client import Server
 from couchdb.mapping import Document, IntegerField, TextField, DateTimeField, Field, ListField, DictField, DictField, Mapping, Mapping
 from nose.tools import *
-from src.data_record.data_record import DataRecord2
+from src.data_record.data_record import DataRecord2, IntDataRecord2, DateTimeDataRecord2, FloatDataRecord2
 
 class TestHierarchyAggregate:
     def setup(self):
         self.server = Server()
         try:
-            DATA_STORE = 'data_store'
+            DATA_STORE = 'data_store3'
             self.db = self.server[DATA_STORE]
         except couchdb.http.ResourceNotFound:
             self.db = self.server.create(DATA_STORE)
     
-    def test_create_hierarchy(self):
-        pass
+
+    def test_check_averages_across_entities(self):
+#         create clinics
+        a = self.create_clinic(1,"Pune","Clinic 1")
+        self.create_clinic_record(a,beds = 10,arv = 100,event_time = datetime(2011,01,01))
+
+        a = self.create_clinic(2,"Bangalore","Clinic 2")
+        self.create_clinic_record(a,beds = 100,arv = 200,event_time = datetime(2011,02,01))
+
+        a = self.create_clinic(3,"Mumbai","Clinic 3")
+        self.create_clinic_record(a,beds = 50,arv = 150,event_time = datetime(2011,02,01))
+
+        a = self.create_clinic(4,"Pune","Clinic 4")
+        self.create_clinic_record(a,beds = 250,arv = 50,event_time = datetime(2011,01,01))
+
+        a = self.create_clinic(5,"Bangalore","Clinic 5")
+        self.create_clinic_record(a,beds = 150,arv = 150,event_time = datetime(2011,01,01))
+
+        a = self.create_clinic(6,"Pune","Clinic 6")
+        self.create_clinic_record(a,beds = 10,arv = 15,event_time = datetime(2011,01,01))
+
+        beds = self.fetch_average_num_of_beds()
+        assert beds == 570/6
+#         create employess
+
+#         check the average salary
+#        check the average number of beds.
+
+    
 
     def test_aggregate_tw_employees(self):
         a = self.create_employee(1,"Chicago")
@@ -24,12 +51,12 @@ class TestHierarchyAggregate:
         d = self.create_employee(4,"Pune")
         e = self.create_employee(5,"Bangalore")
         f = self.create_employee(6,"London")
-        self.create_emp_record(a,"Roy","Chicago",90000)
-        self.create_emp_record(b,"Rohit","Bangalore",5000)
-        self.create_emp_record(c,"Ola","New York",40000)
-        self.create_emp_record(d,"Chai","Pune",2000)
-        self.create_emp_record(e,"Sudhir","Bangalore",70000)
-        self.create_emp_record(f,"Jeff","London",10000)
+        self.create_emp_record(a,"Roy","Chicago",90000,datetime(2011,01,01))
+        self.create_emp_record(b,"Rohit","Bangalore",5000,datetime(2011,01,11))
+        self.create_emp_record(c,"Ola","New York",40000,datetime(2010,01,01))
+        self.create_emp_record(d,"Chai","Pune",2000,datetime(2010,02,01))
+        self.create_emp_record(e,"Sudhir","Bangalore",70000,datetime(2011,03,01))
+        self.create_emp_record(f,"Jeff","London",10000,datetime(2011,03,01))
 
         total_india_count = self.fetch_emp_count("India")
         total_uk_count = self.fetch_emp_count("UK")
@@ -39,21 +66,29 @@ class TestHierarchyAggregate:
         assert total_uk_count == 1
         assert total_us_count == 2
 
-    def create_data_record(self, emp_id, fieldname, value):
-        d = DataRecord2()
-        d.namespace = "org.global.EmployeeRecord"
+    def create_data_record(self, id, fieldname, value,event_time,namespace):
+        if type(value) == type(1):
+            d = IntDataRecord2()
+        elif type(value) == type(1.0):
+            d = FloatDataRecord2()
+        elif isinstance(value,datetime):
+            d = DateTimeDataRecord2()
+        else:
+            d = DataRecord2()
+        d.namespace = namespace
         now = datetime.now()
         d.created_at = now
         d.updated_at = now
-        d.entity_uuid = emp_id
+        d.entity_uuid = id
         d.field_name = fieldname
         d.value = value
+        d.event_time = event_time
         d.store(self.db)
 
-    def create_emp_record(self,emp,name,location,salary):
-        self.create_data_record(emp.entity_id, "Name",name)
-        self.create_data_record(emp.entity_id, "Location",location)
-        self.create_data_record(emp.entity_id, "Salary",salary)
+    def create_emp_record(self,emp,name,location,salary,event_time):
+        self.create_data_record(emp.entity_id, "Name",name,event_time,"org.global.EmployeeRecord")
+        self.create_data_record(emp.entity_id, "Location",location,event_time,"org.global.EmployeeRecord")
+        self.create_data_record(emp.entity_id, "Salary",salary,event_time,"org.global.EmployeeRecord")
         if emp.attr:
             for a in emp.attr:
                 if a["field"] == "Name":
@@ -72,9 +107,30 @@ class TestHierarchyAggregate:
         return 0
 
     def create_employee(self, id,loc):
-        e =  Entity(entity_id = id,location=loc,namespace= "org.global.Employee")
+        return self.create_entity(id,loc,"org.global.Employee")
+
+    def create_clinic(self, id, loc, name):
+        return self.create_entity(id,loc,"org.global.Clinic")
+
+    def create_clinic_record(self, clinic, beds, arv, event_time):
+        self.create_data_record(clinic.entity_id, "beds",beds,event_time,"org.global.ClinicRecord")
+        self.create_data_record(clinic.entity_id, "arv",arv,event_time,"org.global.ClinicRecord")
+        if clinic.attr:
+            for a in clinic.attr:
+                if a["field"] == "beds":
+                    a["value"] = beds
+                if a["field"] == "arv":
+                    a["value"] = arv
+        else:
+            clinic.attr.append(dict(field="beds",value=beds))
+            clinic.attr.append(dict(field="arv",value=arv))
+        clinic.store(self.db)
+
+    def create_entity(self,id,loc,namespace):
+        e =  Entity(entity_id = id,location=loc,namespace= namespace)
         e.store(self.db)
         return e
+
 
 class Entity(Document):
     entity_id = IntegerField()
@@ -83,6 +139,7 @@ class Entity(Document):
     created_at = DateTimeField()
     updated_at = DateTimeField()
     location = TextField()
+    name = TextField()
     attr = ListField(DictField(
                 Mapping.build(
                     timestamp = DateTimeField(),
