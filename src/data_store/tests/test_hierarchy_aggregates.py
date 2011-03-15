@@ -1,6 +1,7 @@
 from datetime import datetime
 import couchdb
 from couchdb.client import Server
+from couchdb.design import ViewDefinition
 from couchdb.mapping import Document, IntegerField, TextField, DateTimeField, Field, ListField, DictField, DictField, Mapping, Mapping
 from nose.tools import *
 from src.data_record.data_record import DataRecord2, IntDataRecord2, DateTimeDataRecord2, FloatDataRecord2
@@ -13,8 +14,17 @@ class TestHierarchyAggregate:
             self.db = self.server[DATA_STORE]
         except couchdb.http.ResourceNotFound:
             self.db = self.server.create(DATA_STORE)
-            
-    
+            self.create_views()
+
+    def create_views(self):
+        view = ViewDefinition('by_field','by_field','''
+         function(doc){for(i in doc.attr){
+            field_dict = doc.attr[i];
+            if (field_dict.type == "Number")
+                emit(field_dict.field,parseInt(field_dict.value));
+         }}''','''_sum''')
+        view.sync(self.db)
+
 
     def test_check_averages_across_entities(self):
 #         create clinics
@@ -36,8 +46,8 @@ class TestHierarchyAggregate:
         a = self.create_clinic(6,"India.Maharashtra.Pune","Clinic 6")
         self.create_clinic_record(a,beds = 10,arv = 15,event_time = datetime(2011,01,01))
 
-        beds = self.fetch_average_num_of_beds()
-        assert beds == 570/6
+        beds = self.fetch_total_num_of_beds()
+        assert beds == 570
 #         create employess
 
 #         check the average salary
@@ -142,7 +152,11 @@ class TestHierarchyAggregate:
         e.store(self.db)
         return e
 
-    def fetch_average_num_of_beds(self):
+    def fetch_total_num_of_beds(self):
+        rows = self.db.view('by_field/by_field',group=True).rows
+        for i in rows:
+            if i.key == 'beds':
+                return i.value
         return 0
 
 
