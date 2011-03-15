@@ -50,6 +50,36 @@ function(doc) {
  }
 }
 
+
+// including location
+function(doc) {
+ for(i in doc.attr){
+  field_dict = doc.attr[i];
+  if (field_dict.type == "Number"){
+     key = [doc.namespace, field_dict.field];
+     for (v in doc.location){
+        key.push(doc.location[v]);
+     }
+     emit(key,parseInt(field_dict.value));
+  }
+ }
+}
+
+// including time and location
+function(doc) {
+ for(i in doc.attr){
+  field_dict = doc.attr[i];
+  if (field_dict.type == "Number"){
+     key = [doc.namespace, field_dict.field];
+     key.push(field_dict.timestamp);
+     for (v in doc.location){
+        key.push(doc.location[v]);
+     }
+
+     emit(key,parseInt(field_dict.value));
+  }
+ }
+}
 //reduce
 
 //_stats

@@ -18,22 +18,22 @@ class TestHierarchyAggregate:
 
     def test_check_averages_across_entities(self):
 #         create clinics
-        a = self.create_clinic(1,"Pune","Clinic 1")
+        a = self.create_clinic(1,"India.Maharashtra.Pune","Clinic 1")
         self.create_clinic_record(a,beds = 10,arv = 100,event_time = datetime(2011,01,01))
 
-        a = self.create_clinic(2,"Bangalore","Clinic 2")
+        a = self.create_clinic(2,"India.Karnataka.Bangalore","Clinic 2")
         self.create_clinic_record(a,beds = 100,arv = 200,event_time = datetime(2011,02,01))
 
-        a = self.create_clinic(3,"Mumbai","Clinic 3")
+        a = self.create_clinic(3,"India.Maharashtra.Mumbai","Clinic 3")
         self.create_clinic_record(a,beds = 50,arv = 150,event_time = datetime(2011,02,01))
 
-        a = self.create_clinic(4,"Pune","Clinic 4")
+        a = self.create_clinic(4,"India.Maharashtra.Pune","Clinic 4")
         self.create_clinic_record(a,beds = 250,arv = 50,event_time = datetime(2011,01,01))
 
-        a = self.create_clinic(5,"Bangalore","Clinic 5")
+        a = self.create_clinic(5,"India.Karnataka.Bangalore","Clinic 5")
         self.create_clinic_record(a,beds = 150,arv = 150,event_time = datetime(2011,01,01))
 
-        a = self.create_clinic(6,"Pune","Clinic 6")
+        a = self.create_clinic(6,"India.Maharashtra.Pune","Clinic 6")
         self.create_clinic_record(a,beds = 10,arv = 15,event_time = datetime(2011,01,01))
 
         beds = self.fetch_average_num_of_beds()
@@ -46,12 +46,12 @@ class TestHierarchyAggregate:
     
 
     def test_aggregate_tw_employees(self):
-        a = self.create_employee(1,"Chicago")
-        b = self.create_employee(2,"Bangalore")
-        c = self.create_employee(3,"New York")
-        d = self.create_employee(4,"Pune")
-        e = self.create_employee(5,"Bangalore")
-        f = self.create_employee(6,"London")
+        a = self.create_employee(1,"US.ChicagoState.Chicago")
+        b = self.create_employee(2,"India.Karnataka.Bangalore")
+        c = self.create_employee(3,"US.Washington.New_York")
+        d = self.create_employee(4,"India.Maharashtra.Pune")
+        e = self.create_employee(5,"India.Karnataka.Bangalore")
+        f = self.create_employee(6,"UK.LondonState.London")
         self.create_emp_record(a,"Roy","Chicago",90000,datetime(2011,01,01))
         self.create_emp_record(b,"Rohit","Bangalore",5000,datetime(2011,01,11))
         self.create_emp_record(c,"Ola","New York",40000,datetime(2010,01,01))
@@ -95,16 +95,19 @@ class TestHierarchyAggregate:
                 if a["field"] == "Name":
                     a["value"] = name
                     a["type"] = "Text"
+                    a["timestamp"] = event_time
                 if a["field"] == "Location":
                     a["value"] = location
                     a["type"] = "Text"
+                    a["timestamp"] = event_time
                 if a["field"] == "Salary":
                     a["value"] = salary
                     a["type"] = "Number"
+                    a["timestamp"] = event_time
         else:
-            emp.attr.append(dict(field="Name",value=name,type = "Text"))
-            emp.attr.append(dict(field="Location",value=location,type = "Text"))
-            emp.attr.append(dict(field="Salary",value=salary,type = "Number"))
+            emp.attr.append(dict(field="Name",value=name,type = "Text",timestamp=event_time))
+            emp.attr.append(dict(field="Location",value=location,type = "Text",timestamp=event_time))
+            emp.attr.append(dict(field="Salary",value=salary,type = "Number",timestamp=event_time))
         emp.store(self.db)
 
     def fetch_emp_count(self, location):
@@ -124,16 +127,18 @@ class TestHierarchyAggregate:
                 if a["field"] == "beds":
                     a["value"] = beds
                     a["type"] = "Number"
+                    a["timestamp"] = event_time
                 if a["field"] == "arv":
                     a["value"] = arv
                     a["type"] = "Number"
+                    a["timestamp"] = event_time
         else:
-            clinic.attr.append(dict(field="beds",value=beds,type = "Number"))
-            clinic.attr.append(dict(field="arv",value=arv, type = "Number"))
+            clinic.attr.append(dict(field="beds",value=beds,type = "Number",timestamp=event_time))
+            clinic.attr.append(dict(field="arv",value=arv, type = "Number",timestamp=event_time))
         clinic.store(self.db)
 
     def create_entity(self,id,loc,namespace):
-        e =  Entity(entity_id = id,location=loc,namespace= namespace)
+        e =  Entity(entity_id = id,location=loc.split('.'),namespace= namespace)
         e.store(self.db)
         return e
 
@@ -147,7 +152,7 @@ class Entity(Document):
     namespace = TextField()
     created_at = DateTimeField()
     updated_at = DateTimeField()
-    location = TextField()
+    location = ListField(TextField())
     name = TextField()
     attr = ListField(DictField(
                 Mapping.build(
