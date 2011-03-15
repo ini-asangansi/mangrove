@@ -24,6 +24,21 @@ class TestHierarchyAggregate:
                 emit(field_dict.field,parseInt(field_dict.value));
          }}''','''_sum''')
         view.sync(self.db)
+        view = ViewDefinition('by_location','by_location','''function(doc) {
+                                for(i in doc.attr){
+                                    field_dict = doc.attr[i];
+                                    if (field_dict.type == "Number"){
+                                        key = [doc.namespace, field_dict.field];
+                                        for (v in doc.location){
+                                            key.push(doc.location[v]);
+                                        }
+                                    key.push(field_dict.timestamp);
+                                    emit(key,parseInt(field_dict.value));
+                                    }
+                                }
+                                }''','''_count'''
+                              )
+        view.sync(self.db)
 
 
     def test_check_averages_across_entities(self):
@@ -121,6 +136,10 @@ class TestHierarchyAggregate:
         emp.store(self.db)
 
     def fetch_emp_count(self, location):
+        rows = self.db.view('by_location/by_location',group_level=3).rows
+        for i in rows:
+            if location in i.key:
+                return i.value
         return 0
 
     def create_employee(self, id,loc):
