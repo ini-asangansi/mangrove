@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block page_title %} Login {% endblock %}
+{% block content %}
+    <div class="span-12 box push-6">
+        <fieldset><legend>Login</legend>
+             <form>
+                    <div>
+                        <div class="span-4 first">
+                            <p class="form-row" ><label for="login">Login</label></p>
+                            <p class="form-row"><label for="password">Password</label></p>
+                        </div>
+                        <div class="span-4 last">
+                            <input id="login" type="text" name="login"/>
+                            <input id="password" type="password"  name="password"/>
+                            <input type="submit" value="Login" />
+                        </div>
+                        <div class="span-8 last">
+                            <span>Do not have an account? <a>Signup now!</a></span>
+                         </div>
+                    </div>
+             </form>
+        </fieldset>
+    </div>
+{% endblock %}

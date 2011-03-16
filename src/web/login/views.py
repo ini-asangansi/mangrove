@@ -3,4 +3,4 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 
 def signup(request):
-    return HttpResponse('Hi, from signup.')
+    return render_to_response('login.html')

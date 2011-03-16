@@ -1,0 +1,9 @@
+{% extends 'site.html' %}
+
+{% block body %}
+    <div id="container" class="container">
+        <div class="span-24 last">{% include 'header.html' %} {% block page_header %} {% endblock %}</div>
+        {% block content %} {% endblock %}
+        <div class="span-24 last">{% include 'footer.html' %} {% block page_footer %} {% endblock %}</div>
+    </div>
+{% endblock %}
