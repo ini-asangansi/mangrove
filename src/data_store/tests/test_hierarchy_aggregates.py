@@ -3,8 +3,9 @@ import couchdb
 from couchdb.client import Server
 from couchdb.design import ViewDefinition
 from nose.tools import *
-from src.data_record.data_record import DataRecord2, IntDataRecord2, DateTimeDataRecord2, FloatDataRecord2
-from src.Entity import Entity
+from data_store.data_record.data_record import IntDataRecord, FloatDataRecord, FloatDataRecord, \
+    DateTimeDataRecord, DataRecord
+from data_store.Entity import Entity
 
 class TestHierarchyAggregate:
     DATA_STORE = "test_data_store"
@@ -54,7 +55,7 @@ class TestHierarchyAggregate:
         self.server = self.__class__.server
         self.db = self.server[self.__class__.DATA_STORE]
 
-    def test_verify_total_num_beds_across_clinics(self):
+    def test_total_num_beds_across_clinics(self):
         #create clinics
         a = self.create_clinic(1,"India.Maharashtra.Pune","Clinic 1")
         self.create_clinic_record(a,beds = 10,arv = 100,event_time = datetime(2011,01,01))
@@ -77,7 +78,7 @@ class TestHierarchyAggregate:
         beds = self.fetch_total_num_of_beds()
         assert beds == 570
 
-    def test_aggregate_tw_employees(self):
+    def test_employee_count_grouped_on_location(self):
         a = self.create_employee(1,"US.ChicagoState.Chicago")
         b = self.create_employee(2,"India.Karnataka.Bangalore")
         c = self.create_employee(3,"US.Washington.New_York")
@@ -101,13 +102,13 @@ class TestHierarchyAggregate:
 
     def create_data_record(self, id, fieldname, value,event_time,namespace):
         if type(value) == type(1):
-            d = IntDataRecord2()
+            d = IntDataRecord()
         elif type(value) == type(1.0):
-            d = FloatDataRecord2()
+            d = FloatDataRecord()
         elif isinstance(value,datetime):
-            d = DateTimeDataRecord2()
+            d = DateTimeDataRecord()
         else:
-            d = DataRecord2()
+            d = DataRecord()
         d.namespace = namespace
         now = datetime.now()
         d.created_at = now
