@@ -2,9 +2,9 @@ from datetime import datetime
 import couchdb
 from couchdb.client import Server
 from couchdb.design import ViewDefinition
-from couchdb.mapping import Document, IntegerField, TextField, DateTimeField, Field, ListField, DictField, DictField, Mapping, Mapping
 from nose.tools import *
 from src.data_record.data_record import DataRecord2, IntDataRecord2, DateTimeDataRecord2, FloatDataRecord2
+from src.Entity import Entity
 
 class TestHierarchyAggregate:
     DATA_STORE = "test_data_store"
@@ -186,19 +186,3 @@ class TestHierarchyAggregate:
         return 0
 
 
-class Entity(Document):
-    entity_id = IntegerField()
-    type = TextField(default="Entity")
-    namespace = TextField()
-    created_at = DateTimeField()
-    updated_at = DateTimeField()
-    location = ListField(TextField())
-    name = TextField()
-    attr = ListField(DictField(
-                Mapping.build(
-                    timestamp = DateTimeField(),
-                    field = TextField(),
-                    value = Field(),
-                    type = TextField()
-                )
-            ))
