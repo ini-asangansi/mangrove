@@ -19,16 +19,32 @@ from datadict.basic_types import TypeBase, IntegerType, StringType
 from datadict.exceptions import IntegrityError
 
 
+
 class TestApi(unittest.TestCase):
 
 
     def setUp(self):
+    
         Connection(db_name="datadict_test")
+        
         self.int = DataType.create(name="int", contraints={'gt': 0}, 
-                                  tags=['int', 'test'], 
+                                   tags=['int', 'test'], 
                                    type="int", description="Integer type")
-        
-        
+
+        self.float = DataType.create(name="float", contraints={'gt': 0}, 
+                                     tags=['float', 'test'], 
+                                     type="float", description="Float type")       
+
+        self.string = DataType.create(name="string", contraints={'in': 0}, 
+                                      tags=['string', 'test'], 
+                                      type="str", description="String type")    
+
+        self.date = DataType.create(name="date", contraints={'gt': '2010-12-10'}, 
+                                      tags=['date', 'test'], 
+                                      type="datetime", description="Date type")  
+
+        self.bool = DataType.create(name="bool", tags=['bool', 'test'], 
+                                    type="bool", description="Date type")                                        
         
     def tearDown(self):
         Connection().server.delete("datadict_test")
@@ -100,8 +116,40 @@ class TestApi(unittest.TestCase):
             self.fail()
         except IntegrityError:
             pass
-      
-      
+   
+    def type_casting_tester(self, datatype, json_value, python_value):
+        
+        # from json to python to json
+        in_python = datatype.to_python(json_value)
+        self.assertEqual(in_python, python_value)
+        self.assertEqual(datatype.to_json(in_python), json_value)
+
+        # from python to json to python
+        in_json = datatype.to_json(python_value)
+        self.assertEqual(in_json, json_value)
+        self.assertEqual(datatype.to_python(in_json), python_value)   
+        
+   
+    def test_type_casting(self):
+        
+        # integer
+        self.type_casting_tester(self.int, u'123', 123)        
+        self.type_casting_tester(self.int, u'-123', -123) 
+        self.type_casting_tester(self.int, u'0', 0)   
+        
+        self.type_casting_tester(self.float, u'123.0', 123.0)        
+        self.type_casting_tester(self.float, u'-123.4', -123.4) 
+        self.type_casting_tester(self.float, u'0.0', 0.0)           
+  
+        self.type_casting_tester(self.string, u'123.0', u'123.0')        
+        self.type_casting_tester(self.string, u'é', u'é') 
+ 
+        self.type_casting_tester(self.bool, '1', True)        
+        self.type_casting_tester(self.bool, '0', False)  
+ 
+        self.type_casting_tester(self.date,  '2011-03-16 20:24:36.307154',
+                             datetime.datetime(2011, 3, 16, 20, 24, 36, 307154))        
+
 """    
     def test_create_datatype(self):
         dt = DataType("test", {'gt', }, "", "")

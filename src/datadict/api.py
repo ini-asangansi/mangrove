@@ -122,6 +122,23 @@ class DataType(DataDictDocument):
         self._data['type'] = BasicType.clean(value)
 
 
+    
+    def to_json(self, value):
+        """ 
+            Convert the value to the JSON format. The method delegate
+            this behavior to the current basic type object.
+        """
+        return self.type.to_json(value)
+        
+        
+    def to_python(self, value):
+        """ 
+            Convert the value to a Python object. The method delegate
+            this behavior to the current basic type object.
+        """
+        return self.type.to_python(value)
+        
+
     # todo: escape this
     # I can't believe there is no better way to do this. Please somebody
     # tell me that I'm completly wrong and that couchdb does let me pass
