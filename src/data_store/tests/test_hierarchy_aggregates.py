@@ -7,23 +7,29 @@ from nose.tools import *
 from src.data_record.data_record import DataRecord2, IntDataRecord2, DateTimeDataRecord2, FloatDataRecord2
 
 class TestHierarchyAggregate:
-    def setup(self):
-        self.server = Server()
-        try:
-            DATA_STORE = 'data_store3'
-            self.db = self.server[DATA_STORE]
-        except couchdb.http.ResourceNotFound:
-            self.db = self.server.create(DATA_STORE)
-            self.create_views()
+    DATA_STORE = "test_data_store"
 
-    def create_views(self):
+    @classmethod
+    def setup_class(klass):
+        DATA_STORE = klass.DATA_STORE
+        klass.server = Server()
+        try:
+            if klass.server[DATA_STORE]:
+                klass.server.delete(DATA_STORE)
+        except couchdb.http.ResourceNotFound:
+            pass
+        klass.db = klass.server.create(DATA_STORE)
+        klass.create_views()
+
+    @classmethod
+    def create_views(klass):
         view = ViewDefinition('by_field','by_field','''
          function(doc){for(i in doc.attr){
             field_dict = doc.attr[i];
             if (field_dict.type == "Number")
                 emit(field_dict.field,parseInt(field_dict.value));
          }}''','''_sum''')
-        view.sync(self.db)
+        view.sync(klass.db)
         view = ViewDefinition('by_location','by_location','''function(doc) {
                                 for(i in doc.attr){
                                     field_dict = doc.attr[i];
@@ -38,11 +44,18 @@ class TestHierarchyAggregate:
                                 }
                                 }''','''_count'''
                               )
-        view.sync(self.db)
+        view.sync(klass.db)
 
+    @classmethod
+    def teardown_class(klass):
+        pass
 
-    def test_check_averages_across_entities(self):
-#         create clinics
+    def setup(self):
+        self.server = self.__class__.server
+        self.db = self.server[self.__class__.DATA_STORE]
+
+    def test_verify_total_num_beds_across_clinics(self):
+        #create clinics
         a = self.create_clinic(1,"India.Maharashtra.Pune","Clinic 1")
         self.create_clinic_record(a,beds = 10,arv = 100,event_time = datetime(2011,01,01))
 
@@ -63,12 +76,6 @@ class TestHierarchyAggregate:
 
         beds = self.fetch_total_num_of_beds()
         assert beds == 570
-#         create employess
-
-#         check the average salary
-#        check the average number of beds.
-
-    
 
     def test_aggregate_tw_employees(self):
         a = self.create_employee(1,"US.ChicagoState.Chicago")
