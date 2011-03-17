@@ -7,6 +7,11 @@ import os
 import sys
 import datetime
 
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 test_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.dirname(test_dir)
 upper_dir = os.path.dirname(project_dir)
@@ -150,9 +155,61 @@ class TestApi(unittest.TestCase):
         self.type_casting_tester(self.date,  '2011-03-16 20:24:36.307154',
                              datetime.datetime(2011, 3, 16, 20, 24, 36, 307154))        
 
+    def test_datatypes_let_you_import_type_from_black_box(self):
+        
+        js = json.dumps({
+            "record_1": { 'type': self.date.id,
+                           'value': '2011-03-16 20:24:36.307154'},
+            "record_2": { 'type':  self.string.id,
+                           'value': 'test'},
+            "record_3": { 'type': self.bool.id,
+                           'value': '0'},                          
+            "record_4": { 'type': self.float.id,
+                           'value': '-123.89'},   
+        })
+
+        check = {
+            "record_1": datetime.datetime(2011, 3, 16, 20, 24, 36, 307154),
+            "record_2": u'test',
+            "record_3": 0,                          
+            "record_4" :-123.89   
+        }
+
+        result = {}
+        for name, record in json.loads(js).iteritems():
+            type_, value = record.values()
+            result[name] = DataType.load(type_).to_python(value)
+            
+            "record_4": { 'type': "feature",
+                           'value': "GR_fJKLMJLM"},  
+           DataType.load(type_).to_python(value) 
+           
+        
+        DataType(type_).generate_aggregation_cache(value)
+          
+        'fdsqfdsf'
+        self.assertEqual(check, result)
+    
+    # next step : casting to georegistry, (not too hard)
+                # casting to any entity (hard)
+                # validation on basic type (easy now we got auto type loading)
+                # custom validation (not hard but long)
+                # generating aggration tree for each type ?
+                # generate xform typin / validation ?
+        
+    # priority: casting to georegistry
+              # test versioning and load by version
+              
+    # in clear: data dict is almost good enought for what we want to do
+    # we should work on the data store
+    # it's dependant for the map reduce 
+    # let's freeze the aggregation on that merge the data store with the data dict
+    
+    
+            
 """    
     def test_create_datatype(self):
-        dt = DataType("test", {'gt', }, "", "")
+        dt: DataType("test", {'gt', }, "", "")
      
         
     def test_datatype_should_be_getable_by_name(self):

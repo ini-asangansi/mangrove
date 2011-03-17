@@ -87,14 +87,6 @@ class DataType(DataDictDocument):
          
     """
     
-    """
-    def validate(value)
-    
-    def to_python()
-    
-    def to_fdjsqkfjqsdlkf()
-    """
-    
     name = TextField()
     constraints = DictField()
     tags = ListField(TextField())
