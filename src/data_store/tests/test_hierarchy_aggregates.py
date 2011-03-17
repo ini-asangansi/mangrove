@@ -48,7 +48,7 @@ class TestHierarchyAggregate:
         view.sync(klass.db)
 
         view = ViewDefinition('by_location_time','by_location_time','''function(doc) {
-                                    if ((doc.type == "Data_Record2")&& (doc.field_type=="Number")){
+                                    if ((doc.type == "Data_Record")&& (doc.field_type=="Number")){
                                         for (location in doc.location_path){
                                             key = [doc.namespace, doc.field_name];
                                             date = new Date(doc.event_time)

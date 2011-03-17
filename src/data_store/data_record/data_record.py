@@ -1,7 +1,7 @@
 from couchdb.mapping import Document, TextField, DateTimeField, Field, IntegerField, FloatField, ListField
 
 class DataRecord(Document):
-    type = TextField(default="Data_Record2")
+    type = TextField(default="Data_Record")
     namespace = TextField()
     created_at = DateTimeField()
     updated_at = DateTimeField()

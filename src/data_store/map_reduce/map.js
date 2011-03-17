@@ -8,7 +8,7 @@
 
 //map
 function(doc) {
-  if (doc.type == 'Data_Record2') emit([doc.entity_uuid,doc.field_name], doc);
+  if (doc.type == 'Data_Record') emit([doc.entity_uuid,doc.field_name], doc);
 }
 //reduce
 function(doc,results,rereduce){
@@ -102,7 +102,7 @@ function(doc,results,rereduce){
         r.sum = total;
 	r.avg = r.sum/r.count;
 	return r;
-    if ((doc.type == "Data_Record2") && (doc.field_type == "Number")) {
+    if ((doc.type == "Data_Record") && (doc.field_type == "Number")) {
         for (location in doc.location_path) {
             key = [doc.namespace, doc.field_name];
             date = new Date(doc.event_time)
