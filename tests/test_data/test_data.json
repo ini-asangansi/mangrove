@@ -1,0 +1,20 @@
+{"docs":[
+    {
+        "_id":"ip1",
+        "type":"L1",
+        "path":["India","TN","Chennai"],
+        "population":50,
+        "month":4,
+        "date":13,
+        "year":2010
+    },
+    {
+        "_id":"ip2",
+        "type":"L1",
+        "path":["India","TN","Chennai"],
+        "population":100,
+        "month":4,
+        "date":12,
+        "year":2010
+    }
+]}
