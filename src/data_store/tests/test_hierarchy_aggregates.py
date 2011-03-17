@@ -7,6 +7,7 @@ from data_store.data_record.data_record import IntDataRecord, FloatDataRecord, F
     DateTimeDataRecord, DataRecord
 from data_store.Entity import Entity
 
+
 class TestHierarchyAggregate:
     DATA_STORE = "test_data_store"
 
@@ -21,6 +22,7 @@ class TestHierarchyAggregate:
             pass
         klass.db = klass.server.create(DATA_STORE)
         klass.create_views()
+
 
     @classmethod
     def create_views(klass):
@@ -46,6 +48,23 @@ class TestHierarchyAggregate:
                                 }''','''_count'''
                               )
         view.sync(klass.db)
+        view = ViewDefinition('by_location_time','by_location_time','''function(doc) {
+                                    if ((doc.type == "Data_Record2")&& (doc.field_type=="Number")){
+                                        for (location in doc.location_path){
+                                            key = [doc.namespace, doc.field_name];
+                                            date = new Date(doc.event_time)
+                                            var year = date.getFullYear();
+                                            var month = date.getMonth()+1;
+                                            key.push(location);
+                                            key.push(doc.location_path[location]);
+                                            key.push(year);
+                                            key.push(month);
+                                            emit(key,parseInt(doc.value));
+                                        }
+                                    }
+                                    }''','''_sum'''
+                              )
+        view.sync(klass.db)
 
     @classmethod
     def teardown_class(klass):
@@ -55,26 +74,22 @@ class TestHierarchyAggregate:
         self.server = self.__class__.server
         self.db = self.server[self.__class__.DATA_STORE]
 
+    def create_clinic_records(self):
+        a = self.create_clinic(1, "India.Maharashtra.Pune", "Clinic 1")
+        self.create_clinic_record(a, beds=10, arv=100, event_time=datetime(2011, 01, 01))
+        a = self.create_clinic(2, "India.Karnataka.Bangalore", "Clinic 2")
+        self.create_clinic_record(a, beds=100, arv=200, event_time=datetime(2011, 02, 01))
+        a = self.create_clinic(3, "India.Maharashtra.Mumbai", "Clinic 3")
+        self.create_clinic_record(a, beds=50, arv=150, event_time=datetime(2011, 02, 01))
+        a = self.create_clinic(4, "India.Maharashtra.Pune", "Clinic 4")
+        self.create_clinic_record(a, beds=250, arv=50, event_time=datetime(2011, 01, 01))
+        a = self.create_clinic(5, "India.Karnataka.Bangalore", "Clinic 5")
+        self.create_clinic_record(a, beds=150, arv=150, event_time=datetime(2011, 01, 01))
+        a = self.create_clinic(6, "India.Maharashtra.Pune", "Clinic 6")
+        self.create_clinic_record(a, beds=10, arv=15, event_time=datetime(2011, 01, 01))
+
     def test_total_num_beds_across_clinics(self):
         #create clinics
-        a = self.create_clinic(1,"India.Maharashtra.Pune","Clinic 1")
-        self.create_clinic_record(a,beds = 10,arv = 100,event_time = datetime(2011,01,01))
-
-        a = self.create_clinic(2,"India.Karnataka.Bangalore","Clinic 2")
-        self.create_clinic_record(a,beds = 100,arv = 200,event_time = datetime(2011,02,01))
-
-        a = self.create_clinic(3,"India.Maharashtra.Mumbai","Clinic 3")
-        self.create_clinic_record(a,beds = 50,arv = 150,event_time = datetime(2011,02,01))
-
-        a = self.create_clinic(4,"India.Maharashtra.Pune","Clinic 4")
-        self.create_clinic_record(a,beds = 250,arv = 50,event_time = datetime(2011,01,01))
-
-        a = self.create_clinic(5,"India.Karnataka.Bangalore","Clinic 5")
-        self.create_clinic_record(a,beds = 150,arv = 150,event_time = datetime(2011,01,01))
-
-        a = self.create_clinic(6,"India.Maharashtra.Pune","Clinic 6")
-        self.create_clinic_record(a,beds = 10,arv = 15,event_time = datetime(2011,01,01))
-
         beds = self.fetch_total_num_of_beds()
         assert beds == 570
 
@@ -100,7 +115,33 @@ class TestHierarchyAggregate:
         assert total_uk_count == 1
         assert total_us_count == 2
 
-    def create_data_record(self, id, fieldname, value,event_time,namespace):
+    def monthly_sum(self, rows,month,state_name):
+        for i in rows:
+            if ((month in i.key) and (state_name in i.key)):
+                return i.value
+        return 0
+
+    def test_total_monthly_attribute_across_clinics(self):
+#        TODO : move this as part of the setup. working on setting up testdata via couch http bulk api
+        self.create_clinic_records()
+        clinic_namespace = "org.global.ClinicRecord"
+        arv = "arv"
+        beds = "beds"
+        state_level = 1
+        city_level = 2
+        rows = self.fetch_statewise_sum_by(entity=clinic_namespace,attribute=arv,hierarchy_level=state_level)
+        assert len(rows) == 4
+
+        jan_karnataka_arv_sum = self.monthly_sum(rows,1,state_name="Karnataka")
+        assert jan_karnataka_arv_sum == 150
+
+        rows = self.fetch_statewise_sum_by(entity=clinic_namespace,attribute=beds,hierarchy_level=city_level)
+        assert len(rows) == 4
+
+        jan_pune_bed_sum = self.monthly_sum(rows,1,state_name="Pune")
+        assert jan_pune_bed_sum == 270
+
+    def create_data_record(self, id, fieldname, value,event_time,namespace,location):
         if type(value) == type(1):
             d = IntDataRecord()
         elif type(value) == type(1.0):
@@ -117,12 +158,13 @@ class TestHierarchyAggregate:
         d.field_name = fieldname
         d.value = value
         d.event_time = event_time
+        d.location_path=location
         d.store(self.db)
 
     def create_emp_record(self,emp,name,location,salary,event_time):
-        self.create_data_record(emp.entity_id, "Name",name,event_time,"org.global.EmployeeRecord")
-        self.create_data_record(emp.entity_id, "Location",location,event_time,"org.global.EmployeeRecord")
-        self.create_data_record(emp.entity_id, "Salary",salary,event_time,"org.global.EmployeeRecord")
+        self.create_data_record(emp.entity_id, "Name",name,event_time,"org.global.EmployeeRecord",emp.location)
+        self.create_data_record(emp.entity_id, "Location",location,event_time,"org.global.EmployeeRecord",emp.location)
+        self.create_data_record(emp.entity_id, "Salary",salary,event_time,"org.global.EmployeeRecord",emp.location)
         if emp.attr:
             for a in emp.attr:
                 if a["field"] == "Name":
@@ -150,6 +192,11 @@ class TestHierarchyAggregate:
                 return i.value
         return 0
 
+
+    def fetch_statewise_sum_by(self, entity, attribute, hierarchy_level):
+        level=str(hierarchy_level)
+        return self.db.view('by_location_time/by_location_time',group_level=6,startkey=[entity,attribute,level],endkey=[entity,attribute,level,{}]).rows
+
     def create_employee(self, id,loc):
         return self.create_entity(id,loc,"org.global.Employee")
 
@@ -157,8 +204,8 @@ class TestHierarchyAggregate:
         return self.create_entity(id,loc,"org.global.Clinic")
 
     def create_clinic_record(self, clinic, beds, arv, event_time):
-        self.create_data_record(clinic.entity_id, "beds",beds,event_time,"org.global.ClinicRecord")
-        self.create_data_record(clinic.entity_id, "arv",arv,event_time,"org.global.ClinicRecord")
+        self.create_data_record(clinic.entity_id, "beds",beds,event_time,"org.global.ClinicRecord",clinic.location)
+        self.create_data_record(clinic.entity_id, "arv",arv,event_time,"org.global.ClinicRecord",clinic.location)
         if clinic.attr:
             for a in clinic.attr:
                 if a["field"] == "beds":
@@ -185,5 +232,6 @@ class TestHierarchyAggregate:
             if i.key == 'beds':
                 return i.value
         return 0
+
 
 

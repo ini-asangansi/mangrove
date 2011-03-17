@@ -1,4 +1,4 @@
-from couchdb.mapping import Document, TextField, DateTimeField, Field, IntegerField, FloatField
+from couchdb.mapping import Document, TextField, DateTimeField, Field, IntegerField, FloatField, ListField
 
 class DataRecord(Document):
     type = TextField(default="Data_Record2")
@@ -9,6 +9,7 @@ class DataRecord(Document):
     field_name = TextField()
     value = Field()
     event_time = DateTimeField()
+    location_path=ListField(TextField())
     field_type = TextField(default="Text")
 
 class IntDataRecord(DataRecord):
