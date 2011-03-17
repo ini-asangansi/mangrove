@@ -10,6 +10,7 @@
 
 # Auto generated files#
 docs/_build/*
+.idea
 
 # Packages #
 ############
