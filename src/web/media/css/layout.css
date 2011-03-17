@@ -1,5 +1,8 @@
-p.form-row
+.width-200px
 {
-    margin:0.5em 0 0 0;
-    padding: 0.25em 0 1em 0;
+    width:200px;
+}
+div.form-row-10px
+{
+    padding-bottom:10px;
 }

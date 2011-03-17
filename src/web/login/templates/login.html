@@ -5,19 +5,23 @@
     <div class="span-12 box push-6">
         <fieldset><legend>Login</legend>
              <form>
-                    <div>
-                        <div class="span-4 first">
-                            <p class="form-row" ><label for="login">Login</label></p>
-                            <p class="form-row"><label for="password">Password</label></p>
+                    <div class="span-8 last">
+                        <div class="span-4">
+                            <p>
+                                <label for="login">Login</label>
+                                <input id="login" type="text" name="login"/>
+                            </p>
+
+                            <p>
+                                <label for="password">Password</label>
+                                <input id="password" type="password"  name="password"/>
+                            </p>
+
+                            <p class="span-8">
+                                <input type="submit" value="Login" />
+                                <div class="span-8 last">Not registered? <a href="{% url login.views.register %}">We can fix that!</a></div>
+                            </p>
                         </div>
-                        <div class="span-4 last">
-                            <input id="login" type="text" name="login"/>
-                            <input id="password" type="password"  name="password"/>
-                            <input type="submit" value="Login" />
-                        </div>
-                        <div class="span-8 last">
-                            <span>Do not have an account? <a>Signup now!</a></span>
-                         </div>
                     </div>
              </form>
         </fieldset>

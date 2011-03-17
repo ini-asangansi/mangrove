@@ -2,7 +2,8 @@ from django.conf.urls.defaults import patterns, include, url
 from views import *
 
 urlpatterns = patterns('',
-    ('signup', signup),
+    ('login', login),
+    ('register', register),
     # Examples:
     # url(r'^$', 'web.views.home', name='home'),
     # url(r'^web/', include('web.foo.urls')),
