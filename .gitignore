@@ -66,3 +66,7 @@ pip-log.txt
 xunit.xml
 .coverage
 coverage.xml
+
+# gitflow specific files #
+############################
+gitflow/
