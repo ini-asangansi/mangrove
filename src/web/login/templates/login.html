@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block page_title %} Login {% endblock %}
+{% block content %}
+    <div class="span-12 box push-6">
+        <fieldset><legend>Login</legend>
+             <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="span-8 last">
+                        <div class="span-8">
+                            <div class="{{ form.email.css_classes  }} form-row-10px">
+                                {{ form.email.label_tag }}<br/>
+                                {{ form.email }}
+                            </div>
+                            <div class="{{ form.password.css_classes  }} form-row-10px">
+                                {{ form.password.label_tag }}<br/>
+                                {{ form.password }}
+                            </div>
+                            <div class="error" {% if not form.errors %} style="visibility:hidden;" {% endif %}>
+                                {{ form.errors }}
+                            </div>
+                            <div class="span-8">
+                                <input type="submit" value="Login" />
+                                <div class="span-8 last">Not registered? <a href="{% url login.views.register %}">We can fix that!</a></div>
+                            </div>
+                        </div>
+                    </div>
+             </form>
+        </fieldset>
+    </div>
+{% endblock %}
