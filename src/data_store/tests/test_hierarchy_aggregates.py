@@ -1,4 +1,5 @@
 from datetime import datetime
+from time import sleep
 import couchdb
 from couchdb.client import Server
 from couchdb.design import ViewDefinition
@@ -91,6 +92,32 @@ class TestHierarchyAggregate:
         #create clinics
         beds = self.fetch_total_num_of_beds()
         assert beds == 570
+
+#    def test_z_latest_num_beds_between_jan_apr(self):
+#
+#        a = self.create_clinic(101, "India.Maharashtra.Pune", "ClinicShweta")
+#        self.create_clinic_record(a, beds=30, arv=100, event_time=datetime(2011, 01, 01))
+#        self.create_clinic_record(a, beds=45, arv=100, event_time=datetime(2011, 01, 15))
+#        self.create_clinic_record(a, beds=15, arv=100, event_time=datetime(2011, 01, 31))
+#        self.create_clinic_record(a, beds=16, arv=100, event_time=datetime(2011, 02, 01))
+#        self.create_clinic_record(a, beds=10, arv=100, event_time=datetime(2011, 04, 01))
+#        sleep(10)
+#        self.create_clinic_record(a, beds=10, arv=100, event_time=datetime(2011, 03, 05))
+#
+
+
+#        a = self.create_clinic(102, "India.Maharashtra.Pune", "ClinicAsif")
+#        self.create_clinic_record(a, beds=30, arv=100, event_time=datetime(2011, 01, 01))
+#        self.create_clinic_record(a, beds=35, arv=100, event_time=datetime(2011, 01, 15))
+#        self.create_clinic_record(a, beds=40, arv=100, event_time=datetime(2011, 01, 31))
+#        self.create_clinic_record(a, beds=32, arv=100, event_time=datetime(2011, 02, 01))
+#        self.create_clinic_record(a, beds=20, arv=100, event_time=datetime(2011, 03, 01))
+#        self.create_clinic_record(a, beds=10, arv=100, event_time=datetime(2011, 03, 07))
+#        beds_row = self.fetch_latest_beds(01,04)
+#        assert beds == {15+40,16+32,20+10}
+
+
+
 
     def test_employee_count_grouped_on_location(self):
         a = self.create_employee(1,"US.ChicagoState.Chicago")
@@ -208,9 +235,11 @@ class TestHierarchyAggregate:
         if clinic.attr:
             for a in clinic.attr:
                 if a["field"] == "beds":
+                    a["timestamp"] = event_time
                     a["value"] = beds
                     a["type"] = "Number"
-                    a["timestamp"] = event_time
+
+                    print "I finished this"
                 if a["field"] == "arv":
                     a["value"] = arv
                     a["type"] = "Number"
@@ -218,7 +247,9 @@ class TestHierarchyAggregate:
         else:
             clinic.attr.append(dict(field="beds",value=beds,type = "Number",timestamp=event_time))
             clinic.attr.append(dict(field="arv",value=arv, type = "Number",timestamp=event_time))
+        print "Attempting to save"
         clinic.store(self.db)
+        return clinic
 
     def create_entity(self,id,loc,namespace):
         e =  Entity(entity_id = id,location=loc.split('.'),namespace= namespace)
