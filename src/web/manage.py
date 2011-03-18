@@ -1,6 +1,9 @@
 #!/usr/bin/env python
-from django.core.management import execute_manager
+from django.core.management import execute_manager, setup_environ
 import imp
+import sys
+import os
+
 try:
     imp.find_module('settings') # Assumed to be in the same directory.
 except ImportError:
@@ -9,6 +12,10 @@ except ImportError:
     sys.exit(1)
 
 import settings
+
+# setup the environment before we start accessing things in the settings.
+setup_environ(settings)
+sys.path.append(os.path.join(settings.PROJECT_DIR, '../../src'))
 
 if __name__ == "__main__":
     execute_manager(settings)
