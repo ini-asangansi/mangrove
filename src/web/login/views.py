@@ -12,7 +12,7 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid() :
-            user = AuthenticationService().authenticate_user(form.cleaned_data['email'].value(), form.cleaned_data['password'].value())
+            user = AuthenticationService().authenticate_user(form.cleaned_data['email'], form.cleaned_data['password'])
             if not user:
                 HttpResponseRedirect(reverse(login))
             else:
@@ -25,7 +25,7 @@ def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid() :
-            user = UserModel(id=form.cleaned_data['email'].value(), email = form.cleaned_data['email'].value(), password = form.cleaned_data['password'].value())
+            user = UserModel(id=form.cleaned_data['email'], email = form.cleaned_data['email'], password = form.cleaned_data['password'])
             AuthenticationService().create_user(user)
             HttpResponseRedirect(reverse(login))
     else:
