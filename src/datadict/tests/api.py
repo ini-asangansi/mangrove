@@ -122,8 +122,7 @@ class TestApi(unittest.TestCase):
         except IntegrityError:
             pass
    
-    def type_casting_tester(self, datatype, json_value, python_value):
-        
+    def type_casting_asserts(self, datatype, json_value, python_value):
         # from json to python to json
         in_python = datatype.to_python(json_value)
         self.assertEqual(in_python, python_value)
@@ -132,63 +131,61 @@ class TestApi(unittest.TestCase):
         # from python to json to python
         in_json = datatype.to_json(python_value)
         self.assertEqual(in_json, json_value)
-        self.assertEqual(datatype.to_python(in_json), python_value)   
+        self.assertEqual(datatype.to_python(in_json), python_value)
         
-   
     def test_type_casting(self):
-        
+
         # integer
-        self.type_casting_tester(self.int, u'123', 123)        
-        self.type_casting_tester(self.int, u'-123', -123) 
-        self.type_casting_tester(self.int, u'0', 0)   
-        
-        self.type_casting_tester(self.float, u'123.0', 123.0)        
-        self.type_casting_tester(self.float, u'-123.4', -123.4) 
-        self.type_casting_tester(self.float, u'0.0', 0.0)           
-  
-        self.type_casting_tester(self.string, u'123.0', u'123.0')        
-        self.type_casting_tester(self.string, u'é', u'é') 
- 
-        self.type_casting_tester(self.bool, '1', True)        
-        self.type_casting_tester(self.bool, '0', False)  
- 
-        self.type_casting_tester(self.date,  '2011-03-16 20:24:36.307154',
-                             datetime.datetime(2011, 3, 16, 20, 24, 36, 307154))        
+        self.type_casting_asserts(self.int, u'123', 123)
+        self.type_casting_asserts(self.int, u'-123', -123)
+        self.type_casting_asserts(self.int, u'0', 0)
 
-    def test_datatypes_let_you_import_type_from_black_box(self):
-        
-        js = json.dumps({
-            "record_1": { 'type': self.date.id,
-                           'value': '2011-03-16 20:24:36.307154'},
-            "record_2": { 'type':  self.string.id,
-                           'value': 'test'},
-            "record_3": { 'type': self.bool.id,
-                           'value': '0'},                          
-            "record_4": { 'type': self.float.id,
-                           'value': '-123.89'},   
-        })
+        self.type_casting_asserts(self.float, u'123.0', 123.0)
+        self.type_casting_asserts(self.float, u'-123.4', -123.4)
+        self.type_casting_asserts(self.float, u'0.0', 0.0)
 
-        check = {
-            "record_1": datetime.datetime(2011, 3, 16, 20, 24, 36, 307154),
-            "record_2": u'test',
-            "record_3": 0,                          
-            "record_4" :-123.89   
-        }
+        self.type_casting_asserts(self.string, u'123.0', u'123.0')
+        self.type_casting_asserts(self.string, u'é', u'é')
 
-        result = {}
-        for name, record in json.loads(js).iteritems():
-            type_, value = record.values()
-            result[name] = DataType.load(type_).to_python(value)
-            
-            "record_4": { 'type': "feature",
-                           'value': "GR_fJKLMJLM"},  
-           DataType.load(type_).to_python(value) 
-           
-        
-        DataType(type_).generate_aggregation_cache(value)
-          
-        'fdsqfdsf'
-        self.assertEqual(check, result)
+        self.type_casting_asserts(self.bool, '1', True)
+        self.type_casting_asserts(self.bool, '0', False)
+
+        self.type_casting_asserts(self.date,  '2011-03-16 20:24:36.307154',
+                             datetime.datetime(2011, 3, 16, 20, 24, 36, 307154))
+
+#    def test_datatypes_let_you_import_type_from_black_box(self):
+#
+#        js = json.dumps({
+#            "record_1": { 'type': self.date.id,
+#                           'value': '2011-03-16 20:24:36.307154'},
+#            "record_2": { 'type':  self.string.id,
+#                           'value': 'test'},
+#            "record_3": { 'type': self.bool.id,
+#                           'value': '0'},
+#            "record_4": { 'type': self.float.id,
+#                           'value': '-123.89'},
+#        })
+#
+#        check = {
+#            "record_1": datetime.datetime(2011, 3, 16, 20, 24, 36, 307154),
+#            "record_2": u'test',
+#            "record_3": 0,
+#            "record_4" :-123.89
+#        }
+#
+#        result = {}
+#        for name, record in json.loads(js).iteritems():
+#            type_, value = record.values()
+#            result[name] = DataType.load(type_).to_python(value)
+#
+#
+#        DataType.load(type_).to_python(value)
+#
+#
+#        DataType(type_).generate_aggregation_cache(value)
+#
+#
+#        self.assertEqual(check, result)
     
     # next step : casting to georegistry, (not too hard)
                 # casting to any entity (hard)
