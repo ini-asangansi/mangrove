@@ -1,11 +1,9 @@
-from couchdb.mapping import Document, TextField, DateTimeField
+from couchdb.mapping import TextField, ListField
 from services.repository.DocumentBase import DocumentBase
-import random
-from django.contrib.auth.models import get_hexdigest
 
-class RegistrationModel(DocumentBase):
+class OrganizationModel(DocumentBase):
     def __init__(self, id=None, **values):
-        DocumentBase.__init__(self, id=id, type = 'RegistrationModel', **values)
+        DocumentBase.__init__(self, id=id, type = 'OrganizationModel', **values)
     name = TextField()
     sector = TextField()
     addressline1 = TextField()
@@ -16,5 +14,8 @@ class RegistrationModel(DocumentBase):
     zipcode = TextField()
     office_phone = TextField()
     website = TextField()
-    
+    administrators = ListField(TextField)
+
+
+
 
