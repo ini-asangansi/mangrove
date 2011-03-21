@@ -17,10 +17,7 @@ Contents:
    datadict_concept
    datadict_api
    terminology
-<<<<<<< HEAD
-=======
    querying_by_loc_and_time
->>>>>>> 07d309ec1df6cb2342898e507a8f155dfeb4ea2b
    ...
 
 Indices and tables
