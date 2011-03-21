@@ -14,5 +14,10 @@ class AuthenticationService:
         if EncryptionHelper().check_password(user.password, password) :
             return user
         return None
+
+    def get_user(self, email):
+        user = self.repository.load(email, UserModel)
+        return user
+    
         
   

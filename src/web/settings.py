@@ -1,4 +1,5 @@
 # Django settings for web project.
+from django.contrib.auth import login
 import os.path
 
 DEBUG = True
@@ -124,6 +125,20 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+AUTHENTICATION_BACKENDS= ['web.login.authentication_backend.AuthenticationBackend',]
+CACHE_BACKEND = 'localmen:///'
+CACHES = {
+             'default':{
+                           'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                           'LOCATION': 'web',
+                       }
+         }
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_COOKIE_HTTPONLY = True
+
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

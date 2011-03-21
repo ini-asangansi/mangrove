@@ -1,6 +1,6 @@
 import hashlib as h
 import random
-from couchdb.mapping import TextField
+from couchdb.mapping import TextField, DateTimeField
 from services.repository.DocumentBase import DocumentBase
 
 class EncryptionHelper:
@@ -29,3 +29,13 @@ class UserModel(DocumentBase):
     last_name = TextField()
     email = TextField()
     password = TextField()
+    last_login = DateTimeField()
+    organization_id = TextField()
+
+    def get_username(self):
+        return self.email
+    username = property(get_username)
+
+    def is_authenticated(self):
+        return True
+

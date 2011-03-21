@@ -15,11 +15,14 @@ class TestAuthenticationService:
         self.repository.delete(document)
 
 
-    def test_should_authenticate_user(self):
+    def test_should_authenticate_and_get_user(self):
         service = AuthenticationService(self.repository)
         user = UserModel(id=self.test_user_email, email=self.test_user_email, password='password')
         service.create_user(user)
         user = service.authenticate_user(self.test_user_email, 'password')
+        assert user
+
+        user = service.get_user(self.test_user_email)
         assert user
 
 
