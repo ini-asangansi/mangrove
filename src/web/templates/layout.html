@@ -4,7 +4,7 @@
     <div id="container" class="container">
         <div class="span-24 last">{% include 'header.html' %} {% block page_header %} {% endblock %}</div>
         {% block success %} {% if success_message != None %}
-            <div class="success span-12">{{ success_message }}</div>
+            <div class="success span-12 push-6 box">{{ success_message }}</div>
         {% endif %}  {% endblock %}
         {% block content %} {% endblock %}
         <div class="span-24 last">{% include 'footer.html' %} {% block page_footer %} {% endblock %}</div>
