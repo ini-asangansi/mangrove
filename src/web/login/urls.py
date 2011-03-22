@@ -4,7 +4,7 @@ from views import *
 urlpatterns = patterns('',
     ('login', login),
     ('register', register),
-    ('logged_in', logged_in),
+    ('home', logged_in),
     # Examples:
     # url(r'^$', 'web.views.home', name='home'),
     # url(r'^web/', include('web.foo.urls')),

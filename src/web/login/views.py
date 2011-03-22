@@ -24,12 +24,12 @@ def login(request):
         if form.is_valid() :
             user = auth.authenticate(username = form.cleaned_data['email'], password = form.cleaned_data['password'])
             if not user:
-                HttpResponseRedirect(reverse(login))
+                return HttpResponseRedirect(reverse(login))
             else:
                 do_login(request, user)
                 if request.GET.get('next'):
                     return HttpResponseRedirect(request.GET['next'])
-                return HttpResponse('Password accepted!')
+                return render_to_response('home.html',{'username': str(user.name)})
     else:
         form = LoginForm()
     return render_to_response('login.html', {'form' : form}, context_instance=RequestContext(request))
@@ -50,14 +50,15 @@ def register(request):
             user.organization_id = created_organization.id
             AuthenticationService().create_user(user)
             
-            HttpResponseRedirect(reverse(login))
+            return HttpResponseRedirect(reverse(login))
     else:
         form = RegistrationForm()
     return render_to_response('register.html', {'form' : form}, context_instance=RequestContext(request))
 
 @authenticate
 def logged_in(request):
-    return HttpResponse('You''re logged in.')
+    user = request.session[SESSION_USER_KEY]
+    return render_to_response('home.html',{'username': str(user.name)})
 
 def do_login(request, user):
     if SESSION_KEY in request.session:

@@ -11,7 +11,7 @@ def authenticate(target=None):
     """
     def router(*args):
         if args[0].session.get('USER') is not None:
-            return target(args)
+            return target(args[0])
         else:
-            return HttpResponseRedirect('/login?%s=%s' % (REDIRECT_FIELD_NAME, args[0].path));
+            return HttpResponseRedirect('/login?%s=%s' % (REDIRECT_FIELD_NAME, args[0].path))
     return router
