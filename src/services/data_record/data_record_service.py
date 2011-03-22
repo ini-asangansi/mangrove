@@ -10,7 +10,7 @@ class DataRecordService:
     def create_data_record(self, data_record):
         return self.repository.save(data_record)
 
-    def load_data_record(self, data_record):
-        return self.repository.load(data_record, DataRecord)
+    def load_data_record(self, id, data_record = DataRecord):
+        return self.repository.load(id, data_record)
 
     
