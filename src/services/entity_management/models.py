@@ -1,10 +1,16 @@
-from couchdb.mapping import TextField, ListField
+from couchdb.mapping import TextField, ListField, DateTimeField, DictField, Mapping, Field
 from services.repository.DocumentBase import DocumentBase
 
-class OrganizationModel(DocumentBase):
+class Entity(DocumentBase):
     def __init__(self, id=None, **values):
-        DocumentBase.__init__(self, id=id, type = 'OrganizationModel', **values)
+        DocumentBase.__init__(self, id=id, document_type = 'Entity', **values)
+    entity_type = TextField()
     name = TextField()
+    location = ListField(TextField())
+
+class Organization(Entity):
+    def __init__(self, id=None, **values):
+        DocumentBase.__init__(self, id=id, entity_type = 'Organization', **values)
     sector = TextField()
     addressline1 = TextField()
     addressline2 = TextField()
@@ -15,7 +21,4 @@ class OrganizationModel(DocumentBase):
     office_phone = TextField()
     website = TextField()
     administrators = ListField(TextField)
-
-
-
 

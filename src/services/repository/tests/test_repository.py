@@ -28,10 +28,10 @@ class TestRepository:
             self.connection.server.delete(self.connection.database)
 
     def test_should_persist_and_load_document_to_database(self):
-        document = DocumentBase(type='TestDocument')
+        document = DocumentBase(document_type='TestDocument')
         repository = Repository(connection=self.connection)
         document = repository.save(document)
-        assert document.type == 'TestDocument'
+        assert document.document_type == 'TestDocument'
 
         document1 = repository.load(document.id)
         assert document1

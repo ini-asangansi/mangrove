@@ -1,8 +1,8 @@
-from services.entity_management.models import OrganizationModel
+from services.entity_management.models import Organization
 
-class TestOrganizationModel:
+class TestOrganization:
     def test_should_create_registration_model(self):
-        org = OrganizationModel(name = 'OrgName', sector = 'OrgSector'
+        org = Organization(name = 'OrgName', sector = 'OrgSector'
                                                , addressline1 = 'line1', addressline2 = 'line2'
                                                , city = 'city', state = 'state', zipcode = 'zip'
                                                , office_phone = '123-456-7890', website = 'http://twi.com'

@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from services.entity_management.entity_management_service import EntityManagementService
-from services.entity_management.models import OrganizationModel
+from services.entity_management.models import Organization
 from web.login.forms import RegistrationForm
 from services.authentication.authentication_service import AuthenticationService
 from services.authentication.models import UserModel
@@ -40,7 +40,7 @@ def register(request):
         if form.is_valid() :
             user = UserModel(id=form.cleaned_data.get('email'), email = form.cleaned_data.get('email'), password = form.cleaned_data.get('password')
                              , title = form.cleaned_data.get('title'), first_name = form.cleaned_data.get('first_name'), last_name = form.cleaned_data.get('last_name'))
-            organization = OrganizationModel(name = form.cleaned_data.get('organization_name'), sector = form.cleaned_data.get('organization_sector')
+            organization = Organization(name = form.cleaned_data.get('organization_name'), sector = form.cleaned_data.get('organization_sector')
                                              , addressline1 = form.cleaned_data.get('organization_addressline1'), addressline2 = form.cleaned_data.get('organization_addressline2')
                                              , city = form.cleaned_data.get('organization_city'), state = form.cleaned_data.get('organization_state')
                                              , country = form.cleaned_data.get('organization_country'), zipcode = form.cleaned_data.get('organization_zipcode')
