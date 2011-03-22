@@ -1,4 +1,4 @@
-from services.entity_management.models import Organization
+from services.entity_management.models import Organization, Entity
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 
@@ -7,8 +7,11 @@ class EntityManagementService:
     def __init__(self, repository=Repository(Connection())):
         self.repository = repository
 
-    def create_organization(self, organization):
-        return self.repository.save(organization)
+    def create_entity(self, entity):
+        return self.repository.save(entity)
 
-    def update_organization(self, organization):
-        return self.repository.load(organization, Organization)
+    def load_entity(self, id, entity = Entity):
+        return self.repository.load(id, entity)
+
+    def update_entity(self, entity):
+        return self.repository.save(entity, entity.__class__)
