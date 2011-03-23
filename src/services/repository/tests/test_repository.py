@@ -22,6 +22,7 @@ class TestRepository:
     def setup(self):
         database = 'test_connection'
         self.connection = Connection(server=SERVER, database=database)
+        self.repository = Repository(connection=self.connection)
 
     def teardown(self):
         if self.connection and self.connection.database :
@@ -29,10 +30,17 @@ class TestRepository:
 
     def test_should_persist_and_load_document_to_database(self):
         document = DocumentBase(document_type='TestDocument')
-        repository = Repository(connection=self.connection)
-        document = repository.save(document)
+
+        document = self.repository.save(document)
         assert document.document_type == 'TestDocument'
 
-        document1 = repository.load(document.id)
+        document1 = self.repository.load(document.id)
         assert document1
+
+    def test_should_persist_and_load_view_to_database(self):
+        self.repository.create_view("test","by_test_entity","function(doc){emit(null,doc);}","")
+
+        view = self.repository.load("_design/test")
+        assert view
+        assert view["views"]["by_test_entity"]
 

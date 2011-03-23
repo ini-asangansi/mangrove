@@ -8,6 +8,7 @@ class Entity(DocumentBase):
     name = TextField()
     location = ListField(TextField())
 
+
 class Organization(Entity):
     def __init__(self, id=None, **values):
         DocumentBase.__init__(self, id=id, entity_type = 'Organization', **values)

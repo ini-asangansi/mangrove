@@ -15,7 +15,6 @@ class TestEntityManagementService:
     def teardown(self):
         document = self.repository.load(self.test_entity_id)
         self.repository.delete(document)
-        
     
     def test_should_create_organization(self):
         service = EntityManagementService(self.repository)
@@ -27,7 +26,7 @@ class TestEntityManagementService:
 
     def test_should_create_entity(self):
         service = EntityManagementService(self.repository)
-        entity = Entity(id=uuid4().hex, name = "TestEntity",location = ["India","MH","Pune"])
+        entity = Entity(id=uuid4().hex, name = "TestEntity", entity_type = 'TestEntityType', location = ["India","MH","Pune"])
         entity= service.create_entity(entity)
         self.test_entity_id = entity.id
         loaded_entity = Repository(Connection()).load(entity.id, Entity)

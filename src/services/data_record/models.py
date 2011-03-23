@@ -1,5 +1,6 @@
+from datetime import datetime
 from uuid import uuid4
-from couchdb.mapping import TextField, ListField, DictField, Field
+from couchdb.mapping import TextField, ListField, DictField, Field, DateTimeField, Mapping
 from services.entity_management.models import Entity
 from services.repository.DocumentBase import DocumentBase
 
@@ -8,7 +9,7 @@ class DataRecord(DocumentBase):
         DocumentBase.__init__(self, id=id, document_type = 'DataRecord')
         for key in values:
             if not key in self._fields.keys():
-                self.attributes[key] = values[key]
+                self.attributes[key] = str(values[key])
         if entity:
             self.entity_backing_field = entity.__dict__
 
@@ -22,7 +23,6 @@ class DataRecord(DocumentBase):
         else:
             raise AttributeError('%s has no attribute %s' % (self.__class__.__name__, name))
 
-    location = ListField(TextField())
     attributes = DictField()
     entity_backing_field = DictField()
 
