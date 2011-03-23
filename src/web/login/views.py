@@ -48,7 +48,7 @@ def register(request):
                                              , country = form.cleaned_data.get('organization_country'), zipcode = form.cleaned_data.get('organization_zipcode')
                                              , office_phone = form.cleaned_data.get('organization_office_phone'), website = form.cleaned_data.get('organization_website')
                                              , administrators = [user.id])
-            created_organization = EntityManagementService().create_organization(organization)
+            created_organization = EntityManagementService().create_entity(organization)
             user.organization_id = created_organization.id
             AuthenticationService().create_user(user)
             messages.success(request,"You have successfully registered.")
@@ -58,7 +58,7 @@ def register(request):
     return render_to_response('register.html', {'form' : form}, context_instance=RequestContext(request))
 
 @authenticate
-def logged_in(request):
+def home(request):
     user = request.session[SESSION_USER_KEY]
     return render_to_response('home.html',{'username': str(user.name)})
 
