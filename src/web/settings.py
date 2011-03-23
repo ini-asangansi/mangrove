@@ -137,7 +137,7 @@ CACHES = {
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_COOKIE_HTTPONLY = True
-
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 
 # A sample logging configuration. The only tangible logging

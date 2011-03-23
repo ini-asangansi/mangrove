@@ -2,6 +2,7 @@
 from uuid import uuid4
 import django.contrib.auth as auth
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -24,6 +25,7 @@ def login(request):
         if form.is_valid() :
             user = auth.authenticate(username = form.cleaned_data['email'], password = form.cleaned_data['password'])
             if not user:
+                messages.error(request,"Email and password do not match!!!")
                 return HttpResponseRedirect(reverse(login))
             else:
                 do_login(request, user)
@@ -49,7 +51,7 @@ def register(request):
             created_organization = EntityManagementService().create_organization(organization)
             user.organization_id = created_organization.id
             AuthenticationService().create_user(user)
-            
+            messages.success(request,"you have successfully registered")
             return HttpResponseRedirect(reverse(login))
     else:
         form = RegistrationForm()

@@ -6,3 +6,8 @@ div.form-row-10px
 {
     padding-bottom:10px;
 }
+
+.message-box {
+    margin-bottom: 1.5em;
+    padding: 1.5em;
+}
