@@ -2,6 +2,7 @@ from services.repository.DocumentBase import DocumentBase
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 from services.settings import *
+from services.authentication.models import UserModel
 
 class TestConnection:
 
@@ -44,3 +45,7 @@ class TestRepository:
         assert view
         assert view["views"]["by_test_entity"]
 
+    def test_should_return_none_if_documentid_is_empty(self):
+        repository = Repository(connection=self.connection)
+        user = repository.load('',UserModel)
+        assert not user

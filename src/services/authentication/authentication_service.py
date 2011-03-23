@@ -11,7 +11,7 @@ class AuthenticationService:
 
     def authenticate_user(self, email, password):
         user = self.repository.load(email, UserModel)
-        if EncryptionHelper().check_password(user.password, password) :
+        if user and EncryptionHelper().check_password(user.password, password):
             return user
         return None
 

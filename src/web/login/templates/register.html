@@ -4,12 +4,12 @@
 {% block content %}
     <div class="span-18 box">
         <fieldset><legend>Register</legend>
-             <form action="" method="POST">
+             <form id="registration_form" action="" method="POST">
                     {% csrf_token %}
                     <div class="span-16 form-5px">
                         <div class="span-7 column border">
                             <div>
-                                <h4 class="title">Your Organization<br/><br/></h4>
+                                <h3 class="title">Your Organization<br/><br/></h3>
                             </div>
                             <div class="{{ form.organization_name.css_classes }} form-row-10px">
                                 {{ form.organization_name.label_tag }}<br/>
@@ -67,7 +67,7 @@
                         </div>
                         <div class="span-7 column last">
                             <div>
-                                <h4 class="title">Point of Contact / <br>Account Administrator</h4>
+                                <h3 class="title">Point of Contact / <br>Account Administrator</h3>
                             </div>
                              <div class="{{ form.title.css_classes  }} form-row-10px">
                                 {{ form.title.label_tag }}<br/>

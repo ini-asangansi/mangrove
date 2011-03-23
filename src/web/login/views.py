@@ -2,6 +2,7 @@
 from uuid import uuid4
 import django.contrib.auth as auth
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -24,12 +25,13 @@ def login(request):
         if form.is_valid() :
             user = auth.authenticate(username = form.cleaned_data['email'], password = form.cleaned_data['password'])
             if not user:
-                HttpResponseRedirect(reverse(login))
+                messages.error(request,"Email and password do not match!!!")
+                return HttpResponseRedirect(reverse(login))
             else:
                 do_login(request, user)
                 if request.GET.get('next'):
                     return HttpResponseRedirect(request.GET['next'])
-                return HttpResponse('Password accepted!')
+                return render_to_response('home.html',{'username': str(user.name)})
     else:
         form = LoginForm()
     return render_to_response('login.html', {'form' : form}, context_instance=RequestContext(request))
@@ -49,15 +51,16 @@ def register(request):
             created_organization = EntityManagementService().create_organization(organization)
             user.organization_id = created_organization.id
             AuthenticationService().create_user(user)
-            
-            HttpResponseRedirect(reverse(login))
+            messages.success(request,"You have successfully registered.")
+            return HttpResponseRedirect(reverse(login))
     else:
         form = RegistrationForm()
     return render_to_response('register.html', {'form' : form}, context_instance=RequestContext(request))
 
 @authenticate
 def logged_in(request):
-    return HttpResponse('You''re logged in.')
+    user = request.session[SESSION_USER_KEY]
+    return render_to_response('home.html',{'username': str(user.name)})
 
 def do_login(request, user):
     if SESSION_KEY in request.session:

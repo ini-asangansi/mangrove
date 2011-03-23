@@ -32,9 +32,16 @@ class UserModel(DocumentBase):
     last_login = DateTimeField()
     organization_id = TextField()
 
+
     def get_username(self):
         return self.email
     username = property(get_username)
+
+
+    def get_name(self):
+        return self.first_name+" "+self.last_name
+    name = property(get_name)
+
 
     def is_authenticated(self):
         return True
