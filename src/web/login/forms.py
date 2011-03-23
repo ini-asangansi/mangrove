@@ -12,7 +12,7 @@ class RegistrationForm(forms.Form):
     password = forms.CharField(required=True, widget=forms.PasswordInput, label='* Password')
     confirm_password = forms.CharField(required=True, widget=forms.PasswordInput, label='* Confirm password')
     organization_name = forms.CharField(required=True, label='* Organization name')
-    organization_sector = forms.CharField(widget=(forms.Select(attrs={'class':'width-200px'},choices=(('Public Health', 'PublicHealth'),('Other', 'Other'),))))
+    organization_sector = forms.CharField(widget=(forms.Select(attrs={'class':'width-200px'},choices=(('PublicHealth', 'Public Health'),('Other', 'Other'),))))
     organization_addressline1 = forms.CharField(required=True,max_length=30,label='* Address Line 1')
     organization_addressline2 = forms.CharField(max_length=30, required=False, label='Address Line 2')
     organization_city = forms.CharField(max_length=30,required=True, label='* City')
