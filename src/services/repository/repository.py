@@ -15,4 +15,6 @@ class Repository:
         self.database.delete(document)
 
     def load(self, id, document_class=DocumentBase):
-        return document_class.load(self.database, id)
+        if id:
+            return document_class.load(self.database, id)
+        return None

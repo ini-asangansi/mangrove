@@ -12,7 +12,8 @@ class TestAuthenticationService:
 
     def teardown(self):
         document = self.repository.load(self.test_user_email)
-        self.repository.delete(document)
+        if (document):
+            self.repository.delete(document)
 
 
     def test_should_authenticate_and_get_user(self):
@@ -24,6 +25,8 @@ class TestAuthenticationService:
 
         user = service.get_user(self.test_user_email)
         assert user
+
+
 
 
         

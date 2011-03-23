@@ -29,7 +29,8 @@ class RegistrationForm(forms.Form):
         != cleaned_data.get('confirm_password'):
             msg = 'Password and Confirm Password do not match.'
             self._errors['password'] = self.error_class([msg])
-        if(AuthenticationService().get_user(cleaned_data.get('email'))):
+        user = AuthenticationService().get_user(cleaned_data.get('email'))
+        if(user):
             msg = 'Email Id already registered.'
             self._errors['email']=self.error_class([msg])
         return  cleaned_data
