@@ -1,4 +1,5 @@
 from django import forms
+from services.authentication.authentication_service import AuthenticationService
 
 class RegistrationForm(forms.Form):
     error_css_class = 'error'
@@ -21,10 +22,20 @@ class RegistrationForm(forms.Form):
     organization_office_phone = forms.CharField(max_length=30, required=False, label='Office Phone Number')
     organization_website = forms.URLField(required=False, label='Website Url')
 
-    def clean(self):
+    def clean_password(self):
         cleaned_data = self.cleaned_data
-        if cleaned_data.get('password') != cleaned_data.get('confirm_password'):
-            self._errors['password'] = 'Password and Confirm Password do not match.'
+        if cleaned_data.get('password')\
+        != cleaned_data.get('confirm_password'):
+            msg = 'Password and Confirm Password do not match.'
+            self._errors['password'] = self.error_class([msg])
+        return  cleaned_data
+
+    def clean_email(self):
+        #todo remove the duplicate code from all the clean method.
+        cleaned_data = self.cleaned_data
+        if(AuthenticationService().get_user(cleaned_data.get('email'))):
+            msg = 'Email Id already registered.'
+            self._errors['email']=self.error_class([msg])
         return  cleaned_data
 
 class LoginForm(forms.Form):
