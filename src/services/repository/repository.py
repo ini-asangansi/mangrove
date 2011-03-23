@@ -7,6 +7,9 @@ class Repository:
         self.connection = connection
         self.database = connection.database
 
+    def load_all_rows_in_view(self,view_name,**values):
+        return self.database.view(view_name,**values).rows
+
     def save(self, document):
         document.store(self.database)
         return document
