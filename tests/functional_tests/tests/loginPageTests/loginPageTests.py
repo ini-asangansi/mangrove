@@ -1,6 +1,7 @@
 from framework.baseTest import BaseTest
 from framework.openMangrove.LoginPage import LoginPage
 from framework.openMangrove.DashboardPage import DashboardPage
+from framework.openMangrove.RegistrationPage import RegistrationPage
 
 __author__ = 'kumarr'
 
@@ -51,4 +52,12 @@ class LoginPageTests(BaseTest) :
         loginPage = LoginPage(self.driver)
         loginPage.EnterCredentialsAndSubmit("","")
         self.assertEqual(LoginPage(self.driver).GetErrorMessage(), "password This field is required. email This field is required.", "Error Message Not Present")
+
+    def test_RegisterLinkFunctionality(self):
+
+        self.driver.get("http://localhost:8000/login")
+        loginPage = LoginPage(self.driver)
+        loginPage.NavigateToRegistrationPage()
+        self.assertEqual(RegistrationPage(self.driver).GetTitle(), "Register", "Registration Page Title is incorrect or Register LinkLink is Not Working")
+
 

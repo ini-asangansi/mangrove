@@ -21,5 +21,11 @@ class LoginPage(Page):
         errorMessage = errorMessage.replace("\n", " ")
         return errorMessage
 
+    def NavigateToRegistrationPage(self):
+        self.driver.find_element_by_css_selector("a[href='/register']").click()
+        return self
+
+
+
 
 

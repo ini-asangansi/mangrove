@@ -5,7 +5,7 @@ __author__ = 'kumarr'
 
 class LoginPageTests(BaseTest) :
 
-    def test_RegisterAnNGOWithValidData(self):
+    def test_RegisterNGOWithValidData(self):
 
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
