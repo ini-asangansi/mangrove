@@ -51,7 +51,7 @@ class EntityManagementService:
                         {
                            for(hierarchy in aggregation_trees)
                            {
-                               var key = [hierarchy].concat(aggregation_trees[hierarchy]);
+                               var key = [hierarchy].concat(aggregation_trees[hierarchy], [date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()]);
                                key.splice(0,0, index);
                                emit(key ,value[index]);
                            }
@@ -86,7 +86,7 @@ class EntityManagementService:
                      }
 			         for(index in value)
                          {
-                            var key = [index, date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes()];
+                            var key = [index, date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
                             emit(key, value[index]);
                          }
                      }
