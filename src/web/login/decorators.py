@@ -10,7 +10,9 @@ def authenticate(target=None):
     to the log-in page if necessary.
     """
     def router(*args):
-        if args[0].session.get('USER') is not None:
+        user = args[0].session.get('USER')
+        if user is not None:
+            args[0].user = user
             return target(args[0])
         else:
             return HttpResponseRedirect('/login?%s=%s' % (REDIRECT_FIELD_NAME, args[0].path))

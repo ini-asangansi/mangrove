@@ -8,14 +8,15 @@ class TestEntityManagementService:
 
     test_organization_name = 'test_organization'
     test_entity_id = ''
-    
+
     def setup(self):
         self.repository = Repository(Connection())
 
     def teardown(self):
         document = self.repository.load(self.test_entity_id)
         self.repository.delete(document)
-    
+        pass
+
     def test_should_create_organization(self):
         service = EntityManagementService(self.repository)
         organization = Organization(id=uuid4().hex, name = self.test_organization_name)
@@ -26,10 +27,14 @@ class TestEntityManagementService:
 
     def test_should_create_entity(self):
         service = EntityManagementService(self.repository)
-        entity = Entity(id=uuid4().hex, name = "TestEntity", entity_type = 'TestEntityType', location = ["India","MH","Pune"])
+        entity = Entity(id=uuid4().hex, name = "TestEntity", entity_type = "TestEntityType",
+                        aggregation_trees = {"location": ["India","MH","Pune"], "something": ["A", "B"]},
+                        attr1='attr1',attr2='attr2')
         entity= service.create_entity(entity)
         self.test_entity_id = entity.id
         loaded_entity = Repository(Connection()).load(entity.id, Entity)
         assert entity.id == loaded_entity.id and entity.name == loaded_entity.name
+        assert len(loaded_entity.aggregation_trees) == 2
+        assert loaded_entity.attr1=='attr1'
+        assert loaded_entity.attr2=='attr2'
 
-        
