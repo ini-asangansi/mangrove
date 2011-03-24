@@ -127,7 +127,7 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS= ['web.login.authentication_backend.AuthenticationBackend',]
-CACHE_BACKEND = 'localmen:///'
+CACHE_BACKEND = 'localmem:///'
 CACHES = {
              'default':{
                            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
