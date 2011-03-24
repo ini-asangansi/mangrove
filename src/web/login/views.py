@@ -9,6 +9,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from services.entity_management.entity_management_service import EntityManagementService
 from services.entity_management.models import OrganizationModel
+from services.entity_management.organization_id_creator import OrganizationIdCreator
 from web.login.forms import RegistrationForm
 from services.authentication.authentication_service import AuthenticationService
 from services.authentication.models import UserModel
@@ -42,7 +43,8 @@ def register(request):
         if form.is_valid() :
             user = UserModel(id=form.cleaned_data.get('email'), email = form.cleaned_data.get('email'), password = form.cleaned_data.get('password')
                              , title = form.cleaned_data.get('title'), first_name = form.cleaned_data.get('first_name'), last_name = form.cleaned_data.get('last_name'))
-            organization = OrganizationModel(name = form.cleaned_data.get('organization_name'), sector = form.cleaned_data.get('organization_sector')
+            org_id=OrganizationIdCreator().generateId()
+            organization = OrganizationModel(id=org_id,name = form.cleaned_data.get('organization_name'), sector = form.cleaned_data.get('organization_sector')
                                              , addressline1 = form.cleaned_data.get('organization_addressline1'), addressline2 = form.cleaned_data.get('organization_addressline2')
                                              , city = form.cleaned_data.get('organization_city'), state = form.cleaned_data.get('organization_state')
                                              , country = form.cleaned_data.get('organization_country'), zipcode = form.cleaned_data.get('organization_zipcode')
@@ -51,7 +53,7 @@ def register(request):
             created_organization = EntityManagementService().create_organization(organization)
             user.organization_id = created_organization.id
             AuthenticationService().create_user(user)
-            messages.success(request,"You have successfully registered.")
+            messages.success(request,"You have successfully registered with id:%s."%(org_id,))
             return HttpResponseRedirect(reverse(login))
     else:
         form = RegistrationForm()
