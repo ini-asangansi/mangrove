@@ -20,22 +20,22 @@ class LoginPageTests(BaseTest) :
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
         loginPage.EnterCredentialsAndSubmit("invalid@mail.com", "nogo123")
-        self.assertEqual(LoginPage(self.driver).InvalidCredentialErrorMessage(), "Email and password do not match!!!", "Error Message Not Present/Incorrect")
+        self.assertEqual(LoginPage(self.driver).GetErrorMessage(), "Email and password do not match!!!", "Error Message Not Present/Incorrect")
 
     def test_LoginWithInvalidPasswordCredential(self):
 
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
         loginPage.EnterCredentialsAndSubmit("invalid@mail.com", "nogo123")
-        self.assertEqual(LoginPage(self.driver).InvalidCredentialErrorMessage(), "Email and password do not match!!!", "Error Message Not Present/Incorrect")
+        self.assertEqual(LoginPage(self.driver).GetErrorMessage(), "Email and password do not match!!!", "Error Message Not Present/Incorrect")
 
 
     def test_LoginWithoutEnteringEmailAddress(self):
-        
+
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
         loginPage.EnterCredentialsAndSubmit("", "nogo123")
-        self.assertEqual(LoginPage(self.driver).EmailAddressNotPresentErrorMessage(), "emailThis field is required.", "Error Message Not Present")
+        self.assertEqual(LoginPage(self.driver).GetErrorMessage(), "email This field is required.", "Error Message Not Present")
 
 
     def test_LoginWithoutEnteringPassword(self):
@@ -43,11 +43,12 @@ class LoginPageTests(BaseTest) :
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
         loginPage.EnterCredentialsAndSubmit("nogo@mail.com", "")
-        self.assertEqual(LoginPage(self.driver).PasswordNotPresentErrorMessage(), "passwordThis field is required.", "Error Message Not Present")
+        self.assertEqual(LoginPage(self.driver).GetErrorMessage(), "password This field is required.", "Error Message Not Present")
 
     def test_loginWithoutEnteringEmailAndPassword(self):
 
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
-        loginPage.SubmitWithoutEnteringEmailAndPassword()
-        self.assertEqual(LoginPage(self.driver).EmailAndPasswordNotPresentErrorMessage(), "passwordThis field is required.emailThis field is required.", "Error Message Not Present")
+        loginPage.EnterCredentialsAndSubmit("","")
+        self.assertEqual(LoginPage(self.driver).GetErrorMessage(), "password This field is required. email This field is required.", "Error Message Not Present")
+

@@ -16,26 +16,10 @@ class LoginPage(Page):
         self.driver.find_element_by_css_selector("input[value='Login']").click()
         return self
 
-    def SubmitWithoutEnteringEmailAndPassword(self):
-        self.driver.find_element_by_css_selector("input[value='Login']").click()
-        return self
+    def GetErrorMessage(self):
+        errorMessage = self.driver.find_element_by_css_selector("div[class*=error]").text
+        errorMessage = errorMessage.replace("\n", " ")
+        return errorMessage
 
-    def InvalidCredentialErrorMessage(self):
-        invalidEmailErrorMessage = self.driver.find_element_by_class_name("error span-12 push-6 message-box").text
-        return invalidEmailErrorMessage
 
-    def EmailAddressNotPresentErrorMessage(self):
-        emailAddressNotPresentErrorMessage = self.driver.find_element_by_css_selector(".errorlist li").text
-        emailAddressNotPresentErrorMessage = emailAddressNotPresentErrorMessage.replace("\n", "")
-        return emailAddressNotPresentErrorMessage
-
-    def PasswordNotPresentErrorMessage(self):
-        passwordNotPresentErrorMessage = self.driver.find_element_by_css_selector(".errorlist li").text
-        passwordNotPresentErrorMessage = passwordNotPresentErrorMessage.replace("\n", "")
-        return passwordNotPresentErrorMessage
-
-    def EmailAndPasswordNotPresentErrorMessage(self):
-        emailAndPasswordNotPresentErrorMessage = self.driver.find_element_by_xpath("//div[@class='error span-12 push-6 message-box']").text
-        emailAndPasswordNotPresentErrorMessage = emailAndPasswordNotPresentErrorMessage.replace("\n", "")
-        return emailAndPasswordNotPresentErrorMessage
 
