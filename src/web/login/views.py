@@ -53,8 +53,8 @@ def register(request):
             created_organization = EntityManagementService().create_organization(organization)
             user.organization_id = created_organization.id
             AuthenticationService().create_user(user)
-            messages.success(request,"You have successfully registered with id:%s."%(org_id,))
-            return HttpResponseRedirect(reverse(login))
+            messages.success(request,"You have successfully registered organization with id : %s."%(org_id,))
+            return render_to_response('registration_success.html', {'organization' : organization}, context_instance=RequestContext(request))
     else:
         form = RegistrationForm()
     return render_to_response('register.html', {'form' : form}, context_instance=RequestContext(request))
