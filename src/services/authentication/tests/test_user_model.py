@@ -6,7 +6,6 @@ class TestUserModel:
 
     def test_should_create_user_model(self):
         user = UserModel(id='TestUser1',title='Mr.',first_name='Test',last_name='User',email='testuser1@email.com', password = 'password', organization_id = 'org_id')
-        assert (datetime.utcnow() - user.created_on).total_seconds() < 10
         assert user.id == 'TestUser1'
         assert user.title == 'Mr.'
         assert user.first_name=='Test'
