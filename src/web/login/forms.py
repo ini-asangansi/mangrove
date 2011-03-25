@@ -9,8 +9,9 @@ class RegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=30, required=True, label='* First name')
     last_name = forms.CharField(max_length=30,required=True, label='* Last name')
     email = forms.EmailField(required=True, label='* Email')
-    password = forms.CharField(required=True, widget=forms.PasswordInput, label='* Password')
     confirm_password = forms.CharField(required=True, widget=forms.PasswordInput, label='* Confirm password')
+    password = forms.CharField(required=True, widget=forms.PasswordInput, label='* Password')
+
     organization_name = forms.CharField(required=True, label='* Organization name')
     organization_sector = forms.CharField(widget=(forms.Select(attrs={'class':'width-200px'},choices=(('PublicHealth', 'Public Health'),('Other', 'Other'),))))
     organization_addressline1 = forms.CharField(required=True,max_length=30,label='* Address Line 1')
@@ -22,6 +23,11 @@ class RegistrationForm(forms.Form):
     organization_office_phone = forms.CharField(max_length=30, required=False, label='Office Phone Number')
     organization_website = forms.URLField(required=False, label='Website Url')
 
+
+    def __init__(self,*args,**kwargs):
+        self.authService = AuthenticationService()
+        super(RegistrationForm,self).__init__(*args,**kwargs)
+
     def clean(self):
         # todo cleanup the individual field validations. right now it is throwing some error
         cleaned_data = self.cleaned_data
@@ -29,19 +35,17 @@ class RegistrationForm(forms.Form):
         != cleaned_data.get('confirm_password'):
             msg = 'Password and Confirm Password do not match.'
             self._errors['password'] = self.error_class([msg])
-        user = AuthenticationService().get_user(cleaned_data.get('email'))
+        user = self.authService.get_user(cleaned_data.get('email'))
         if(user):
             msg = 'Email Id already registered.'
             self._errors['email']=self.error_class([msg])
         return  cleaned_data
 
-#    def clean_email(self):
-#        #todo remove the duplicate code from all the clean method.
-#        cleaned_data = self.cleaned_data
-#        if(AuthenticationService().get_user(cleaned_data.get('email'))):
-#            msg = 'Email Id already registered.'
-#            self._errors['email']=self.error_class([msg])
-#        return  cleaned_data
+
+    def clean_email(self):
+        cleaned_data = self.cleaned_data
+        cleaned_data['email']=cleaned_data.get('email').lower()
+        return cleaned_data['email']
 
 class LoginForm(forms.Form):
     error_css_class = 'error'
