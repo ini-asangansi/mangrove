@@ -24,8 +24,3 @@ class LoginPage(Page):
     def NavigateToRegistrationPage(self):
         self.driver.find_element_by_css_selector("a[href='/register']").click()
         return self
-
-
-
-
-

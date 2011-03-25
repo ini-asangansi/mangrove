@@ -39,7 +39,7 @@ Environment Setup:
 Execute Environment:
 -------------------
 1. Activate virtual environment
-	source <foldername>/mangrove/activate
+	source <foldername>/bin/activate
 2. Run server
 	python <foldername>/mangrove/src/web/manage.py runserver
 
@@ -47,5 +47,5 @@ Execute Environment:
 Access URLs:
 ------------
 1. Website URL: http://localhost:8000/login
-2. Couchdb URL: http://localhost:5984
+2. Couchdb URL: http://localhost:5984/_utils
 
