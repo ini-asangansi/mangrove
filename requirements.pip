@@ -4,3 +4,6 @@ nose==1.0.0
 CouchDB==0.8
 coverage==3.4
 simplejson
+ipython
+mock
+
