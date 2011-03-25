@@ -1,3 +1,8 @@
+------------------------------------
+Setting up the 'DataWinners' Web App
+------------------------------------
+
+
 * Pre-requisites:
 
 	1. Install python 2.7

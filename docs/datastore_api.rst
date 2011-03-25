@@ -1,3 +1,8 @@
+----------------------------
+Datastore document structure
+----------------------------
+
+
 Reporter
 {
    "_id": "a676766fe45440f48ff4e9a0ce58b329",
