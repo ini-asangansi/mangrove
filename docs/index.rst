@@ -20,6 +20,7 @@ Contents:
    datadict_api
    terminology
    querying_by_loc_and_time
+   website_setup_on_local_env	
 
 Indices and tables
 ==================
