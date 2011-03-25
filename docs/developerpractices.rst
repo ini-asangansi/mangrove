@@ -22,10 +22,6 @@ Other important links
 * Our transport layer is managed by VUMI_
 * `Django 1.3`_ is our web framework
 
-Contact us
-----------
-IRC chat: freenode.net#mangrove
-
 .. _Django 1.3: http://www.djangoproject.com
 .. _VUMI: https://github.com/praekelt/vumi 
 .. _Git: http://git-scm.com/
