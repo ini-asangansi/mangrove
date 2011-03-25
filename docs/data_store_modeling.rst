@@ -28,21 +28,33 @@ Data Store Modeling
   }
 
 * Data_Record
+{
+	"type": "DataRecord",
+	"class": "class.path.ClinicRecord",
+	"uuid": "32chr",
+	"created_at": "utc timestamp+tz",
+	"updated_at": "utc timestamp+tz",
+	"entity_uuid": "points to entity 32chr uuid",
+	"payload": [
+		{
+			"timestamp": "ts utc+tz",
+			"field": "nr_of_beds",
+			"value": 50,
+		},
+		
+		{
+			"timestamp": "ts utc+tz",
+			"field": "report_month",
+			"value": "JAN",
+		},
+		
+		{
+			"timestamp": "ts utc+tz",
+			"field": "ARV",
+			"value": 50,
+		},
+			
+		}
+	]
+}
 
-  {
-
-  UUID: Unique ID
-
-  Entity_id: (Entity_ref_id)
-
-  created_at: Timestamp
-
-  key : value
-
-  ``` : `````
-
-  ``` : `````
-
-  ``` : `````
-
-  }

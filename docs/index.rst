@@ -3,20 +3,44 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Mangrove Docs
-====================================
+==============
+About Mangrove  
+==============
 
-Contents:
+[Awesome project description coming soon!]
 
-.. toctree::
-   :maxdepth: 2
+============    ====================================================================
+Project Home    http://mangroveorg.github.com
+Email           http://groups.google.com/group/mangroveorg
+IRC chat        `#mangrove`_  on freenode.net
+Source          https://github.com/mangroveorg/mangrove
+============    ====================================================================
 
-   developerpractices
-   data_store_modeling
-   datadict_concept
-   datadict_api
-   terminology
-   ...
+.. _\#mangrove: irc://chat.freenode.net:6667/mangrove
+ 
+Project Organization
+====================
+
+..  toctree::
+    :maxdepth: 2
+
+    governance
+    faces
+    developerpractices
+    
+Design & Tech Docs
+==================
+
+..  toctree::
+    :maxdepth: 2
+    
+    concepts
+    data_store_modeling
+    datastore_api
+    api_toplevel_spec
+    datadict_api
+    querying_by_loc_and_time
+    website_setup_on_local_env	
 
 Indices and tables
 ==================

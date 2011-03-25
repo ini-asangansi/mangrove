@@ -7,6 +7,11 @@ import os
 import sys
 import datetime
 
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 test_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.dirname(test_dir)
 upper_dir = os.path.dirname(project_dir)
@@ -15,13 +20,36 @@ sys.path.insert(0, upper_dir)
 
 from datadict.api import DataType
 from datadict.connection import Connection
+from datadict.basic_types import TypeBase, IntegerType, StringType
+from datadict.exceptions import IntegrityError
+
+
 
 class TestApi(unittest.TestCase):
 
 
     def setUp(self):
+    
         Connection(db_name="datadict_test")
         
+        self.int = DataType.create(name="int", contraints={'gt': 0}, 
+                                   tags=['int', 'test'], 
+                                   type="int", description="Integer type")
+
+        self.float = DataType.create(name="float", contraints={'gt': 0}, 
+                                     tags=['float', 'test'], 
+                                     type="float", description="Float type")       
+
+        self.string = DataType.create(name="string", contraints={'in': 0}, 
+                                      tags=['string', 'test'], 
+                                      type="str", description="String type")    
+
+        self.date = DataType.create(name="date", contraints={'gt': '2010-12-10'}, 
+                                      tags=['date', 'test'], 
+                                      type="datetime", description="Date type")  
+
+        self.bool = DataType.create(name="bool", tags=['bool', 'test'], 
+                                    type="bool", description="Date type")                                        
         
     def tearDown(self):
         Connection().server.delete("datadict_test")
@@ -30,7 +58,7 @@ class TestApi(unittest.TestCase):
 
     def test_datatype_attributes(self):
     
-        dt = DataType(name="", contraints="", tags="", type="",
+        dt = DataType(name="", contraints="", tags="", type="str",
                       version=datetime.datetime.now(), description="")
         
         self.assertTrue(hasattr(dt, 'name'))
@@ -72,10 +100,113 @@ class TestApi(unittest.TestCase):
 
         self.assertEqual(len(DataType.with_tags('foo', 'bar')), 1)
     
-      
+  
+    def test_type_is_a_type_base_instance(self):
+        dt = DataType.load(self.int.id)
+        self.assertTrue(isinstance(dt.type, TypeBase))
+        dt.type = 'str'
+        self.assertTrue(isinstance(dt.type, TypeBase))
+  
+
+    def test_basic_types_instances_type_match_the_name(self):
+        dt = DataType.load(self.int.id)
+        self.assertTrue(isinstance(dt.type, IntegerType))
+        dt.type = 'str'
+        self.assertTrue(isinstance(dt.type, StringType))  
+    
+  
+    def test_you_cant_assign_a_non_compatible_type(self):
+        try:
+            self.int.type = "test" 
+            self.fail()
+        except IntegrityError:
+            pass
+   
+    def type_casting_asserts(self, datatype, json_value, python_value):
+        # from json to python to json
+        in_python = datatype.to_python(json_value)
+        self.assertEqual(in_python, python_value)
+        self.assertEqual(datatype.to_json(in_python), json_value)
+
+        # from python to json to python
+        in_json = datatype.to_json(python_value)
+        self.assertEqual(in_json, json_value)
+        self.assertEqual(datatype.to_python(in_json), python_value)
+        
+    def test_type_casting(self):
+
+        # integer
+        self.type_casting_asserts(self.int, u'123', 123)
+        self.type_casting_asserts(self.int, u'-123', -123)
+        self.type_casting_asserts(self.int, u'0', 0)
+
+        self.type_casting_asserts(self.float, u'123.0', 123.0)
+        self.type_casting_asserts(self.float, u'-123.4', -123.4)
+        self.type_casting_asserts(self.float, u'0.0', 0.0)
+
+        self.type_casting_asserts(self.string, u'123.0', u'123.0')
+        self.type_casting_asserts(self.string, u'é', u'é')
+
+        self.type_casting_asserts(self.bool, '1', True)
+        self.type_casting_asserts(self.bool, '0', False)
+
+        self.type_casting_asserts(self.date,  '2011-03-16 20:24:36.307154',
+                             datetime.datetime(2011, 3, 16, 20, 24, 36, 307154))
+
+#    def test_datatypes_let_you_import_type_from_black_box(self):
+#
+#        js = json.dumps({
+#            "record_1": { 'type': self.date.id,
+#                           'value': '2011-03-16 20:24:36.307154'},
+#            "record_2": { 'type':  self.string.id,
+#                           'value': 'test'},
+#            "record_3": { 'type': self.bool.id,
+#                           'value': '0'},
+#            "record_4": { 'type': self.float.id,
+#                           'value': '-123.89'},
+#        })
+#
+#        check = {
+#            "record_1": datetime.datetime(2011, 3, 16, 20, 24, 36, 307154),
+#            "record_2": u'test',
+#            "record_3": 0,
+#            "record_4" :-123.89
+#        }
+#
+#        result = {}
+#        for name, record in json.loads(js).iteritems():
+#            type_, value = record.values()
+#            result[name] = DataType.load(type_).to_python(value)
+#
+#
+#        DataType.load(type_).to_python(value)
+#
+#
+#        DataType(type_).generate_aggregation_cache(value)
+#
+#
+#        self.assertEqual(check, result)
+    
+    # next step : casting to georegistry, (not too hard)
+                # casting to any entity (hard)
+                # validation on basic type (easy now we got auto type loading)
+                # custom validation (not hard but long)
+                # generating aggration tree for each type ?
+                # generate xform typin / validation ?
+        
+    # priority: casting to georegistry
+              # test versioning and load by version
+              
+    # in clear: data dict is almost good enought for what we want to do
+    # we should work on the data store
+    # it's dependant for the map reduce 
+    # let's freeze the aggregation on that merge the data store with the data dict
+    
+    
+            
 """    
     def test_create_datatype(self):
-        dt = DataType("test", {'gt', }, "", "")
+        dt: DataType("test", {'gt', }, "", "")
      
         
     def test_datatype_should_be_getable_by_name(self):
