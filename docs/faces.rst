@@ -104,7 +104,6 @@ Kick-off team as of Feb-2011
 .. _Photos hosted here on Flickr: http://www.flickr.com/groups/mangroveproject/
 
 .. |andrew_marder| image:: http://farm6.static.flickr.com/5178/5519381737_4d74b94062_m.jpg
-.. |diptanu_choudhury| image:: http://farm6.static.flickr.com/5093/5519657426_db6309cd54_m.jpg
 .. |matt_berg| image:: http://farm6.static.flickr.com/5214/5519481492_e64075b475_m.jpg
 .. |kedar_bapat| image:: http://farm6.static.flickr.com/5137/5518889139_5d696e8b16_m.jpg
 .. |kevin_samuel| image:: http://farm6.static.flickr.com/5137/5519481728_740a435e2d_m.jpg

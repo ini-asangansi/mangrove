@@ -11,15 +11,15 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-=======
    faces
    developerpractices
    data_store_modeling
+   api_toplevel_spec
+   datastore_api
    datadict_concept
    datadict_api
    terminology
    querying_by_loc_and_time
-   ...
 
 Indices and tables
 ==================
