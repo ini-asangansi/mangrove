@@ -8,19 +8,19 @@ Mangrove Docs
 
 Contents:
 
-.. toctree::
-   :maxdepth: 2
+..  toctree::
+    :maxdepth: 2
 
-   faces
-   developerpractices
-   data_store_modeling
-   api_toplevel_spec
-   datastore_api
-   datadict_concept
-   datadict_api
-   terminology
-   querying_by_loc_and_time
-   website_setup_on_local_env	
+    faces
+    developerpractices
+    data_store_modeling
+    api_toplevel_spec
+    datastore_api
+    datadict_concept
+    datadict_api
+    terminology
+    querying_by_loc_and_time
+    website_setup_on_local_env	
 
 Indices and tables
 ==================
