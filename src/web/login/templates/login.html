@@ -1,14 +1,6 @@
 {% extends 'layout.html' %}
 
 {% block page_title %} Login {% endblock %}
-{% block messages %}
-    {{ block.super }}
-    {% if form.errors %}
-    <div class="error span-12 push-6 message-box">
-        {{ form.errors }}
-    </div>
-    {% endif %}
-{% endblock %}
 {% block content %}
     <div class="span-12 box push-6">
         <fieldset><legend>Login</legend>
@@ -19,11 +11,13 @@
                             <div class="{{ form.email.css_classes  }} form-row-10px">
                                 {{ form.email.label_tag }}<br/>
                                 {{ form.email }}
+                                {{ form.email.errors }}
                             </div>
 
                             <div class="{{ form.password.css_classes  }} form-row-10px">
                                 {{ form.password.label_tag }}<br/>
                                 {{ form.password }}
+                                {{ form.password.errors }}
                             </div>
 
                             <div class="span-8">
