@@ -4,7 +4,7 @@ from services.entity_management.models import Organization, Entity
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 
-class TestEntityManagementService:
+class TestEntityManagementService(object):
 
     test_organization_name = 'test_organization'
     test_entity_id = ''

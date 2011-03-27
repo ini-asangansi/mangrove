@@ -2,7 +2,7 @@ from couchdb.design import ViewDefinition
 from services.repository.DocumentBase import DocumentBase
 from services.repository.connection import Connection
 
-class Repository:
+class Repository(object):
 
     def __init__(self, connection):
         self.connection = connection

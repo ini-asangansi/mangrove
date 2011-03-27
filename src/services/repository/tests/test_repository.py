@@ -4,7 +4,7 @@ from services.repository.repository import Repository
 from services.settings import *
 from services.authentication.models import UserModel
 
-class TestConnection:
+class TestConnection(object):
 
     def test_should_create_database_if_it_does_not_exist(self):
         database = 'test_connection'
@@ -18,7 +18,7 @@ class TestConnection:
         if self.connection and self.connection.database :
             self.connection.server.delete(self.connection.database)
 
-class TestRepository:
+class TestRepository(object):
 
     def setup(self):
         database = 'test_connection'

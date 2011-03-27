@@ -1,6 +1,6 @@
 from services.entity_management.models import Organization
 
-class TestOrganization:
+class TestOrganization(object):
     def test_should_create_registration_model(self):
         org = Organization(name = 'OrgName', sector = 'OrgSector'
                                                , addressline1 = 'line1', addressline2 = 'line2'

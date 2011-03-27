@@ -2,7 +2,7 @@ from services.data_record.models import DataRecord
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 
-class DataRecordService:
+class DataRecordService(object):
 
     def __init__(self, repository=Repository(Connection())):
         self.repository = repository

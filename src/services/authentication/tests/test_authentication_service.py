@@ -3,7 +3,7 @@ from services.authentication.models import UserModel
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 
-class TestAuthenticationService:
+class TestAuthenticationService(object):
 
     test_user_email = 'testuser@email.com'
 

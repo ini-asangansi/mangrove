@@ -3,7 +3,7 @@ import random
 from couchdb.mapping import TextField, DateTimeField
 from services.repository.DocumentBase import DocumentBase
 
-class EncryptionHelper:
+class EncryptionHelper(object):
     def hash(self, valueToHash,salt=None, algorithm='sha1'):
         salt = salt or self.get_hexdigest('sha1', str(random.random()), str(random.random()))[:5]
         hsh = self.get_hexdigest(algorithm, salt, valueToHash)

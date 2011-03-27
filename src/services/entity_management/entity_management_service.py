@@ -2,7 +2,7 @@ from services.entity_management.models import Organization, Entity
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 
-class EntityManagementService:
+class EntityManagementService(object):
 
     def __init__(self, repository=Repository(Connection())):
         self.repository = repository

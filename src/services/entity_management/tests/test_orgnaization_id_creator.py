@@ -1,7 +1,7 @@
 from time import sleep
 from services.entity_management.organization_id_creator import OrganizationIdCreator
 
-class TestOrganizationIdGenerator:
+class TestOrganizationIdGenerator(object):
     def setup(self):
         self.organizationIdCreator=OrganizationIdCreator()
 

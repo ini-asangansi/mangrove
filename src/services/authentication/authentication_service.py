@@ -2,7 +2,7 @@ from services.authentication.models import EncryptionHelper, UserModel
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 
-class AuthenticationService:
+class AuthenticationService(object):
     def __init__(self, repository=Repository(Connection())):
         self.repository = repository
 

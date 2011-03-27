@@ -2,7 +2,7 @@ from datetime import datetime
 import re
 from services.authentication.models import UserModel, EncryptionHelper
 
-class TestUserModel:
+class TestUserModel(object):
 
     def test_should_create_user_model(self):
         user = UserModel(id='TestUser1',title='Mr.',first_name='Test',last_name='User',email='testuser1@email.com', password = 'password', organization_id = 'org_id')
