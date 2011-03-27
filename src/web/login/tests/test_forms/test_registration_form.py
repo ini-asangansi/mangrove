@@ -4,7 +4,7 @@ from web.login.forms import RegistrationForm
 from mock import Mock
 
 
-class TestRegistrationForm:
+class TestRegistrationForm(object):
     def setup(self):
         pass
 

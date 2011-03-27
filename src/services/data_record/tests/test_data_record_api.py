@@ -10,7 +10,7 @@ from services.data_record.data_record_service import DataRecordService
 from services.data_record.models import DataRecord
 
 
-class TestDataRecordApi:
+class TestDataRecordApi(object):
 
     test_data_record_id = ''
 

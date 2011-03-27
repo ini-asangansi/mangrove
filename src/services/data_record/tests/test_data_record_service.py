@@ -7,7 +7,7 @@ from services.entity_management.models import Organization, Entity
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 
-class TestDataRecordService:
+class TestDataRecordService(object):
 
     test_data_record_id = ''
     
