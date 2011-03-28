@@ -35,7 +35,6 @@ Design & Tech Docs
     :maxdepth: 2
     
     concepts
-    data_store_modeling
     datastore_api
     api_toplevel_spec
     datadict_api
