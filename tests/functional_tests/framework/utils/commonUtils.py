@@ -2,7 +2,8 @@
 
 __author__ = 'ravi'
 
-from framework.perspectives.Page import Page
+from framework.openMangrove.Page import Page
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.exceptions import NoSuchElementException
 
 
@@ -70,3 +71,9 @@ class CommonUtilities(Page):
          self.driver.find_element_by_id(elementId).click()
          return self
 
+    def isElementPresent(self, elementLocator, by=By.ID):
+        try:
+            locator = self.driver.find_element(by,elementLocator)
+            return locator
+        except NoSuchElementException:
+            return False
