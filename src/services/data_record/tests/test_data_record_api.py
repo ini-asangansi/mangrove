@@ -29,10 +29,10 @@ class TestDataRecordApi:
         return clinic
 
     def create_reporter(self,id,name,org_chart,age):
-            entity_service = EntityManagementService(self.repository)
-            reporter= Entity(id=id,entity_type = 'reporter',name=name,aggregation_trees={"org_chart":org_chart},age=age)
-            reporter = entity_service.create_entity(reporter)
-            return reporter
+		entity_service = EntityManagementService(self.repository)
+		reporter= Entity(id=id,entity_type = 'reporter',name=name,aggregation_trees={"org_chart":org_chart},age=age)
+		reporter = entity_service.create_entity(reporter)
+		return reporter
 
     def create_clinic_records(self):
         data_service = DataRecordService(self.repository)
