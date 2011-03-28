@@ -13,8 +13,8 @@ class EntityManagementService:
                self.__create_by_location_view_for_entity_type(saved_entity.entity_type)
         if not self.exists_entity_type_view(saved_entity.entity_type, 'by_time'):
                self.__create_by_time_view_for_entity_type(saved_entity.entity_type)
-#        if not self.exists_entity_type_view(saved_entity.entity_type, 'current_values'):
-#               self.__create_current_values_view_for_entity_type(saved_entity.entity_type)
+        if not self.exists_entity_type_view(saved_entity.entity_type, 'current_values'):
+               self.__create_current_values_view_for_entity_type(saved_entity.entity_type)
         return saved_entity
 
     def load_entity(self, id, entity = Entity):
@@ -97,12 +97,12 @@ class EntityManagementService:
     def __create_current_values_view_for_entity_type(self,entity_type):
         map = """  function(doc)
                  {
-                    if (doc.document_type == 'DataRecord' && doc['entity_backing_field'] && doc['entity_backing_field']['entity_type'] == '%s')
+                    var isNotNull = function(o)
                     {
-                        var isNotNull = function(o)
-                        {
-                             return !((o === undefined) || (o == null));
-                        };
+                        return !((o === undefined) || (o == null));
+                    };
+                    if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field) && doc.entity_backing_field['entity_type'] == '%s')
+                    {
                         var value = {};
                         var date = new Date(doc.created_on);
                         if(isNotNull(doc.entity_backing_field) && isNotNull(doc.entity_backing_field.attributes))
@@ -110,8 +110,10 @@ class EntityManagementService:
                             var attributes = doc.entity_backing_field.attributes;
                             for(index in attributes)
                             {
-                                 if(isNotNull(attributes[index]))
+                                 if(isNotNull(attributes[index]) && isNotNull(attributes[index]['value']))
                                  {
+                                      var attribute_object = attributes[index];
+                                      attribute_object['timestamp_for_view'] = date.getTime();
                                       value[index] = attributes[index];
                                  }
                             }
@@ -119,8 +121,10 @@ class EntityManagementService:
                         for(index in doc.attributes)
                         {
                              var attributes = doc.attributes;
-                             if(isNotNull(attributes[index]))
+                             if(isNotNull(attributes[index]) && isNotNull(attributes[index]['value']))
                              {
+                                 var attribute_object = attributes[index];
+                                 attribute_object['timestamp_for_view'] = date.getTime();
                                  value[index] = attributes[index];
                              }
                          }
@@ -128,7 +132,26 @@ class EntityManagementService:
                          emit (key, value);
                      }
                 }""" % (entity_type,)
-        reduce = """ _stats """
+        reduce = """function(key, values, rereduce){
+                            var isNull = function(o)
+                            {
+                                return (o === undefined) || (o == null);
+                            };
+
+                            var current = {entity_id : key[0][0][0]};
+
+                            for(value in values)
+                            {
+                                for(index in values[value])
+                                {
+                                    if(isNull(current[index]) || values[value][index].timestamp_for_view > current[index].timestamp_for_view)
+                                    {
+                                        current[index] = values[value][index];
+                                    }
+                                }
+                            }
+                            return current;
+                    }"""
         self.repository.create_view(entity_type,"current_values",map,reduce)
 
     def exists_entity_type_view(self,entity_type, aggregation):
