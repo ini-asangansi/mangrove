@@ -41,7 +41,6 @@ class RegistrationForm(forms.Form):
             self._errors['email']=self.error_class([msg])
         return  cleaned_data
 
-
     def clean_email(self):
         cleaned_data = self.cleaned_data
         cleaned_data['email']=cleaned_data.get('email').lower()

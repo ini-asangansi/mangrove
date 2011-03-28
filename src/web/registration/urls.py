@@ -1,8 +1,8 @@
 from django.conf.urls.defaults import patterns, include, url
-from views import *
+from web.registration.views import *
 
 urlpatterns = patterns('',
-    ('login', login),
+    ('login', 'django.contrib.auth.views.login'),
     ('register', register),
     ('home', home),
     # Examples:

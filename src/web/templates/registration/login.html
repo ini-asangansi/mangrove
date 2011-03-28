@@ -9,9 +9,9 @@
                     <div class="span-8 last">
                         <div class="span-8">
                             <div class="{{ form.email.css_classes  }} form-row-10px">
-                                {{ form.email.label_tag }}<br/>
-                                {{ form.email }}
-                                {{ form.email.errors }}
+                                {{ form.username.label_tag }}<br/>
+                                {{ form.username }}
+                                {{ form.username.errors }}
                             </div>
 
                             <div class="{{ form.password.css_classes  }} form-row-10px">
@@ -22,7 +22,7 @@
 
                             <div class="span-8">
                                 <input type="submit" value="Login" />
-                                <div class="span-8 last">Not registered? <a href="{% url login.views.register %}">We can fix that!</a></div>
+                                <div class="span-8 last">Not registered? <a href="{% url web.registration.views.register %}">We can fix that!</a></div>
                             </div>
                         </div>
                     </div>
