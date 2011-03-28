@@ -64,6 +64,7 @@ def home(request):
     user = request.session[SESSION_USER_KEY]
     return render_to_response('home.html',{'username': str(user.name)})
 
+
 def do_login(request, user):
     if SESSION_KEY in request.session:
         if request.session[SESSION_KEY] != user.id:
