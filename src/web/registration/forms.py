@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from services.authentication.authentication_service import AuthenticationService
+from web.registration.models import NGOUser
 
 class RegistrationForm(forms.Form):
     error_css_class = 'error'
@@ -30,22 +31,31 @@ class RegistrationForm(forms.Form):
         super(RegistrationForm,self).__init__(*args,**kwargs)
 
     def clean(self):
-        # todo cleanup the individual field validations. right now it is throwing some error
-        cleaned_data = self.cleaned_data
-        if cleaned_data.get('password')\
-        != cleaned_data.get('confirm_password'):
-            msg = 'Password and Confirm Password do not match.'
-            self._errors['password'] = self.error_class([msg])
-        user = self.authService.get_user(cleaned_data.get('email'))
-        if(user):
-            msg = 'Email Id already registered.'
-            self._errors['email']=self.error_class([msg])
-        return  cleaned_data
+        self.check_password_match()
+        self.check_existence_of_user()
+        return  self.cleaned_data
 
     def clean_email(self):
         cleaned_data = self.cleaned_data
         cleaned_data['email']=cleaned_data.get('email').lower()
         return cleaned_data['email']
+
+    def check_password_match(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get('password')\
+        != cleaned_data.get('confirm_password'):
+            msg = 'Password and Confirm Password do not match.'
+            self._errors['password'] = self.error_class([msg])
+
+    def check_existence_of_user(self):
+        cleaned_data = self.cleaned_data
+        try:
+            user = NGOUser.objects.get(username=(cleaned_data.get('email')))
+            if(user):
+                msg = 'Email Id already registered.'
+                self._errors['email'] = self.error_class([msg])
+        except NGOUser.DoesNotExist:
+            pass
 
 class LoginForm(AuthenticationForm):
     error_css_class = 'error'
