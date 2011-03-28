@@ -47,6 +47,6 @@ class RegistrationForm(forms.Form):
         cleaned_data['email']=cleaned_data.get('email').lower()
         return cleaned_data['email']
 
-class NGOLoginForm(AuthenticationForm):
+class LoginForm(AuthenticationForm):
     error_css_class = 'error'
     required_css_class = 'required'
