@@ -50,4 +50,4 @@ Setting up the 'DataWinners' Web App
 * Access URLs:
 
 	1. Website URL: http://localhost:8000/login
-	2. Couchdb URL: http://localhost:5984/utils
+	2. Couchdb URL: http://localhost:5984/_utils

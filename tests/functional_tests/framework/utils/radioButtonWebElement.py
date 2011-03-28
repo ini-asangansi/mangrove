@@ -19,8 +19,3 @@ class RadioButton (WebElement):
 
     def radio_button_status(self):
         return self.webElement.is_enabled()
-
-
-       
-
-

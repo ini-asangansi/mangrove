@@ -25,8 +25,6 @@ class DropDown (WebElement):
 
         return None
 
-
-
     def is_selected(self, itemText):
         """ Gets the currently selected item from the drop down
         """
