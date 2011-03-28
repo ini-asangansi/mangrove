@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 from services.authentication.authentication_service import AuthenticationService
 
 class RegistrationForm(forms.Form):
@@ -46,9 +47,6 @@ class RegistrationForm(forms.Form):
         cleaned_data['email']=cleaned_data.get('email').lower()
         return cleaned_data['email']
 
-class LoginForm(forms.Form):
+class NGOLoginForm(AuthenticationForm):
     error_css_class = 'error'
     required_css_class = 'required'
-
-    email = forms.EmailField(required=True)
-    password = forms.CharField(required=True, widget=forms.PasswordInput)

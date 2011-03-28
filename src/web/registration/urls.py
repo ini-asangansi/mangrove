@@ -1,8 +1,9 @@
 from django.conf.urls.defaults import patterns, include, url
+from web.registration.forms import NGOLoginForm
 from web.registration.views import *
 
 urlpatterns = patterns('',
-    ('login', 'django.contrib.auth.views.login'),
+    ('login', 'django.contrib.auth.views.login', {'authentication_form': NGOLoginForm}),
     ('register', register),
     ('home', home),
     # Examples:
