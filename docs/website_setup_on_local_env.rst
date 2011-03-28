@@ -44,7 +44,7 @@ Setting up the 'DataWinners' Web App
 	1. Activate virtual environment
 		source <foldername>/bin/activate
 	2. Run server
-		spython <foldername>/mangrove/src/web/manage.py runserver
+		python <foldername>/mangrove/src/web/manage.py runserver
 
 
 * Access URLs:
