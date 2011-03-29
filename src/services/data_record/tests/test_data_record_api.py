@@ -94,22 +94,24 @@ class TestDataRecordApi(object):
         entity_management_service = EntityManagementService(self.repository)
         entity_management_service.create_views()
 
+        clinic = {}
+        data_service = DataRecordService(self.repository)
+        reporter =self.create_reporter(uuid4().hex,"reporter1",["Country Manager","Field Manager","Field Agent"],25)
+
         with patch('services.repository.DocumentBase.DateTime') as dt:
             dt.now.return_value = d.datetime(2005,1,1)
-
-            data_service = DataRecordService(self.repository)
-            reporter =self.create_reporter(uuid4().hex,"reporter1",["Country Manager","Field Manager","Field Agent"],25)
             clinic = self.create_clinic(uuid4().hex, ["India","Maharashtra","Pune"], "Clinic 1")
 
             data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 10},arv = {'value' : 100})
             data_service.create_data_record(data_record)
 
+        with patch('services.repository.DocumentBase.DateTime') as dt:
+            dt.now.return_value = d.datetime(2005,1,1)
             data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 15},arv = {'value' : 100})
             data_service.create_data_record(data_record)
-            rows = entity_management_service.load_attributes_for_entity_as_on(clinic.id, dt.now())
 
-        assert True
-#       need to fix this test
+        entity_as_on_date = entity_management_service.load_attributes_for_entity_as_on(clinic.id, d.datetime(2005,3,1))
+        assert entity_as_on_date['beds']['value'] == "10"
 
 
 
