@@ -24,7 +24,6 @@ class RegistrationForm(forms.Form):
     organization_office_phone = forms.CharField(max_length=30, required=False, label='Office Phone Number')
     organization_website = forms.URLField(required=False, label='Website Url')
 
-
     def __init__(self,*args,**kwargs):
         super(RegistrationForm,self).__init__(*args,**kwargs)
 
@@ -45,10 +44,14 @@ class RegistrationForm(forms.Form):
             msg = 'Password and Confirm Password do not match.'
             self._errors['password'] = self.error_class([msg])
 
+    def get_user_from_database(self):
+        user = NGOUser.objects.get(username=(cleaned_data.get('email')))
+        return user
+
     def check_existence_of_user(self):
         cleaned_data = self.cleaned_data
         try:
-            user = NGOUser.objects.get(username=(cleaned_data.get('email')))
+            user = self.get_user_from_database()
             if(user):
                 msg = 'Email Id already registered.'
                 self._errors['email'] = self.error_class([msg])
