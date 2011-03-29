@@ -4,7 +4,7 @@ from services.repository.repository import Repository
 from services.settings import *
 from authentication.models import UserModel
 
-class TestConnection(object):
+class TestConnection:
 
     def test_should_create_database_if_it_does_not_exist(self):
         database = 'test_connection'
@@ -18,7 +18,7 @@ class TestConnection(object):
         if self.connection and self.connection.database :
             self.connection.server.delete(self.connection.database)
 
-class TestRepository(object):
+class TestRepository:
 
     def setup(self):
         database = 'test_connection'
@@ -37,13 +37,6 @@ class TestRepository(object):
 
         document1 = self.repository.load(document.id)
         assert document1
-
-    def test_should_persist_and_load_view_to_database(self):
-        self.repository.create_view("test","by_test_entity","function(doc){emit(null,doc);}","")
-
-        view = self.repository.load("_design/test")
-        assert view
-        assert view["views"]["by_test_entity"]
 
     def test_should_return_none_if_documentid_is_empty(self):
         repository = Repository(connection=self.connection)

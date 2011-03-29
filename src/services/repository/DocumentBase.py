@@ -7,9 +7,14 @@ class DocumentBase(Document):
         if id is None:
             id = uuid4().hex
         Document.__init__(self,id=id, **values)
-        self.created_on = datetime.utcnow()
+        self.created_on = DateTime.now()
         self.document_type = document_type
 
     created_on = DateTimeField()
     last_updated_on = DateTimeField()
     document_type = TextField()
+
+class DateTime(datetime):
+    @staticmethod
+    def now():
+        return datetime.now()

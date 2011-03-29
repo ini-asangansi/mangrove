@@ -2,7 +2,7 @@ from couchdb.design import ViewDefinition
 from services.repository.DocumentBase import DocumentBase
 from services.repository.connection import Connection
 
-class Repository(object):
+class Repository:
 
     def __init__(self, connection):
         self.connection = connection
@@ -11,7 +11,7 @@ class Repository(object):
     def load_all_rows_in_view(self,view_name,**values):
         return self.database.view(view_name,**values).rows
 
-    def create_view(self,view_document,view_name,map,reduce):
+    def create_view(self,view_name,map,reduce, view_document='mangrove_views'):
         view = ViewDefinition(view_document,view_name,map,reduce)
         view.sync(self.database)
 
@@ -26,7 +26,6 @@ class Repository(object):
         if id:
             return document_class.load(self.database, id)
         return None
-
 
 class RepositoryForTests(Repository):
     def delete_database(self):

@@ -1,29 +1,56 @@
-from services.entity_management.models import Organization, Entity
+from services.entity_management.models import  Entity
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 
-class EntityManagementService(object):
+class EntityManagementService:
 
     def __init__(self, repository=Repository(Connection())):
         self.repository = repository
 
+    def create_views(self):
+        if not self.exists_view('by_location'):
+               self.__create_by_location_view()
+        if not self.exists_view('by_time'):
+               self.__create_by_time_view()
+        if not self.exists_view('current_values'):
+               self.__create_current_values_view()
+
     def create_entity(self, entity):
         saved_entity =self.repository.save(entity)
-        if not self.exists_entity_type_view(saved_entity.entity_type, 'by_location'):
-               self.__create_by_location_view_for_entity_type(saved_entity.entity_type)
-        if not self.exists_entity_type_view(saved_entity.entity_type, 'by_time'):
-               self.__create_by_time_view_for_entity_type(saved_entity.entity_type)
-        if not self.exists_entity_type_view(saved_entity.entity_type, 'current_values'):
-               self.__create_current_values_view_for_entity_type(saved_entity.entity_type)
         return saved_entity
 
     def load_entity(self, id, entity = Entity):
-        return self.repository.load(id, entity)
+        loaded_entities = self.load_entities([id], entity)
+        return  loaded_entities[0]
+
+    def load_attributes_for_entity(self, entity_id):
+        rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',group=True, group_level=2)
+        for row in rows:
+            if row['value']['entity_id'] == entity_id:
+                return row['value']
+        return None
+
+    def load_attributes_for_entity_as_on(self, entity_id, date):
+        rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',group=True, group_level=10, startkey=[entity_id], endkey=[entity_id, date.year, date.month, date.day, {}])
+        for row in rows:
+            if row['value']['entity_id'] == entity_id:
+                return row['value']
+        return None
+
+
+    def load_entities(self, ids = None, entity = Entity):
+        if not isinstance(ids, list):
+            raise TypeError('ids was expected to be of type list.')
+        entities = []
+        for id in ids:
+            loaded_entity = self.repository.load(id, entity)
+            entities.append(loaded_entity)
+        return entities
 
     def update_entity(self, entity):
         return self.repository.save(entity, entity.__class__)
 
-    def __create_by_location_view_for_entity_type(self,entity_type):
+    def __create_by_location_view(self):
 
         map = """ function(doc)
                  {
@@ -35,7 +62,7 @@ class EntityManagementService(object):
                    {
                         return !((o === undefined) || (o == null));
                    };
-                   if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field) && doc.entity_backing_field.entity_type == '%s')
+                   if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field))
                    {
                        var value = {};
                        var date = new Date(doc.created_on);
@@ -51,17 +78,17 @@ class EntityManagementService(object):
                         {
                            for(hierarchy in aggregation_trees)
                            {
-                               var key = [hierarchy].concat(aggregation_trees[hierarchy], [date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()]);
-                               key.splice(0,0, index);
+                               var key = [index].concat([hierarchy], aggregation_trees[hierarchy], [date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()]);
+                               key.splice(0,0, doc.entity_backing_field.entity_type);
                                emit(key ,value[index]);
                            }
                         }
                     }
-                 }""" % (entity_type,)
+                 }"""
         reduce = """ _stats """
-        self.repository.create_view(entity_type,"by_location",map,reduce)
+        self.repository.create_view("by_location",map,reduce)
 
-    def __create_by_time_view_for_entity_type(self,entity_type):
+    def __create_by_time_view(self):
 
         map = """  function(doc)
                   {
@@ -73,7 +100,7 @@ class EntityManagementService(object):
                     {
                         return !((o === undefined) || (o == null));
                     };
-                    if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field) && doc.entity_backing_field.entity_type == '%s')
+                    if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field))
                     {
                         var value = {};
                         var date = new Date(doc.created_on);
@@ -86,22 +113,22 @@ class EntityManagementService(object):
                      }
 			         for(index in value)
                          {
-                            var key = [index, date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+                            var key = [doc.entity_backing_field.entity_type, index, date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
                             emit(key, value[index]);
                          }
                      }
-                  }""" % (entity_type,)
+                  }"""
         reduce = """ _stats """
-        self.repository.create_view(entity_type,"by_time",map,reduce)
+        self.repository.create_view("by_time",map,reduce)
 
-    def __create_current_values_view_for_entity_type(self,entity_type):
+    def __create_current_values_view(self):
         map = """  function(doc)
                  {
                     var isNotNull = function(o)
                     {
                         return !((o === undefined) || (o == null));
                     };
-                    if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field) && doc.entity_backing_field['entity_type'] == '%s')
+                    if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field))
                     {
                         var value = {};
                         var date = new Date(doc.created_on);
@@ -128,17 +155,17 @@ class EntityManagementService(object):
                                  value[index] = attributes[index];
                              }
                          }
-                         var key = [doc.entity_backing_field._id, date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+                         var key = [doc.entity_backing_field.entity_type, doc.entity_backing_field._id, date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
                          emit (key, value);
                      }
-                }""" % (entity_type,)
+                }"""
         reduce = """function(key, values, rereduce){
                             var isNull = function(o)
                             {
                                 return (o === undefined) || (o == null);
                             };
 
-                            var current = {entity_id : key[0][0][0]};
+                            var current = {entity_id : key[0][0][1]};
 
                             for(value in values)
                             {
@@ -152,10 +179,10 @@ class EntityManagementService(object):
                             }
                             return current;
                     }"""
-        self.repository.create_view(entity_type,"current_values",map,reduce)
+        self.repository.create_view("current_values",map,reduce)
 
-    def exists_entity_type_view(self,entity_type, aggregation):
-            entity_type_views = self.repository.load('_design/%s' % (entity_type,))
+    def exists_view(self, aggregation):
+            entity_type_views = self.repository.load('_design/mangrove_views')
             if entity_type_views and entity_type_views['views'].get(aggregation):
                 return True
             return False
