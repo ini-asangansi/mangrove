@@ -26,27 +26,17 @@ class EntityManagementService:
     def load_attributes_for_entity(self, entity_id):
         rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',group=True, group_level=2)
         for row in rows:
-            if row['value']['entity_id']['value'] == entity_id:
+            if row['value']['entity_id'] == entity_id:
                 return row['value']
         return None
 
     def load_attributes_for_entity_as_on(self, entity_id, date):
-        entity = self.load_entity(entity_id)
-        rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',group_level=2,descending=False,startkey=[entity.entity_type, entity_id],endkey=[entity.entity_type, entity_id, date.year, date.month, date.day, {}],)
+        rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',group=True, group_level=10, startkey=[entity_id], endkey=[entity_id, date.year, date.month, date.day, {}])
         for row in rows:
-            if row['value']['entity_id']['value'] == entity_id:
+            if row['value']['entity_id'] == entity_id:
                 return row['value']
         return None
 
-    def load_entities_which_have_attributes(self, attributes):
-        rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',group=True, group_level=2)
-        for row in rows:
-            match = True
-            for attr in attributes:
-                if not row['value'].get(attr) or not str(attributes[attr]) == row['value'][attr].get('value'):
-                    match = False
-            if match:
-                yield row['value']
 
     def load_entities(self, ids = None, entity = Entity):
         if not isinstance(ids, list):
@@ -88,7 +78,7 @@ class EntityManagementService:
                         {
                            for(hierarchy in aggregation_trees)
                            {
-                               var key = [index].concat([hierarchy], aggregation_trees[hierarchy], [date.getFullYear(), date.getMonth()+1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()]);
+                               var key = [index].concat([hierarchy], aggregation_trees[hierarchy], [date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()]);
                                key.splice(0,0, doc.entity_backing_field.entity_type);
                                emit(key ,value[index]);
                            }
@@ -123,7 +113,7 @@ class EntityManagementService:
                      }
 			         for(index in value)
                          {
-                            var key = [doc.entity_backing_field.entity_type, index, date.getFullYear(), date.getMonth()+1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+                            var key = [doc.entity_backing_field.entity_type, index, date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
                             emit(key, value[index]);
                          }
                      }
@@ -140,7 +130,7 @@ class EntityManagementService:
                     };
                     if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field))
                     {
-                        var value = {entity_type: { value:doc.entity_backing_field.entity_type }, document_type: { value:doc.entity_backing_field.document_type}};
+                        var value = {};
                         var date = new Date(doc.created_on);
                         if(isNotNull(doc.entity_backing_field) && isNotNull(doc.entity_backing_field.attributes))
                         {
@@ -165,7 +155,7 @@ class EntityManagementService:
                                  value[index] = attributes[index];
                              }
                          }
-                         var key = [doc.entity_backing_field.entity_type, doc.entity_backing_field._id, date.getFullYear(), date.getMonth()+1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+                         var key = [doc.entity_backing_field.entity_type, doc.entity_backing_field._id, date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
                          emit (key, value);
                      }
                 }"""
@@ -175,7 +165,7 @@ class EntityManagementService:
                                 return (o === undefined) || (o == null);
                             };
 
-                            var current = { entity_id : {value: key[0][0][1] } };
+                            var current = {entity_id : key[0][0][1]};
 
                             for(value in values)
                             {
