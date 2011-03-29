@@ -2,7 +2,7 @@ from services.repository.DocumentBase import DocumentBase
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 from services.settings import *
-from services.authentication.models import UserModel
+from authentication.models import UserModel
 
 class TestConnection(object):
 

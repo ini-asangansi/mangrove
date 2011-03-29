@@ -1,6 +1,6 @@
 from datetime import datetime
 import re
-from services.authentication.models import UserModel, EncryptionHelper
+from authentication.models import UserModel, EncryptionHelper
 
 class TestUserModel(object):
 

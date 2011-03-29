@@ -1,5 +1,5 @@
-from services.authentication.authentication_service import AuthenticationService
-from services.authentication.models import UserModel
+from authentication.authentication_service import AuthenticationService
+from authentication.models import UserModel
 from web.registration.forms import RegistrationForm
 from mock import Mock
 

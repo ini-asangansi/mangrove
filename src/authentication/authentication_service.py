@@ -1,4 +1,4 @@
-from services.authentication.models import EncryptionHelper, UserModel
+from authentication.models import EncryptionHelper, UserModel
 from services.repository.connection import Connection
 from services.repository.repository import Repository
 

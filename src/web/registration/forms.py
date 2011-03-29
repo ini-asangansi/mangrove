@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from services.authentication.authentication_service import AuthenticationService
 from web.registration.models import NGOUser
 
 class RegistrationForm(forms.Form):
@@ -27,7 +26,6 @@ class RegistrationForm(forms.Form):
 
 
     def __init__(self,*args,**kwargs):
-        self.authService = AuthenticationService()
         super(RegistrationForm,self).__init__(*args,**kwargs)
 
     def clean(self):
