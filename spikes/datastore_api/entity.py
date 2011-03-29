@@ -41,7 +41,7 @@ def entities_for_ids(uids):
             # guess there wasn't an entity with that id
             pass
 
-    return uids
+    return entities
 
 def entities_for_attributes(attrs):
     '''
