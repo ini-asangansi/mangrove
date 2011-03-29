@@ -1,10 +1,12 @@
 from django.conf.urls.defaults import patterns, include, url
-import os
-from settings import PROJECT_DIR
+
+# Uncomment the next two lines to enable the admin:
+# from django.contrib import admin
+# admin.autodiscover()
 import settings
 
 urlpatterns = patterns('',
-    (r'',include('web.login.urls')),
+    (r'',include('web.registration.urls')),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     # Examples:
     # url(r'^$', 'web.views.home', name='home'),

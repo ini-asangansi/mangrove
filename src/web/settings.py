@@ -1,6 +1,5 @@
 # Django settings for web project.
-from django.contrib.auth import login
-import os.path
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -14,8 +13,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'mangrovedb',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -73,7 +72,7 @@ STATIC_URL = '/static/'
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -91,7 +90,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '#$(g3bl61qkn6ii+imw^+sh(m8j*h!sr(pm#27f$79e9r%-tyv'
+SECRET_KEY = ')(qag8n#2$8dl8krz20+xe9khly2_g$k&29m&-$)bcmd-l-5m)'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -112,12 +111,14 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'web.urls'
 
 TEMPLATE_DIRS = (
+#    os.path.join(PROJECT_DIR, 'registration'),
     os.path.join(PROJECT_DIR, 'templates'),
-    os.path.join(PROJECT_DIR, 'login/templates'),
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/registration".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
+
+LOGIN_REDIRECT_URL=('home')
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -126,25 +127,15 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'web.registration'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
 
-AUTHENTICATION_BACKENDS= ['web.login.authentication_backend.AuthenticationBackend',]
-CACHE_BACKEND = 'localmem:///'
-CACHES = {
-             'default':{
-                           'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-                           'LOCATION': 'web',
-                       }
-         }
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_COOKIE_HTTPONLY = True
-MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
-
+AUTHENTICATION_BACKENDS= ('web.registration.authentication_backend.NGOUserModelBackend',)
+CUSTOM_USER_MODEL = 'registration.NGOUser'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

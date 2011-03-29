@@ -18,7 +18,7 @@
 
                             <div class="{{ form.password.css_classes  }} form-row-10px">
                                 Point of Contact :
-                                {{ user.first_name }} {{ user.last_name }}
+                                {{ user.title }} {{ user.first_name }} {{ user.last_name }}
                             </div>
 
                             <div class="{{ form.password.css_classes  }} form-row-10px">
@@ -33,6 +33,6 @@
                         </div>
                     </div>
         </fieldset>
-        <div class="span-2 push-1 right"><a href="{% url login.views.login %}">Login</a></div>
+        <div class="span-2 push-1 right"><a href="{% url django.contrib.auth.views.login %}">Login</a></div>
     </div>
 {% endblock %}
