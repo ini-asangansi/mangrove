@@ -26,7 +26,7 @@ class EntityManagementService:
     def load_attributes_for_entity(self, entity_id):
         rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',group=True, group_level=2)
         for row in rows:
-            if row['value']['entity_id'] == entity_id:
+            if row['value']['entity_id']['value'] == entity_id:
                 return row['value']
         return None
 
@@ -34,10 +34,19 @@ class EntityManagementService:
         entity = self.load_entity(entity_id)
         rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',descending=False,group=True, group_level=10, startkey=[entity.entity_type, entity_id], endkey=[entity.entity_type, entity_id, date.year, date.month, date.day, {}])
         for row in rows:
-            if row['value']['entity_id'] == entity_id:
+            if row['value']['entity_id']['value'] == entity_id:
                 return row['value']
         return None
 
+    def load_entities_which_have_attributes(self, attributes):
+        rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',group=True, group_level=2)
+        for row in rows:
+            match = True
+            for attr in attributes:
+                if not row['value'].get(attr) or not str(attributes[attr]) == row['value'][attr].get('value'):
+                    match = False
+            if match:
+                yield row['value']
 
     def load_entities(self, ids = None, entity = Entity):
         if not isinstance(ids, list):
@@ -131,7 +140,7 @@ class EntityManagementService:
                     };
                     if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field))
                     {
-                        var value = {};
+                        var value = {entity_type: { value:doc.entity_backing_field.entity_type }, document_type: { value:doc.entity_backing_field.document_type}};
                         var date = new Date(doc.created_on);
                         if(isNotNull(doc.entity_backing_field) && isNotNull(doc.entity_backing_field.attributes))
                         {
@@ -166,7 +175,7 @@ class EntityManagementService:
                                 return (o === undefined) || (o == null);
                             };
 
-                            var current = {entity_id : key[0][0][1]};
+                            var current = { entity_id : {value: key[0][0][1] } };
 
                             for(value in values)
                             {
