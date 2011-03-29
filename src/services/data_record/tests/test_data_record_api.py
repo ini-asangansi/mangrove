@@ -83,7 +83,7 @@ class TestDataRecordApi(object):
         clinic = self.create_clinic(uuid4().hex, ["India","Maharashtra","Pune"], "Clinic 1")
         data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 10},arv = {'value' : 100},event_time=now)
         data_service.create_data_record(data_record)
-        sleep(1)
+
         data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 15},arv = {'value' : 100},event_time=now + d.timedelta(days=30))
         data_service.create_data_record(data_record)
 
@@ -106,12 +106,26 @@ class TestDataRecordApi(object):
             data_service.create_data_record(data_record)
 
         with patch('services.repository.DocumentBase.DateTime') as dt:
-            dt.now.return_value = d.datetime(2005,1,1)
+            dt.now.return_value = d.datetime(2006,1,1)
             data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 15},arv = {'value' : 100})
             data_service.create_data_record(data_record)
 
         entity_as_on_date = entity_management_service.load_attributes_for_entity_as_on(clinic.id, d.datetime(2005,3,1))
         assert entity_as_on_date['beds']['value'] == "10"
+
+    def test_should_load_entities_with_attributes(self):
+        entity_management_service = EntityManagementService(self.repository)
+        entity_management_service.create_views()
+        now = d.datetime.now()
+        data_service = DataRecordService(self.repository)
+        reporter =self.create_reporter(uuid4().hex,"reporter1",["Country Manager","Field Manager","Field Agent"],25)
+        clinic = self.create_clinic(uuid4().hex, ["India","Maharashtra","Pune"], "Clinic 1")
+        data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 129},arv = {'value' : 100},event_time=now)
+        data_service.create_data_record(data_record)
+
+        generator = entity_management_service.load_entities_which_have_attributes({'entity_type':'clinic', 'beds' : 129})
+        loaded_clinic = generator.next()
+        assert loaded_clinic['beds']['value'] == '129'
 
 
 
