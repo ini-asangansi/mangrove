@@ -13,6 +13,7 @@
 docs/_build/*
 .buildinfo
 .doctrees
+*.mo
 
 # Logs, databases, packages #
 #############################
