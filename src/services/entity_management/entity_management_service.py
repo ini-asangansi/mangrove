@@ -31,7 +31,8 @@ class EntityManagementService:
         return None
 
     def load_attributes_for_entity_as_on(self, entity_id, date):
-        rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',group=True, group_level=10, startkey=[entity_id], endkey=[entity_id, date.year, date.month, date.day, {}])
+        entity = self.load_entity(entity_id)
+        rows = self.repository.load_all_rows_in_view('mangrove_views/current_values',descending=False,group=True, group_level=10, startkey=[entity.entity_type, entity_id], endkey=[entity.entity_type, entity_id, date.year, date.month, date.day, {}])
         for row in rows:
             if row['value']['entity_id'] == entity_id:
                 return row['value']
