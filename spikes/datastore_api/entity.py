@@ -30,7 +30,8 @@ class DataRecord(object):
 
 class Entity(object):
     
-    # entity creation / retrieval
+    #entity creation / retrieval
+    #The user has to call the save method on entity after creating the new Entity object using the contructor
     def __init__(self, geocode = None, geoname = None, unique_name = None):
         '''
         arg is either a uuid, in which case try to instantiate out of DB.
@@ -49,6 +50,9 @@ class Entity(object):
         return self
         
     # datarecord CRUD
+    #The user has to call .save() on the datarecord after calling this api
+    #Also a entity which is not persisted on the datastore and hence has no uuid, can-not be related to a datarecord.
+    #Because we use the uuid of the entity to relate a datarecord to an entity
     def submit_datarecord(self, record_dict):
         '''
         Add a new datarecord to this Entity.
