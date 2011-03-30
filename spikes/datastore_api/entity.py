@@ -8,6 +8,26 @@ from query import QueryManager
 import datetime
 from couchdb.mapping import DateTimeField
 
+class DataRecord(object):
+
+    #FIXME entity_uuid may not be enough for us to relate to an entity
+    #But keeping it simple for now and add other stuff only when we need
+    #And I don't think we need a document_type in the documents to distinguish between entities and data records
+    #Because documents which have the field for_entity_uuid _will_ be datarecords, and others not. 
+    #And this can work in map functions to differentiate datarecords from entities. 
+    #lets keep it simple for now, unless it doesn't work
+    def __init__(self, for_entity_uuid, **kargs):
+        setattr(self, 'for_entity_uuid', entity_uuid)
+        for key, value in kargs.items():
+            setattr(self, key, value)
+
+    def save(self):
+        con = Connection()
+        self.data['created_at'] = DateTimeField()._to_json(datetime.datetime.now())
+        uuid, rev_id = con.save_entity(self.data, self)
+        setattr(self, "uuid", uuid)
+        return self
+
 class Entity(object):
     
     # entity creation / retrieval
@@ -26,6 +46,7 @@ class Entity(object):
         self.data['created_at'] = DateTimeField()._to_json(datetime.datetime.now())
         uuid, rev_id = con.save_entity(self.data, self)
         setattr(self, "uuid", uuid)
+        return self
         
     # datarecord CRUD
     def submit_datarecord(self, record_dict):
