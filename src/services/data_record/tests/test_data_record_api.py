@@ -84,10 +84,13 @@ class TestDataRecordApi(object):
         data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 10},arv = {'value' : 100},event_time=now)
         data_service.create_data_record(data_record)
 
-        data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 15},arv = {'value' : 100},event_time=now + d.timedelta(days=30))
-        data_service.create_data_record(data_record)
+        with patch('services.repository.DocumentBase.DateTime') as dt:
+            dt.now.return_value = d.datetime(2015,1,1)
+            data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 15},arv = {'value' : 100},event_time=now + d.timedelta(days=30))
+            data_service.create_data_record(data_record)
 
         current_value = entity_management_service.load_attributes_for_entity(clinic.id)
+        print current_value['beds']['value']
         assert current_value['beds']['value'] == '15'
 
     def test_should_get_current_values_for_entity_as_on_date(self):
