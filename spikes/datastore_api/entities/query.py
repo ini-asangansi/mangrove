@@ -1,12 +1,15 @@
 from datastore_api.entity import Entity
 from datastore_api.connection import Connection
+from couchdb.mapping import DateTimeField
 
 database = Connection().get_database()
 
 def get(uuid):
     data_dict = database[uuid]
+    created_at = DateTimeField()._to_python(data_dict['created_at'])
     entity = Entity(geocode = data_dict['geocode'], geoname = data_dict['geoname'], unique_name = data_dict['unique_name'])
     setattr(entity, 'uuid', data_dict['_id'])
+    setattr(entity, 'created_at', created_at)
     return entity
     
 def entities_for_ids(uids):

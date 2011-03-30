@@ -5,6 +5,8 @@
 
 from connection import Connection
 from query import QueryManager
+import datetime
+from couchdb.mapping import DateTimeField
 
 class Entity(object):
     
@@ -15,13 +17,13 @@ class Entity(object):
         OR arg is a dict, in which case create a new one
 
         '''
-        
-        self.data = {'geocode' : geocode, 'geoname' :geoname, 'unique_name' :unique_name }
+        self.data = {'geocode' : geocode, 'geoname' :geoname, 'unique_name' :unique_name}
         for key, value in self.data.items():
             setattr(self, key, value)
                 
     def save(self):
         con = Connection()
+        self.data['created_at'] = DateTimeField()._to_json(datetime.datetime.now())
         uuid, rev_id = con.save_entity(self.data, self)
         setattr(self, "uuid", uuid)
         
