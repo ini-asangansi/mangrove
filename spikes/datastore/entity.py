@@ -1,45 +1,40 @@
 import uuid
 import couchdb
-from couchdb.mapping import *
 import datetime
-
-from record import Record
-from datastore import DataStore
 
 # Module (almost Class) methods
 
-#def get_by_id(self, id):
-#    return self.load(ds.db, id)
+def get_by_id(id):
+    """
+    returns an entity from the given entity id
+    """
+    return None
+
+def get_by_type(type):
+    """
+    returns a list of entities that match the given type
+    """
+    return []
+
+def get_by_attribute(attribute=[]):
+    """
+    returns a list of entities that match the given attributes
+    """
+    return []
 
 # Main Entity class
 
-class Entity(couchdb.mapping.Document):
-    document_type = TextField()
-    entity_type = TextField()
-    name = TextField()
-    created_at = DateTimeField()
-    aggregation_trees = DictField()
+class Entity(object):
 
-    def __init__(self, id=None, document_type='entity', aggregation_trees={}, **kwargs):
-        self.data = {}
-        if not id: id = uuid.uuid4().hex
-        super(couchdb.mapping.Document, self).__init__(
-            id = id,
-            document_type = document_type,
-            aggregation_trees = aggregation_trees,
-            created_at = datetime.datetime.now(),
-            **kwargs
-        )
-        self._save()
+    def __init__(self, **kwargs):
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
-    def _save(self):
-        ds = DataStore()
-        ds.store(self)
+    def save(self):
+        pass
 
     def update(self, **kwargs):
-        for k, v in kwargs.iteritems():
-            setattr(self, k, v)
-        self._save()
+        pass
 
     def delete(self):
         pass
