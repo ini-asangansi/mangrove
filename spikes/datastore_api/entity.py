@@ -16,9 +16,9 @@ class DataRecord(object):
     #Because documents which have the field for_entity_uuid _will_ be datarecords, and others not. 
     #And this can work in map functions to differentiate datarecords from entities. 
     #lets keep it simple for now, unless it doesn't work
-    def __init__(self, for_entity_uuid, **kargs):
+    def __init__(self, for_entity_uuid, record_dict):
         setattr(self, 'for_entity_uuid', entity_uuid)
-        for key, value in kargs.items():
+        for key, value in record_dict.items():
             setattr(self, key, value)
 
     def save(self):
@@ -55,7 +55,8 @@ class Entity(object):
 
         Return a UUID for the datarecord.
         '''
-        pass
+        data_record = DataRecord(for_entity_uuid = self.uuid, record_dict)
+        return data_record
         
     def update_datarecord(self,uid,record_dict):
         '''
