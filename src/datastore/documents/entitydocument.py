@@ -3,13 +3,12 @@ from services.data_record.raw_field import RawField
 from services.repository.DocumentBase import DocumentBase
 
 class EntityDocument(DocumentBase):
-    def __init__(self, id=None,name = None, entity_type = None, aggregation_trees={}, **values):
+    def __init__(self, id=None,name = None, entity_type = None, aggregation_trees={},attributes=None, **values):
         DocumentBase.__init__(self, id=id, document_type = 'Entity', **values)
         self.aggregation_trees = aggregation_trees
         self.name=name
         self.entity_type = entity_type
-        if values:
-            self.attributes = values
+        self.attributes = attributes
 
     entity_type = TextField()
     name = TextField()
