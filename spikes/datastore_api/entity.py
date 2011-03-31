@@ -6,7 +6,6 @@
 import datetime
 
 from backend import DataBaseBackend
-from query import QueryManager
 
 class DataRecord(object):
 
