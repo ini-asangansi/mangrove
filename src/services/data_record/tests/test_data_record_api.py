@@ -22,7 +22,6 @@ class TestDataRecordApi(object):
         self.repository.delete_database()
 
     def create_clinic(self,id,location,name):
-
         entity_service = EntityManagementService(self.repository)
         clinic= Entity(id=id,entity_type = 'clinic',name=name,aggregation_trees={"location":location})
         clinic = entity_service.create_entity(clinic)
@@ -110,11 +109,49 @@ class TestDataRecordApi(object):
 
         with patch('services.repository.DocumentBase.DateTime') as dt:
             dt.now.return_value = d.datetime(2006,1,1)
-            data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 15},arv = {'value' : 100})
+            data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 20},arv = {'value' : 200})
+            data_service.create_data_record(data_record)
+
+        with patch('services.repository.DocumentBase.DateTime') as dt:
+            dt.now.return_value = d.datetime(2006,2,1)
+            data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 30},arv = {'value' : 300})
+            data_service.create_data_record(data_record)
+
+        with patch('services.repository.DocumentBase.DateTime') as dt:
+            dt.now.return_value = d.datetime(2006,2,2)
+            data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 40},arv = {'value' : 400})
+            data_service.create_data_record(data_record)
+
+        with patch('services.repository.DocumentBase.DateTime') as dt:
+            dt.now.return_value = d.datetime(2006,2,28)
+            data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 50},arv = {'value' : 500})
             data_service.create_data_record(data_record)
 
         entity_as_on_date = entity_management_service.load_attributes_for_entity_as_on(clinic.id, d.datetime(2005,3,1))
         assert entity_as_on_date['beds']['value'] == "10"
+        assert entity_as_on_date['arv']['value'] == "100"
+
+        entity_as_on_date = entity_management_service.load_attributes_for_entity_as_on(clinic.id, d.datetime(2006,1,1))
+        assert entity_as_on_date['beds']['value'] == "20"
+        assert entity_as_on_date['arv']['value'] == "200"
+
+        entity_as_on_date = entity_management_service.load_attributes_for_entity_as_on(clinic.id, d.datetime(2006,2,1))
+        assert entity_as_on_date['beds']['value'] == "30"
+        assert entity_as_on_date['arv']['value'] == "300"
+
+        entity_as_on_date = entity_management_service.load_attributes_for_entity_as_on(clinic.id, d.datetime(2006,2,2))
+        assert entity_as_on_date['beds']['value'] == "40"
+        assert entity_as_on_date['arv']['value'] == "400"
+
+        entity_as_on_date = entity_management_service.load_attributes_for_entity_as_on(clinic.id, d.datetime(2006,2,10))
+        assert entity_as_on_date['beds']['value'] == "40"
+        assert entity_as_on_date['arv']['value'] == "400"
+
+        entity_as_on_date = entity_management_service.load_attributes_for_entity_as_on(clinic.id, d.datetime(2006,2,28))
+        assert entity_as_on_date['beds']['value'] == "50"
+        assert entity_as_on_date['arv']['value'] == "500"
+
+
 
     def test_should_load_entities_with_attributes(self):
         entity_management_service = EntityManagementService(self.repository)
