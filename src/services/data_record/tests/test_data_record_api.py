@@ -89,8 +89,27 @@ class TestDataRecordApi(object):
             data_service.create_data_record(data_record)
 
         current_value = entity_management_service.load_attributes_for_entity(clinic.id)
-        print current_value['beds']['value']
         assert current_value['beds']['value'] == '15'
+
+        with patch('services.repository.DocumentBase.DateTime') as dt:
+            dt.now.return_value = d.datetime(2015,1,2)
+            data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 20},arv = {'value' : 1000},event_time=now + d.timedelta(days=30))
+            data_service.create_data_record(data_record)
+
+        current_value = entity_management_service.load_attributes_for_entity(clinic.id)
+        assert current_value['beds']['value'] == '20'
+
+
+        with patch('services.repository.DocumentBase.DateTime') as dt:
+            dt.now.return_value = d.datetime(2015,2,2)
+            data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 30},arv = {'value' : 3000},event_time=now + d.timedelta(days=30))
+            data_service.create_data_record(data_record)
+
+        current_value = entity_management_service.load_attributes_for_entity(clinic.id)
+        assert current_value['beds']['value'] == '30'
+
+
+
 
     def test_should_get_current_values_for_entity_as_on_date(self):
         entity_management_service = EntityManagementService(self.repository)
@@ -163,9 +182,26 @@ class TestDataRecordApi(object):
         data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1234',"report":'hn1.2424'},beds = {'value' : 129},arv = {'value' : 100},event_time=now)
         data_service.create_data_record(data_record)
 
+        clinic = self.create_clinic(uuid4().hex, ["India","Maharashtra","Mumbai"], "Clinic 2")
+        data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1243',"report":'hn1.3434'},beds = {'value' : 129},arv = {'value' : 200},event_time=now)
+        data_service.create_data_record(data_record)
+
+        clinic = self.create_clinic(uuid4().hex, ["India","Maharashtra","Mumbai"], "Clinic 3")
+        data_record = DataRecord(entity=clinic,reporter=reporter,source = {"phone":'1243',"report":'hn1.3434'},beds = {'value' : 229},arv = {'value' : 200},event_time=now)
+        data_service.create_data_record(data_record)
+
         generator = entity_management_service.load_entities_which_have_attributes({'entity_type':'clinic', 'beds' : 129})
-        loaded_clinic = generator.next()
-        assert loaded_clinic['beds']['value'] == '129'
+        rowlist = list(generator)
+
+        assert len(rowlist) == 2
+        assert ('229' in [row['beds']['value'] for row in rowlist]) == False
+
+
+
+
+        
+
+
 
 
 
