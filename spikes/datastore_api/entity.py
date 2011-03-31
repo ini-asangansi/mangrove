@@ -3,8 +3,25 @@
 # Datarecords are always submitted/retrieved from an Entity
 #
 
+import datetime
+
 from backend import DataBaseBackend
 from query import QueryManager
+
+class DataRecord(object):
+
+    #FIXME entity_uuid may not be enough for us to relate to an entity
+    #But keeping it simple for now and add other stuff only when we need
+    #And I don't think we need a document_type in the documents to distinguish between entities and data records
+    #Because documents which have the field for_entity_uuid _will_ be datarecords, and others not. 
+    #And this can work in map functions to differentiate datarecords from entities. 
+    #lets keep it simple for now, unless it doesn't work
+    def __init__(self, for_entity_uuid, record_dict):
+        setattr(self, 'for_entity_uuid', for_entity_uuid)
+        setattr(self, 'data', record_dict)
+
+    def save(self):
+        return DataBaseBackend().save_datarecord(self.data, self)
 
 class Entity(object):
     
@@ -16,21 +33,25 @@ class Entity(object):
 
         '''
         
-        self.data = {'geocode' : geocode, 'geoname' :geoname, 'unique_name' :unique_name }
-        for key, value in self.data.items():
+        data = {'geocode' : geocode, 'geoname' :geoname, 'unique_name' :unique_name }
+        for key, value in data.items():
             setattr(self, key, value)
                 
     def save(self):
-        return DataBaseBackend().save(self.data, self)
+        return DataBaseBackend().save_entity(self)
         
-    # datarecord CRUD
+    #The user has to call .save() on the datarecord after calling this api
+    #Also a entity which is not persisted on the datastore and hence has no uuid, can-not be related to a datarecord.
+    #Because we use the uuid of the entity to relate a datarecord to an entity
     def submit_datarecord(self, record_dict):
         '''
         Add a new datarecord to this Entity.
 
         Return a UUID for the datarecord.
         '''
-        pass
+        data_record = DataRecord(self.uuid, record_dict)
+        return data_record
+
         
     def update_datarecord(self,uid,record_dict):
         '''

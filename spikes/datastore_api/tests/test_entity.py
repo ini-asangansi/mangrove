@@ -22,3 +22,11 @@ class TestEntity(unittest.TestCase):
         entity.save()
         #FIXME Need Py2.7 to run the below code.
         #self.assertIfNotNone(entity.created_at)
+
+    def test_add_data_record_to_entity(self):
+        entity = Entity(geocode = "1234", geoname = "Accra", unique_name = "Kajelo CHPS")
+        entity.save()
+
+        data_record = entity.submit_datarecord({'arv': '40'})
+        data_record.save()
+        self.assertEqual(data_record.for_entity_uuid, entity.uuid)

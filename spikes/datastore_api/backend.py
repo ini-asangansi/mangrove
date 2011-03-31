@@ -1,5 +1,8 @@
+import datetime
+
 from couchdb.http import ResourceNotFound
 from couchdb import Server
+from couchdb.mapping import DateTimeField
 
 DATABASE_NAME = 'mangrove'
 SERVER_HOST = 'http://0.0.0.0:5984'
@@ -24,8 +27,15 @@ class DataBaseBackend(object):
         except ResourceNotFound:
             self.database = self.server.create(database_name)
         
-    def save(self, arg, obj):
-        uuid, rev_id = self.database.save(arg)
+    def save_datarecord(self, data, obj):
+        data['created_at'] = DateTimeField()._to_json(datetime.datetime.now())
+        uuid, rev_id = self.database.save(data)
+        setattr(obj, "uuid", uuid)
+        return obj
+
+    def save_entity(self, obj):
+        created_at = DateTimeField()._to_json(datetime.datetime.now())
+        uuid, rev_id = self.database.save({'geocode' : obj.geocode, 'geoname' :obj.geoname, 'unique_name' :obj.unique_name, 'created_at' :created_at })
         setattr(obj, "uuid", uuid)
         return obj
         
