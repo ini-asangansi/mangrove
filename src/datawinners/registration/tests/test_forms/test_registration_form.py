@@ -1,9 +1,9 @@
 from authentication.authentication_service import AuthenticationService
 from authentication.models import UserModel
-from web.registration.forms import RegistrationForm
+from datawinners.registration.forms import RegistrationForm
 from mock import Mock
 from mock import patch
-from web.registration.models import NGOUser
+from datawinners.registration.models import NGOUser
 
 
 class TestRegistrationForm(object):

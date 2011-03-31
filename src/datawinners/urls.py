@@ -6,7 +6,7 @@ from django.conf.urls.defaults import patterns, include, url
 import settings
 
 urlpatterns = patterns('',
-    (r'',include('web.registration.urls')),
+    (r'',include('datawinners.registration.urls')),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     # Examples:
     # url(r'^$', 'web.views.home', name='home'),

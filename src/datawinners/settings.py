@@ -108,7 +108,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware'
 )
 
-ROOT_URLCONF = 'web.urls'
+ROOT_URLCONF = 'datawinners.urls'
 
 TEMPLATE_DIRS = (
 #    os.path.join(PROJECT_DIR, 'registration'),
@@ -127,14 +127,14 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'web.registration'
+    'datawinners.registration'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
 
-AUTHENTICATION_BACKENDS= ('web.registration.authentication_backend.NGOUserModelBackend',)
+AUTHENTICATION_BACKENDS= ('datawinners.registration.authentication_backend.NGOUserModelBackend',)
 CUSTOM_USER_MODEL = 'registration.NGOUser'
 
 # A sample logging configuration. The only tangible logging

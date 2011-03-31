@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from web.registration.models import NGOUser
+from datawinners.registration.models import NGOUser
 
 class RegistrationForm(forms.Form):
     error_css_class = 'error'
@@ -45,14 +45,14 @@ class RegistrationForm(forms.Form):
             self._errors['password'] = self.error_class([msg])
 
     def get_user_from_database(self):
-        user = NGOUser.objects.get(username=(cleaned_data.get('email')))
+        user = NGOUser.objects.get(username=(self.cleaned_data.get('email')))
         return user
 
     def check_existence_of_user(self):
         cleaned_data = self.cleaned_data
         try:
             user = self.get_user_from_database()
-            if(user):
+            if user:
                 msg = 'Email Id already registered.'
                 self._errors['email'] = self.error_class([msg])
         except NGOUser.DoesNotExist:

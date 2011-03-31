@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
-from web.registration.forms import LoginForm
-from web.registration.views import *
+from datawinners.registration.forms import LoginForm
+from datawinners.registration.views import *
 
 urlpatterns = patterns('',
     ('login', 'django.contrib.auth.views.login', {'authentication_form': LoginForm}),

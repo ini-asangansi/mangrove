@@ -4,12 +4,12 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
-from web.registration.forms import RegistrationForm
+from datawinners.registration.forms import RegistrationForm
 from django.contrib import messages
 
 #TODO: create org id from the creator
 # Set the user as super user
-from web.registration.models import Organization, NGOUser
+from datawinners.registration.models import Organization, NGOUser
 
 def register(request):
     if request.method == 'POST':
