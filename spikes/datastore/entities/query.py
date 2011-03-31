@@ -4,7 +4,7 @@ from couchdb.mapping import DateTimeField
 
 def get(uuid):
     data_dict = DataBaseBackend().get(uuid)
-    entity = Entity(geocode = data_dict['geocode'], geoname = data_dict['geoname'], unique_name = data_dict['unique_name'])
+    entity = Entity(geocode = data_dict['geocode'], geoname = data_dict['geoname'], unique_name = data_dict['unique_name'], aggregation_tree = data_dict['aggregation_tree'])
     setattr(entity, 'uuid', data_dict['_id'])
     setattr(entity, 'created_at', data_dict['created_at'])
     return entity

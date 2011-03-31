@@ -19,8 +19,8 @@ class DataRecord(object):
 
 class Entity(object):
     
-    def __init__(self, geocode = None, geoname = None, unique_name = None):
-        data = {'geocode' : geocode, 'geoname' :geoname, 'unique_name' :unique_name }
+    def __init__(self, geocode = None, geoname = None, unique_name = None, aggregation_tree = None):
+        data = {'geocode' : geocode, 'geoname' :geoname, 'unique_name' :unique_name, 'aggregation_tree' :aggregation_tree}
         for key, value in data.items():
             setattr(self, key, value)
                 

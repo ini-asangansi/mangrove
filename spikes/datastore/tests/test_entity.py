@@ -39,3 +39,11 @@ class TestEntity(unittest.TestCase):
         data_record = entity.submit_datarecord(record_dict = {'arv': '40'}, created_at = datetime.datetime.now())
         data_record.save()
         self.assertEqual(data_record.reported_at.date(), datetime.datetime.now().date())
+        
+    def test_single_aggregation_trees(self):
+        aggregation_tree = {"org_chart": ["CEO", "Architect", "Developer"]}
+        entity = Entity(geocode = "1234", geoname = "Accra", unique_name = "Kajelo CHPS", aggregation_tree = aggregation_tree)
+        entity.save()
+        
+        loaded_entity = query.get(uuid=entity.uuid)
+        self.assertEqual(loaded_entity.aggregation_tree['org_chart'], ["CEO", "Architect", "Developer"])
