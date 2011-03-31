@@ -8,7 +8,7 @@ from services.entity_management.models import Entity
 from uuid import uuid4
 from services.data_record.data_record_service import DataRecordService
 from services.data_record.models import DataRecord
-
+from nose.tools import assert_equal
 
 class TestDataRecordApi(object):
 
@@ -88,7 +88,7 @@ class TestDataRecordApi(object):
         data_service.create_data_record(data_record)
 
         current_value = entity_management_service.load_attributes_for_entity(clinic.id)
-        assert current_value['beds']['value'] == '15'
+        assert_equal(current_value['beds']['value'],'15')
 
     def test_should_get_current_values_for_entity_as_on_date(self):
         entity_management_service = EntityManagementService(self.repository)

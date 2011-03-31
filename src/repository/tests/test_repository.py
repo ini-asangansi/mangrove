@@ -1,6 +1,6 @@
-from services.repository.DocumentBase import DocumentBase
-from services.repository.connection import Connection
-from services.repository.repository import Repository
+from repository.DocumentBase import DocumentBase
+from repository.connection import Connection
+from repository.repository import Repository
 from services.settings import *
 from authentication.models import UserModel
 

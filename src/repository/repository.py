@@ -1,9 +1,8 @@
 from couchdb.design import ViewDefinition
-from services.repository.DocumentBase import DocumentBase
-from services.repository.connection import Connection
+from DocumentBase import DocumentBase
+from connection import Connection
 
 class Repository:
-
     def __init__(self, connection = Connection()):
         self.connection = connection
         self.database = connection.database
