@@ -17,3 +17,8 @@ class TestEntity(unittest.TestCase):
         self.assertEqual(loaded_entity.uuid, entity.uuid)
         
         
+    def test_enity_has_created_at(self):
+        entity = Entity(geocode = "1234", geoname = "Accra", unique_name = "Kajelo CHPS")
+        entity.save()
+        #FIXME Need Py2.7 to run the below code.
+        #self.assertIfNotNone(entity.created_at)

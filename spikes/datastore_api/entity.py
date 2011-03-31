@@ -3,7 +3,7 @@
 # Datarecords are always submitted/retrieved from an Entity
 #
 
-from connection import Connection
+from backend import DataBaseBackend
 from query import QueryManager
 
 class Entity(object):
@@ -21,9 +21,7 @@ class Entity(object):
             setattr(self, key, value)
                 
     def save(self):
-        con = Connection()
-        uuid, rev_id = con.save_entity(self.data, self)
-        setattr(self, "uuid", uuid)
+        return DataBaseBackend().save(self.data, self)
         
     # datarecord CRUD
     def submit_datarecord(self, record_dict):

@@ -5,7 +5,7 @@ DATABASE_NAME = 'mangrove'
 SERVER_HOST = 'http://0.0.0.0:5984'
 
 #FIXME: Duplicated it for the sake of the spike
-class Connection(object):
+class DataBaseBackend(object):
     """
         Connect to CouchDb according to params in the settings.py file
         and store that internally.
@@ -13,22 +13,21 @@ class Connection(object):
         Access is made with this class cause it's a singleton.
     """
 
-    def __init__(self, server=SERVER_HOST, *args, **kwargs):
+    def __init__(self, server=SERVER_HOST, database_name = DATABASE_NAME, *args, **kwargs):
         """
             Connect to the CouchDB server. If no database name is given , use the name provided in the settings
         """
-        self.url = server or SERVER
+        self.url = server
         self.server = Server(self.url)
-            
-    def get_database(self, database_name = DATABASE_NAME):
         try:
             self.database = self.server[database_name]
         except ResourceNotFound:
             self.database = self.server.create(database_name)
-        return self.database
         
-    def save_entity(self, arg, entity):
-        return self.get_database(DATABASE_NAME).save(arg)
+    def save(self, arg, obj):
+        uuid, rev_id = self.database.save(arg)
+        setattr(obj, "uuid", uuid)
+        return obj
         
     def get(self, uuid):
         return self.database[uuid]

@@ -1,10 +1,8 @@
 from datastore_api.entity import Entity
-from datastore_api.connection import Connection
-
-database = Connection().get_database()
+from datastore_api.backend import DataBaseBackend
 
 def get(uuid):
-    data_dict = database[uuid]
+    data_dict = DataBaseBackend().get(uuid)
     entity = Entity(geocode = data_dict['geocode'], geoname = data_dict['geoname'], unique_name = data_dict['unique_name'])
     setattr(entity, 'uuid', data_dict['_id'])
     return entity
