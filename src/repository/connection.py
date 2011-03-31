@@ -1,5 +1,5 @@
 from couchdb.http import ResourceNotFound
-from services.repository.server import Server
+from server import Server
 
 from services.settings import *
 
