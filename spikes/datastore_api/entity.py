@@ -16,8 +16,9 @@ class DataRecord(object):
     #Because documents which have the field for_entity_uuid _will_ be datarecords, and others not. 
     #And this can work in map functions to differentiate datarecords from entities. 
     #lets keep it simple for now, unless it doesn't work
-    def __init__(self, for_entity_uuid, record_dict):
+    def __init__(self, for_entity_uuid, record_dict, reported_at):
         setattr(self, 'for_entity_uuid', for_entity_uuid)
+        setattr(self, 'reported_at', reported_at)
         setattr(self, 'data', record_dict)
 
     def save(self):
@@ -43,13 +44,13 @@ class Entity(object):
     #The user has to call .save() on the datarecord after calling this api
     #Also a entity which is not persisted on the datastore and hence has no uuid, can-not be related to a datarecord.
     #Because we use the uuid of the entity to relate a datarecord to an entity
-    def submit_datarecord(self, record_dict):
+    def submit_datarecord(self, record_dict, created_at):
         '''
         Add a new datarecord to this Entity.
 
         Return a UUID for the datarecord.
         '''
-        data_record = DataRecord(self.uuid, record_dict)
+        data_record = DataRecord(self.uuid, record_dict, created_at)
         return data_record
 
         

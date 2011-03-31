@@ -29,6 +29,7 @@ class DataBaseBackend(object):
         
     def save_datarecord(self, data, obj):
         data['created_at'] = DateTimeField()._to_json(datetime.datetime.now())
+        data['reported_at'] = DateTimeField()._to_json(obj.reported_at)
         uuid, rev_id = self.database.save(data)
         setattr(obj, "uuid", uuid)
         return obj

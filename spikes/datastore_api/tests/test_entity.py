@@ -1,6 +1,7 @@
 from datastore_api.entity import Entity
 from datastore_api.entities import query
 import unittest
+import datetime
 
 class TestEntity(unittest.TestCase):
     
@@ -27,6 +28,14 @@ class TestEntity(unittest.TestCase):
         entity = Entity(geocode = "1234", geoname = "Accra", unique_name = "Kajelo CHPS")
         entity.save()
 
-        data_record = entity.submit_datarecord({'arv': '40'})
+        data_record = entity.submit_datarecord(record_dict = {'arv': '40'}, created_at = datetime.datetime.now())
         data_record.save()
         self.assertEqual(data_record.for_entity_uuid, entity.uuid)
+
+    def test_if_reported_at_attribute_is_created(self):
+        entity = Entity(geocode = "1234", geoname = "Accra", unique_name = "Kajelo CHPS")
+        entity.save()
+
+        data_record = entity.submit_datarecord(record_dict = {'arv': '40'}, created_at = datetime.datetime.now())
+        data_record.save()
+        self.assertEqual(data_record.reported_at.date(), datetime.datetime.date())
