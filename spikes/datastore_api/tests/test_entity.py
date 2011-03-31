@@ -38,4 +38,4 @@ class TestEntity(unittest.TestCase):
 
         data_record = entity.submit_datarecord(record_dict = {'arv': '40'}, created_at = datetime.datetime.now())
         data_record.save()
-        self.assertEqual(data_record.reported_at.date(), datetime.datetime.date())
+        self.assertEqual(data_record.reported_at.date(), datetime.datetime.now().date())

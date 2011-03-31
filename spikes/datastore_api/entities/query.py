@@ -14,7 +14,7 @@ def entities_for_ids(uids):
     entities = []
     for uid in uids:
         try:
-            entities.append(Entity(id=uid))
+            entities.append(get(uid))
         except:
             # guess there wasn't an entity with that id
             pass

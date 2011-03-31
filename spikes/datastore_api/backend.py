@@ -9,17 +9,8 @@ SERVER_HOST = 'http://0.0.0.0:5984'
 
 #FIXME: Duplicated it for the sake of the spike
 class DataBaseBackend(object):
-    """
-        Connect to CouchDb according to params in the settings.py file
-        and store that internally.
-
-        Access is made with this class cause it's a singleton.
-    """
 
     def __init__(self, server=SERVER_HOST, database_name = DATABASE_NAME, *args, **kwargs):
-        """
-            Connect to the CouchDB server. If no database name is given , use the name provided in the settings
-        """
         self.url = server
         self.server = Server(self.url)
         try:
@@ -36,7 +27,8 @@ class DataBaseBackend(object):
 
     def save_entity(self, obj):
         created_at = DateTimeField()._to_json(datetime.datetime.now())
-        uuid, rev_id = self.database.save({'geocode' : obj.geocode, 'geoname' :obj.geoname, 'unique_name' :obj.unique_name, 'created_at' :created_at })
+        setattr(obj, 'created_at', created_at)
+        uuid, rev_id = self.database.save(obj.__dict__)
         setattr(obj, "uuid", uuid)
         return obj
         
