@@ -1,7 +1,7 @@
+from datastore.entity import Entity
 from repository.DocumentBase import DocumentBase
 from repository.repository import Repository
 from services.settings import *
-from authentication.models import UserModel
 
 class TestRepository:
 
@@ -33,5 +33,5 @@ class TestRepository:
     def test_should_return_none_if_documentid_is_empty(self):
         database = 'test_connection'
         repository = Repository(server=SERVER, database=database)
-        user = repository.load('',UserModel)
+        user = repository.load('',Entity)
         assert not user
