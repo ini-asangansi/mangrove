@@ -1,6 +1,6 @@
 from couchdb.mapping import TextField, ListField, DateTimeField, DictField, Mapping, Field
 from services.data_record.raw_field import RawField
-from services.repository.DocumentBase import DocumentBase
+from repository.DocumentBase import DocumentBase
 
 class EntityDocument(DocumentBase):
     def __init__(self, id=None,name = None, entity_type = None, aggregation_trees={},attributes=None, **values):

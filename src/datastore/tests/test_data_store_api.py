@@ -18,6 +18,7 @@ class TestDataStoreApi(object):
                                   attributes={"power_type":"dc"})
         uuid = e.save()
         assert uuid
+        Repository().delete(e.entity_doc)
 
     def test_get_entity(self):
         e = entity.get(self.uuid)
@@ -48,11 +49,20 @@ class TestDataStoreApi(object):
         saved = entity.get(self.uuid)
         assert saved.hierarchy_tree["location"]==["India","MH","Pune"]  # Hierarchy has not changed.
 
-#    def test_get_entities(self):
-#        entity_two = Entity("Clinic2","clinic",["India","TN","Chennai"])
-#        id2 = entity_two.save()
-#        id_list=[]
-#        id_list.append(self.uuid)
-#        id_list.append(id2)
-#        entity_list = entity.get_entities(id_list)
-#        assert len(entity_list) ==2
+    def test_get_entities(self):
+        entity_two = Entity("Clinic2","clinic",["India","TN","Chennai"])
+        id2 = entity_two.save()
+        id_list=[]
+        id_list.append(self.uuid)
+        id_list.append(id2)
+        entity_list = entity.get_entities(id_list)
+        assert len(entity_list) ==2
+        assert entity_list[0].name == "Test_Entity"
+        assert entity_list[1].name == "Clinic2"
+        Repository().delete(entity_two.entity_doc)
+
+#    def test_add_data_record_to_entity(self):
+#        e = entity.get(self.uuid)
+#        data_record = Data
+#        e.add_data_record(DataRecord())
+
