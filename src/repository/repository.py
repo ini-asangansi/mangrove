@@ -1,11 +1,31 @@
 from couchdb.design import ViewDefinition
 from DocumentBase import DocumentBase
-from connection import Connection
+from couchdb.http import ResourceNotFound
+from server import Server
+from services.settings import *
 
 class Repository:
-    def __init__(self, connection = Connection()):
-        self.connection = connection
-        self.database = connection.database
+
+    def __init__(self, server=None, database=None,  *args, **kwargs):
+        """
+            Connect to the CouchDB server. If no database name is given , use the name provided in the settings
+        """
+        self.url = server or SERVER
+        self.database_name = database or DATABASE
+        self.server = Server(self.url)
+        try:
+            self.database = self.server[self.database_name]
+        except ResourceNotFound:
+            self.database = self.server.create(self.database_name)
+
+    def __unicode__(self):
+        return u"Connected on %s - working on %s" % (self.url, self.database_name)
+
+    def __str__(self):
+        return unicode(self)
+
+    def __repr__(self):
+        return repr(self.database)
 
     def load_all_rows_in_view(self,view_name,**values):
         return self.database.view(view_name,**values).rows
@@ -28,4 +48,4 @@ class Repository:
 
 class RepositoryForTests(Repository):
     def delete_database(self):
-        self.connection.server.delete(self.database)
+        self.server.delete(self.database)

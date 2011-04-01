@@ -1,33 +1,25 @@
 from repository.DocumentBase import DocumentBase
-from repository.connection import Connection
 from repository.repository import Repository
 from services.settings import *
 from authentication.models import UserModel
-
-class TestConnection:
-
-    def test_should_create_database_if_it_does_not_exist(self):
-        database = 'test_connection'
-        self.connection = Connection(server=SERVER, database=database)
-        assert self.connection.url == SERVER
-        assert self.connection.database_name == database
-        assert self.connection.server
-        assert self.connection.database
-
-    def teardown(self):
-        if self.connection and self.connection.database :
-            self.connection.server.delete(self.connection.database)
 
 class TestRepository:
 
     def setup(self):
         database = 'test_connection'
-        self.connection = Connection(server=SERVER, database=database)
-        self.repository = Repository(connection=self.connection)
+        self.repository = Repository(server=SERVER, database=database)
 
     def teardown(self):
-        if self.connection and self.connection.database :
-            self.connection.server.delete(self.connection.database)
+        if self.repository and self.repository.database :
+            self.repository.server.delete(self.repository.database)
+
+    def test_should_create_database_if_it_does_not_exist(self):
+        database = 'test_connection'
+        self.repository = Repository(server=SERVER, database=database)
+        assert self.repository.url == SERVER
+        assert self.repository.database_name == database
+        assert self.repository.server
+        assert self.repository.database
 
     def test_should_persist_and_load_document_to_database(self):
         document = DocumentBase(document_type='TestDocument')
@@ -39,6 +31,7 @@ class TestRepository:
         assert document1
 
     def test_should_return_none_if_documentid_is_empty(self):
-        repository = Repository(connection=self.connection)
+        database = 'test_connection'
+        repository = Repository(server=SERVER, database=database)
         user = repository.load('',UserModel)
         assert not user
