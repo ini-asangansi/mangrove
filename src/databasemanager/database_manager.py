@@ -4,7 +4,7 @@ from couchdb.http import ResourceNotFound
 from server import Server
 from services.settings import *
 
-class Repository:
+class DatabaseManager:
 
     def __init__(self, server=None, database=None,  *args, **kwargs):
         """
@@ -46,6 +46,6 @@ class Repository:
             return document_class.load(self.database, id)
         return None
 
-class RepositoryForTests(Repository):
+class DatabaseManagerForTests(DatabaseManager):
     def delete_database(self):
         self.server.delete(self.database)

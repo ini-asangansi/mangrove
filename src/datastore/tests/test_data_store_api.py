@@ -1,6 +1,6 @@
 from datastore import entity
 from datastore.entity import Entity
-from repository.repository import Repository
+from databasemanager.database_manager import DatabaseManager
 
 class TestDataStoreApi(object):
     def setup(self):
@@ -10,7 +10,7 @@ class TestDataStoreApi(object):
 
     def teardown(self):
         e = entity.get(self.uuid)
-        Repository().delete(e.entity_doc)
+        DatabaseManager().delete(e.entity_doc)
 
     def test_create_entity(self):
         e = Entity(name="X",entity_type="clinic",
@@ -18,7 +18,7 @@ class TestDataStoreApi(object):
                                   attributes={"power_type":"dc"})
         uuid = e.save()
         assert uuid
-        Repository().delete(e.entity_doc)
+        DatabaseManager().delete(e.entity_doc)
 
     def test_get_entity(self):
         e = entity.get(self.uuid)
@@ -59,7 +59,7 @@ class TestDataStoreApi(object):
         assert len(entity_list) ==2
         assert entity_list[0].name == "Test_Entity"
         assert entity_list[1].name == "Clinic2"
-        Repository().delete(entity_two.entity_doc)
+        DatabaseManager().delete(entity_two.entity_doc)
 
 #    def test_add_data_record_to_entity(self):
 #        e = entity.get(self.uuid)

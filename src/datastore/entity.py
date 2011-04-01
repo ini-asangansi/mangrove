@@ -1,10 +1,10 @@
 import copy
 from datastore.documents.entitydocument import EntityDocument
-from repository.repository import Repository
+from databasemanager.database_manager import DatabaseManager
 
 def get(uuid):
-    repository = Repository()
-    entity_doc = repository.load(uuid,EntityDocument)
+    database_manager = DatabaseManager()
+    entity_doc = database_manager.load(uuid,EntityDocument)
     e = Entity(entity_doc.name,entity_doc.entity_type)
     e._setDocument(entity_doc)
     return e
@@ -66,10 +66,10 @@ def entities_in(geoname, attrs=None):
 
 class Entity(object):
 
-    def __init__(self,name,entity_type,location=None,attributes=None,repository=Repository()):
+    def __init__(self,name,entity_type,location=None,attributes=None,database_manager=DatabaseManager()):
         self.entity_doc = None
         self._hierarchy_tree = {}
-        self.repository = repository
+        self.database_manager = database_manager
         self.add_hierarchy("location",location)
         self._set_attr(name,entity_type,self._hierarchy_tree,attributes)
 
@@ -79,7 +79,7 @@ class Entity(object):
                                          aggregation_trees=self._hierarchy_tree,
                                          attributes=self.attributes)
 
-        self.repository.save(self.entity_doc)
+        self.database_manager.save(self.entity_doc)
         return self.entity_doc.id
 
     def add_hierarchy(self,name,value):
