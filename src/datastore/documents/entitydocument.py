@@ -2,7 +2,13 @@ from couchdb.mapping import TextField, ListField, DateTimeField, DictField, Mapp
 from services.data_record.raw_field import RawField
 from databasemanager.DocumentBase import DocumentBase
 
+
 class EntityDocument(DocumentBase):
+    """
+        The couch entity document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
+        A schema for the entity is enforced here.
+    """
+
     def __init__(self, id=None,name = None, entity_type = None, aggregation_trees={},attributes=None, **values):
         DocumentBase.__init__(self, id=id, document_type = 'Entity', **values)
         self.aggregation_trees = aggregation_trees
