@@ -10,11 +10,8 @@ def get(uuid):
     e._setDocument(entity_doc)
     return e
 
-def get_entities(uuid_list):
-    entity_list=[]
-    for uuid in uuid_list:
-        entity_list.append(get(uuid))
-    return entity_list
+def get_entities(uuids):
+    return [ get(i) for i in uuids ]
 
 def entities_for_attributes(attrs):
     '''
@@ -133,9 +130,8 @@ class Entity(object):
         for key in data_record:
             val = data_record[key]
             if type(val)==tuple:
-                value = val[0]
-                meta = val[1]
-                attributes[key] = {"value": value,"metadata":meta}
+                value,meta = val
+                attributes[key] = {"value": value,"metadata" : meta}
             else:
                 attributes[key] = {"value":val}
 

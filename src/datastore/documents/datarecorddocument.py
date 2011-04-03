@@ -1,6 +1,7 @@
-from couchdb.mapping import DictField, DateTimeField
+from couchdb.mapping import DictField, DateTimeField, Field
 from databasemanager.document_base import DocumentBase
 from databasemanager.raw_field import RawField
+from datastore.documents.entitydocument import EntityDocument
 
 class DataRecordDocument(DocumentBase):
     """
@@ -35,7 +36,7 @@ class DataRecordDocument(DocumentBase):
     source = DictField()
     def load_backing_field(self,field):
         if field:
-            entity = Entity()
+            entity = EntityDocument()
             entity.__dict__['_data'] = field
             return entity
         return None

@@ -35,7 +35,7 @@ class TestDataStoreApi(object):
         saved = entity.get(self.uuid)
         assert saved.hierarchy_tree["org"] == ["TW","PS","IS"]
 
-    def test_hierarchy_addition_should_deep_clone_tree(self):
+    def test_hierarchy_addition_should_clone_tree(self):
         e = entity.get(self.uuid)
         org_hierarchy = ["TW", "PS", "IS"]
         e.add_hierarchy(name="org",value = org_hierarchy)
@@ -52,16 +52,15 @@ class TestDataStoreApi(object):
         assert saved.hierarchy_tree["location"]==["India","MH","Pune"]  # Hierarchy has not changed.
 
     def test_get_entities(self):
-        entity_two = Entity("Clinic2","clinic",["India","TN","Chennai"])
-        id2 = entity_two.save()
-        id_list= [self.uuid, id2]
-        entity_list = entity.get_entities(id_list)
-        assert len(entity_list) ==2
-        assert entity_list[0].name == "Test_Entity"
-        assert entity_list[1].name == "Clinic2"
-        DatabaseManager().delete(entity_two.entity_doc)
+        e2 = Entity("Clinic2","clinic",["India","TN","Chennai"])
+        id2 = e2.save()
+        entities = entity.get_entities([self.uuid, id2])
+        assert_equal (len(entities),2)
+        assert_equal(entities[0].name ,"Test_Entity")
+        assert_equal(entities[1].name , "Clinic2")
+        DatabaseManager().delete(e2.entity_doc)
 
-    def create_clinic_and_reporter(self):
+    def _create_clinic_and_reporter(self):
         clinic_entity = Entity(name="Clinic1", entity_type="clinic",
                                location=["India", "MH", "Pune"])
         clinic_entity.save()
@@ -70,8 +69,8 @@ class TestDataStoreApi(object):
         return clinic_entity, reporter_id
 
     def test_submit_data_record_to_entity(self):
-        clinic_entity, reporter_id = self.create_clinic_and_reporter()
-        data_record = {"medicines": 20 , "beds" :(10,{"notes":"recorded by Mr. xyz"})}
+        clinic_entity, reporter_id = self._create_clinic_and_reporter()
+        data_record = {"medicines": 20 , "beds" :(10,{"notes":"recorded by Mr. xyz","expiry" : datetime(2011,1,12)})}
         data_record_id = clinic_entity.submit_data_record(data_record, reported_on = datetime(2011,1,12),
                                                           reported_by = reporter_id,
                                                           source = {"phone":1234,"form_id":"hni.1234"})
@@ -79,8 +78,9 @@ class TestDataStoreApi(object):
 
         # Assert the saved document structure is as expected
         saved = DatabaseManager().load(data_record_id, document_class=DataRecordDocument)
-        assert_equals(saved.beds,{"value": 10,"metadata":{"notes":"recorded by Mr. xyz"}} )
+        assert_equals(saved.beds,{"value": 10,"metadata":{"notes":"recorded by Mr. xyz","expiry" : '2011-01-12 00:00:00'}} )
         assert_equals(saved.reported_on,datetime(2011,1,12))
+
         DatabaseManager().delete(clinic_entity.entity_doc)
         DatabaseManager().delete(saved)
         DatabaseManager().delete(entity.get(reporter_id).entity_doc)
