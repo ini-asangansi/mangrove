@@ -1,5 +1,5 @@
-from formservice.models import Question, Questionnaire
 """ Run couch and uncomment the saves """
+from spikes.formservicespike.formservice.models import Question
 
 class test_question:
     def test_should_return_and_save_question_object(self):

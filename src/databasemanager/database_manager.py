@@ -1,6 +1,6 @@
 from couchdb.design import ViewDefinition
-from DocumentBase import DocumentBase
 from couchdb.http import ResourceNotFound
+from databasemanager.document_base import DocumentBase
 from server import Server
 from services.settings import *
 

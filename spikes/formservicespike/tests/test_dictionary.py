@@ -1,7 +1,7 @@
 import sys
 import os
 from nose.tools import *
-from formservice.models import Dictionary
+from spikes.formservicespike.formservice.models import Dictionary
 
 class test_dictionary:
 

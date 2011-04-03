@@ -1,5 +1,5 @@
 from couchdb.mapping import DictField, DateTimeField
-from databasemanager.DocumentBase import DocumentBase
+from databasemanager.document_base import DocumentBase
 from databasemanager.raw_field import RawField
 
 class DataRecordDocument(DocumentBase):

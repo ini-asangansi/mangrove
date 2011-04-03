@@ -1,5 +1,5 @@
+from databasemanager.document_base import DocumentBase
 from datastore.entity import Entity
-from databasemanager.DocumentBase import DocumentBase
 from databasemanager.database_manager import DatabaseManager
 from services.settings import *
 

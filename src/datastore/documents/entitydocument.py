@@ -1,6 +1,6 @@
 from couchdb.mapping import TextField, ListField, DateTimeField, DictField, Mapping, Field
+from databasemanager.document_base import DocumentBase
 from services.data_record.raw_field import RawField
-from databasemanager.DocumentBase import DocumentBase
 
 
 class EntityDocument(DocumentBase):
