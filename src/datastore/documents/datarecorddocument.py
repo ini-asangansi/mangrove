@@ -8,10 +8,10 @@ class DataRecordDocument(DocumentBase):
         The couch data_record document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
         A schema for the data_record is enforced here.
     """
-    def __init__(self, entity=None,reporter=None, source=None,id = None,reported_on = None,attributes=None):
+    def __init__(self, entity=None,reporter=None, source=None,id = None,_reported_on = None,_attributes=None):
         DocumentBase.__init__(self, id=id, source=source,document_type = 'DataRecord')
-        self.attributes = attributes
-        self.reported_on = reported_on
+        self.attributes = _attributes
+        self.reported_on = _reported_on
         if entity:
             self.entity_backing_field = entity.__dict__.get('_data')
         if reporter:

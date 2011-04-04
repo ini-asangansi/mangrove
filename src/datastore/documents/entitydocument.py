@@ -9,9 +9,9 @@ class EntityDocument(DocumentBase):
         A schema for the entity is enforced here.
     """
 
-    def __init__(self, id=None,name = None, entity_type = None, aggregation_trees={},attributes=None, **values):
-        DocumentBase.__init__(self, id=id, document_type = 'Entity', **values)
-        self.aggregation_trees = aggregation_trees
+    def __init__(self, id=None,name = None, entity_type = None, aggregation_trees = None, attributes = None):
+        DocumentBase.__init__(self, id=id, document_type = 'Entity')
+        self.aggregation_trees = aggregation_trees or {}
         self.name=name
         self.entity_type = entity_type
         self.attributes = attributes

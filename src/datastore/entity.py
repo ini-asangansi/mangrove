@@ -2,9 +2,10 @@ import copy
 from datastore.documents.entitydocument import EntityDocument
 from databasemanager.database_manager import DatabaseManager
 from datastore.documents.datarecorddocument import DataRecordDocument
+from datastore import config
 
 def get(uuid):
-    database_manager = DatabaseManager()
+    database_manager = DatabaseManager(server=config._server,database=config._db)
     entity_doc = database_manager.load(uuid,EntityDocument)
     e = Entity(entity_doc.name,entity_doc.entity_type)
     e._setDocument(entity_doc)
@@ -72,22 +73,22 @@ class Entity(object):
         Entity class is main way of interacting with Entities AND datarecords.
     """
 
-    def __init__(self,name,entity_type,location=None,attributes=None,database_manager=DatabaseManager()):
-        self.entity_doc = None
+    def __init__(self,name,entity_type,location=None,attributes=None):
+        self._entity_doc = None
         self._hierarchy_tree = {}
-        self._database_manager = database_manager
+        self._database_manager = DatabaseManager(server=config._server,database=config._db)
         self.add_hierarchy("location",location)
         self._set_attr(name,entity_type,self._hierarchy_tree,attributes)
 
     def save(self):
-        if not self.entity_doc:
+        if not self._entity_doc:
             # create the document to be persisted to CouchDb
-            self.entity_doc = EntityDocument(name=self.name,entity_type=self.entity_type,
+            self._entity_doc = EntityDocument(name=self.name,entity_type=self.entity_type,
                                          aggregation_trees=self._hierarchy_tree,
                                          attributes=self.attributes)
 
-        self._database_manager.save(self.entity_doc)
-        return self.entity_doc.id
+        self._database_manager.save(self._entity_doc)
+        return self._entity_doc.id
 
     def add_hierarchy(self,name,value):
         if type(value) == list:
@@ -122,7 +123,7 @@ class Entity(object):
                             }
              }
         """
-        if not self.entity_doc:
+        if not self._entity_doc:
             print "you cannot submit a datarecord without saving the entity" # TODO: Handle validation
             return None
         reporter = get(reported_by)
@@ -135,13 +136,13 @@ class Entity(object):
             else:
                 attributes[key] = {"value":val}
 
-        data_record_doc = DataRecordDocument(entity=self.entity_doc,reporter=reporter.entity_doc,source=source,
-                                             reported_on=reported_on, attributes=attributes)
+        data_record_doc = DataRecordDocument(entity = self._entity_doc, reporter = reporter._entity_doc,
+                                             source = source, _reported_on = reported_on, _attributes=attributes)
         self._database_manager.save(data_record_doc)
         return data_record_doc.id
 
     def _setDocument(self, entity_doc):
-        self.entity_doc = entity_doc
+        self._entity_doc = entity_doc
         self._set_attr(entity_doc.name,entity_doc.entity_type,
                        entity_doc.aggregation_trees,entity_doc.attributes)
 
@@ -221,7 +222,6 @@ class Entity(object):
   	 	
         Returns a dict of the latest values in the entities data records.
   	 	
-
   	 	
         ex.
   	 	
@@ -229,18 +229,16 @@ class Entity(object):
   	 	
             { 'type':'patient', 'weight':, 'dob':'--', 'muac':'' }
   	 	
-
   	 	
         '''
   	 	
         return self.state(None)
   	 	
-
   	 	
     def state(self, asof=None):
   	 	
         '''
-  	 	
+
         return latest attributes as-of the given date. If 'asof' is None,
   	 	
         return the absolute latest.
@@ -249,6 +247,4 @@ class Entity(object):
   	 	
         pass
 
-
     
-

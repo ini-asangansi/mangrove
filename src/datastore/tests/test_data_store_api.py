@@ -1,8 +1,10 @@
 from datetime import datetime
+from couchdb.client import Server
 from datastore import entity
+from datastore import config
 from datastore.documents.datarecorddocument import DataRecordDocument
 from datastore.entity import Entity
-from databasemanager.database_manager import DatabaseManager
+from databasemanager.database_manager import DatabaseManager, DatabaseManagerForTests
 from nose.tools import *
 
 class TestDataStoreApi(object):
@@ -13,7 +15,7 @@ class TestDataStoreApi(object):
 
     def teardown(self):
         e = entity.get(self.uuid)
-        DatabaseManager().delete(e.entity_doc)
+        DatabaseManager().delete(e._entity_doc)
 
     def test_create_entity(self):
         e = Entity(name="X",entity_type="clinic",
@@ -21,7 +23,7 @@ class TestDataStoreApi(object):
                                   attributes={"power_type":"dc"})
         uuid = e.save()
         assert uuid
-        DatabaseManager().delete(e.entity_doc)
+        DatabaseManager().delete(e._entity_doc)
 
     def test_get_entity(self):
         e = entity.get(self.uuid)
@@ -58,7 +60,7 @@ class TestDataStoreApi(object):
         assert_equal (len(entities),2)
         assert_equal(entities[0].name ,"Test_Entity")
         assert_equal(entities[1].name , "Clinic2")
-        DatabaseManager().delete(e2.entity_doc)
+        DatabaseManager().delete(e2._entity_doc)
 
     def _create_clinic_and_reporter(self):
         clinic_entity = Entity(name="Clinic1", entity_type="clinic",
@@ -81,10 +83,26 @@ class TestDataStoreApi(object):
         assert_equals(saved.beds,{"value": 10,"metadata":{"notes":"recorded by Mr. xyz","expiry" : '2011-01-12 00:00:00'}} )
         assert_equals(saved.reported_on,datetime(2011,1,12))
 
-        DatabaseManager().delete(clinic_entity.entity_doc)
+        DatabaseManager().delete(clinic_entity._entity_doc)
         DatabaseManager().delete(saved)
-        DatabaseManager().delete(entity.get(reporter_id).entity_doc)
+        DatabaseManager().delete(entity.get(reporter_id)._entity_doc)
 
+    def test_should_switch_database_on_config_change(self):
+        config.set_database("db1")
+        e = Entity("1","test")
+        id = e.save()
+        config.set_database("db2")  #Now change db and try to load entity
+        try:
+            found = entity.get(id)
+        except:
+            found = None
+        assert not found
+        config.set_database("db1")
+        assert entity.get(id)
+        
+        Server(config._server).delete("db1")
+        Server(config._server).delete("db2")
+        config.reset()
 
 #    def test_get_current_state(self):
 #        clinic_entity, reporter_id = self.create_clinic_and_reporter()
