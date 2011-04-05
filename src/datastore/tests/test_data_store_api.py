@@ -4,7 +4,7 @@ from datastore import entity
 from datastore import config
 from datastore.documents.datarecorddocument import DataRecordDocument
 from datastore.entity import Entity
-from databasemanager.database_manager import DatabaseManager, DatabaseManagerForTests
+from databasemanager.database_manager import DatabaseManager
 from nose.tools import *
 
 class TestDataStoreApi(object):
@@ -31,11 +31,11 @@ class TestDataStoreApi(object):
 
     def test_hierarchy_addition(self):
         e = entity.get(self.uuid)
-        org_hierarchy = ["TW", "PS", "IS"]
+        org_hierarchy = ["TWGlobal", "TW-India", "TW-Pune"]
         e.add_hierarchy(name="org",value =org_hierarchy)
         e.save()
         saved = entity.get(self.uuid)
-        assert saved.hierarchy_tree["org"] == ["TW","PS","IS"]
+        assert saved.hierarchy_tree["org"] == ["TWGlobal", "TW-India", "TW-Pune"]
 
     def test_hierarchy_addition_should_clone_tree(self):
         e = entity.get(self.uuid)
@@ -67,14 +67,14 @@ class TestDataStoreApi(object):
                                location=["India", "MH", "Pune"])
         clinic_entity.save()
         reporter_entity = Entity(name="Reporter1", entity_type="reporter")
-        reporter_id = reporter_entity.save()
-        return clinic_entity, reporter_id
+        reporter_entity.save()
+        return clinic_entity, reporter_entity
 
     def test_submit_data_record_to_entity(self):
-        clinic_entity, reporter_id = self._create_clinic_and_reporter()
+        clinic_entity, reporter = self._create_clinic_and_reporter()
         data_record = {"medicines": 20 , "beds" :(10,{"notes":"recorded by Mr. xyz","expiry" : datetime(2011,1,12)})}
         data_record_id = clinic_entity.submit_data_record(data_record, reported_on = datetime(2011,1,12),
-                                                          reported_by = reporter_id,
+                                                          reported_by = reporter,
                                                           source = {"phone":1234,"form_id":"hni.1234"})
         assert data_record_id
 
@@ -85,7 +85,7 @@ class TestDataStoreApi(object):
 
         DatabaseManager().delete(clinic_entity._entity_doc)
         DatabaseManager().delete(saved)
-        DatabaseManager().delete(entity.get(reporter_id)._entity_doc)
+        DatabaseManager().delete(reporter._entity_doc)
 
     def test_should_switch_database_on_config_change(self):
         config.set_database("db1")
