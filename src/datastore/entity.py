@@ -1,14 +1,17 @@
 import copy
+from datetime import datetime, date
 from datastore.documents.entitydocument import EntityDocument
 from databasemanager.database_manager import DatabaseManager
 from datastore.documents.datarecorddocument import DataRecordDocument
 from datastore import config
 
+
+_view_names = { "latest" : "by_values" }
+
 def get(uuid):
     database_manager = DatabaseManager(server=config._server,database=config._db)
     entity_doc = database_manager.load(uuid,EntityDocument)
-    e = Entity(entity_doc.name,entity_doc.entity_type)
-    e._setDocument(entity_doc)
+    e = Entity(_document = entity_doc)
     return e
 
 def get_entities(uuids):
@@ -68,24 +71,35 @@ def entities_in(geoname, attrs=None):
 # Datarecords are always submitted/retrieved from an Entity
 
 
+
+
 class Entity(object):
     """
         Entity class is main way of interacting with Entities AND datarecords.
     """
 
-    def __init__(self,name,entity_type,location=None,attributes=None):
-        self._entity_doc = None
-        self._hierarchy_tree = {}
+    def __init__(self,entity_type = None,location=None,aggregation_paths = None,_document = None):
+
+        assert _document is None or isinstance(_document, EntityDocument)
+
+        self._entity_doc = _document
+        if self._entity_doc is not None:
+            self._set_attr(self._entity_doc.entity_type,self._entity_doc.aggregation_trees)
+        else:
+            self._set_attr(entity_type)
         self._database_manager = DatabaseManager(server=config._server,database=config._db)
         self.add_hierarchy("location",location)
-        self._set_attr(name,entity_type,self._hierarchy_tree,attributes)
+
+    @property
+    def id(self):
+        return self._entity_doc.id if self._entity_doc is not None else None
 
     def save(self):
-        if not self._entity_doc:
+        if self._entity_doc is None:
             # create the document to be persisted to CouchDb
-            self._entity_doc = EntityDocument(name=self.name,entity_type=self.entity_type,
-                                         aggregation_trees=self._hierarchy_tree,
-                                         attributes=self.attributes)
+            self._entity_doc = EntityDocument(entity_type=self.entity_type,
+                                         aggregation_trees=self._hierarchy_tree
+                                         )
 
         self._database_manager.save(self._entity_doc)
         return self._entity_doc.id
@@ -126,7 +140,7 @@ class Entity(object):
         if not self._entity_doc:
             print "you cannot submit a datarecord without saving the entity" # TODO: Handle validation
             return None
-        reporter = get(reported_by)
+#        reporter = get(reported_by)
         attributes = {}
         for key in data_record:
             val = data_record[key]
@@ -136,21 +150,14 @@ class Entity(object):
             else:
                 attributes[key] = {"value":val}
 
-        data_record_doc = DataRecordDocument(entity = self._entity_doc, reporter = reporter._entity_doc,
+        data_record_doc = DataRecordDocument(entity = self._entity_doc, reporter = reported_by._entity_doc,
                                              source = source, _reported_on = reported_on, _attributes=attributes)
         self._database_manager.save(data_record_doc)
         return data_record_doc.id
 
-    def _setDocument(self, entity_doc):
-        self._entity_doc = entity_doc
-        self._set_attr(entity_doc.name,entity_doc.entity_type,
-                       entity_doc.aggregation_trees,entity_doc.attributes)
-
-    def _set_attr(self, name,entity_type, hierarchy_tree, attributes):
-        self.name = name
+    def _set_attr(self, entity_type, hierarchy_tree = None):
         self.entity_type = entity_type
-        self._hierarchy_tree = hierarchy_tree
-        self.attributes = attributes or {}
+        self._hierarchy_tree = hierarchy_tree or {}
 
     @property
     def hierarchy_tree(self):
@@ -246,5 +253,46 @@ class Entity(object):
         '''
   	 	
         pass
+
+    def values(self, aggregation_rules, asof = None):
+        """
+        returns the aggregated value for the given fields using the aggregation function specified for data collected till a point in time.
+         Eg: data_records_func = {'arv':'latest', 'num_patients':'sum'} will return latest value for ARV and sum of number of patients
+        """
+        asof = asof or datetime.now()
+        result = {}
+        
+        for field,aggregate_fn in aggregation_rules.items():
+            view_name = self._translate(aggregate_fn)
+            result[field] = self._get_aggregate_value(field,view_name,asof)
+        return result
+
+
+    def _get_aggregate_value(self, field, aggregate_fn,date):
+        entity_id = self._entity_doc.id
+        rows = self._database_manager.load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=2,descending=False,
+                                                     startkey=[self.entity_type, entity_id],
+                                                     endkey=[self.entity_type, entity_id, date.year, date.month, date.day, {}])
+        # The above will return rows in the format described:
+        # Row key=['clinic', 'e4540e0ae93042f4b583b54b6fa7d77a'],
+        #   value={'beds': {'timestamp_for_view': 1420070400000, 'value': '15'},
+        #           'entity_id': {'value': 'e4540e0ae93042f4b583b54b6fa7d77a'}, 'document_type': {'value': 'Entity'},
+        #           'arv': {'timestamp_for_view': 1420070400000, 'value': '100'}, 'entity_type': {'value': 'clinic'}
+        #           }
+        #  The aggregation map-reduce view will return only one row for an entity-id
+        # From this we return the field we are interested in.
+        return rows[0]['value'][field]['value'] if len(rows) else None
+
+    def _translate(self, aggregate_fn):
+        return _view_names.get(aggregate_fn) or aggregate_fn
+
+
+
+
+
+    
+
+
+
 
     
