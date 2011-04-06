@@ -1,8 +1,8 @@
 import copy
+
 from datetime import datetime
-from datastore.documents.entitydocument import EntityDocument
+from documents import EntityDocument, DataRecordDocument
 from database import get_db_manager
-from datastore.documents.datarecorddocument import DataRecordDocument
 
 _view_names = { "latest" : "by_values" }
 
@@ -131,7 +131,7 @@ class Entity(object):
         if type(value) == list:
             self._hierarchy_tree[name] = list(value)
 
-    def submit_data_record(self,data_record,reported_on,reported_by = None, source = None):
+    def submit_data_record(self,data_record,reported_on = None,reported_by = None, source = None):
         """
             Add a new datarecord to this Entity.
             Return a UUID for the datarecord.

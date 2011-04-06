@@ -1,8 +1,9 @@
 from datetime import datetime
 from datastore import entity
-from datastore.documents.datarecorddocument import DataRecordDocument
+
 from datastore.entity import Entity
-from datastore.database import DatabaseManager
+from datastore.database import get_db_manager
+from datastore.documents import DataRecordDocument
 from nose.tools import *
 
 class TestDataStoreApi(object):
@@ -12,7 +13,7 @@ class TestDataStoreApi(object):
 
     def teardown(self):
         e = entity.get(self.uuid)
-        DatabaseManager().delete(e._entity_doc)
+        get_db_manager().delete(e._entity_doc)
 
     def test_create_entity(self):
         e = Entity(entity_type="clinic",
@@ -20,7 +21,7 @@ class TestDataStoreApi(object):
                                   )
         uuid = e.save()
         assert uuid
-        DatabaseManager().delete(e._entity_doc)
+        get_db_manager().delete(e._entity_doc)
 
     def test_get_entity(self):
         e = entity.get(self.uuid)
@@ -30,7 +31,7 @@ class TestDataStoreApi(object):
     def test_should_add_location_hierarchy_on_create(self):
         e = Entity(entity_type="clinic",
                                       location=["India","MH","Pune"]
-                                      )
+                   )
         uuid = e.save()
         saved = entity.get(uuid)
         hpath = saved._entity_doc.aggregation_trees
@@ -86,7 +87,7 @@ class TestDataStoreApi(object):
         saved = dict([(e.id, e) for e in entities])
         assert_equal (saved[id2].entity_type,"hospital")
         assert_equal (saved[self.uuid].entity_type,"clinic")
-        DatabaseManager().delete(e2._entity_doc)
+        get_db_manager().delete(e2._entity_doc)
 
     def _create_clinic_and_reporter(self):
         clinic_entity = Entity(entity_type="clinic",
@@ -105,13 +106,13 @@ class TestDataStoreApi(object):
         assert data_record_id
 
         # Assert the saved document structure is as expected
-        saved = DatabaseManager().load(data_record_id, document_class=DataRecordDocument)
+        saved = get_db_manager().load(data_record_id, document_class=DataRecordDocument)
         assert_equals(saved.beds,{"value": 10,"metadata":{"notes":"recorded by Mr. xyz","expiry" : '2011-01-12 00:00:00'}} )
         assert_equals(saved.reported_on,datetime(2011,1,12))
 
-        DatabaseManager().delete(clinic_entity._entity_doc)
-        DatabaseManager().delete(saved)
-        DatabaseManager().delete(reporter._entity_doc)
+        get_db_manager().delete(clinic_entity._entity_doc)
+        get_db_manager().delete(saved)
+        get_db_manager().delete(reporter._entity_doc)
 
 #    def test_should_switch_database_on_config_change(self):
 #        config.set_database("db1")
