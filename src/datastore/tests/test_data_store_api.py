@@ -2,6 +2,7 @@ from datetime import datetime
 from couchdb.client import Server
 from datastore import entity
 from datastore import config
+from datastore import settings
 from datastore.documents.datarecorddocument import DataRecordDocument
 from datastore.entity import Entity
 from databasemanager.database_manager import DatabaseManager
@@ -26,6 +27,7 @@ class TestDataStoreApi(object):
 
     def test_get_entity(self):
         e = entity.get(self.uuid)
+        assert e.id
         assert e.entity_type == "clinic"
 
     def test_hierarchy_addition(self):
@@ -87,22 +89,41 @@ class TestDataStoreApi(object):
         DatabaseManager().delete(saved)
         DatabaseManager().delete(reporter._entity_doc)
 
-    def test_should_switch_database_on_config_change(self):
-        config.set_database("db1")
-        e = Entity("1","test")
-        id = e.save()
-        config.set_database("db2")  #Now change db and try to load entity
-        try:
-            found = entity.get(id)
-        except:
-            found = None
-        assert not found
-        config.set_database("db1")
-        assert entity.get(id)
-        
-        Server(config._server).delete("db1")
-        Server(config._server).delete("db2")
-        config.reset()
+#    def test_should_switch_database_on_config_change(self):
+#        config.set_database("db1")
+#        e = Entity("1","test")
+#        id = e.save()
+#        config.set_database("db2")  #Now change db and try to load entity
+#        try:
+#            found = entity.get(id)
+#        except:
+#            found = None
+#        assert not found
+#        config.set_database("db1")
+#        assert entity.get(id)
+#
+#        Server(config._server).delete("db1")
+#        Server(config._server).delete("db2")
+#        config.reset()
+#        assert_equal(config._db,"mangrove_web")
+#        assert_equal(config._server,settings.SERVER)
+
+
+    def test_should_create_entity_from_document(self):
+        existing = entity.get(self.uuid)
+        e = Entity(_document = existing._entity_doc)
+        assert e._entity_doc is not None
+        assert_equal (e.id,existing.id)
+        assert_equal (e.entity_type,existing.entity_type)
+
+
+    #    TODO: Figure out the right way to check for assertion validation
+    @raises(AssertionError)
+    def test_should_fail_create_for_invalid_arguments(self):
+        e = Entity(_document = "xyz")
+
+
+
 
 #    def test_get_current_state(self):
 #        clinic_entity, reporter_id = self.create_clinic_and_reporter()

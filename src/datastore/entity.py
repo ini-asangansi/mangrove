@@ -11,8 +11,7 @@ _view_names = { "latest" : "by_values" }
 def get(uuid):
     database_manager = DatabaseManager(server=config._server,database=config._db)
     entity_doc = database_manager.load(uuid,EntityDocument)
-    e = Entity(entity_doc.entity_type)
-    e._setDocument(entity_doc)
+    e = Entity(_document = entity_doc)
     return e
 
 def get_entities(uuids):
@@ -79,21 +78,24 @@ class Entity(object):
         Entity class is main way of interacting with Entities AND datarecords.
     """
 
-    def __init__(self,entity_type = None,location=None):
-        self._entity_doc = None
-        self._hierarchy_tree = {}
+    def __init__(self,entity_type = None,location=None,aggregation_paths = None,_document = None):
+
+        assert _document is None or isinstance(_document, EntityDocument)
+
+        self._entity_doc = _document
+        if self._entity_doc is not None:
+            self._set_attr(self._entity_doc.entity_type,self._entity_doc.aggregation_trees)
+        else:
+            self._set_attr(entity_type)
         self._database_manager = DatabaseManager(server=config._server,database=config._db)
         self.add_hierarchy("location",location)
-        self._set_attr(entity_type,self._hierarchy_tree)
 
     @property
     def id(self):
-        assert self._entity_doc.id is not None
-        return self._entity_doc.id
+        return self._entity_doc.id if self._entity_doc is not None else None
 
-    
     def save(self):
-        if not self._entity_doc:
+        if self._entity_doc is None:
             # create the document to be persisted to CouchDb
             self._entity_doc = EntityDocument(entity_type=self.entity_type,
                                          aggregation_trees=self._hierarchy_tree
@@ -153,14 +155,9 @@ class Entity(object):
         self._database_manager.save(data_record_doc)
         return data_record_doc.id
 
-    def _setDocument(self, entity_doc):
-        self._entity_doc = entity_doc
-        self._set_attr(entity_doc.entity_type,
-                       entity_doc.aggregation_trees)
-
-    def _set_attr(self, entity_type, hierarchy_tree):
+    def _set_attr(self, entity_type, hierarchy_tree = None):
         self.entity_type = entity_type
-        self._hierarchy_tree = hierarchy_tree
+        self._hierarchy_tree = hierarchy_tree or {}
 
     @property
     def hierarchy_tree(self):
