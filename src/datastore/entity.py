@@ -94,13 +94,13 @@ class Entity(object):
         Entity class is main way of interacting with Entities AND datarecords.
     """
 
-    def __init__(self,entity_type = None,location=None,aggregation_paths = None,_document = None):
+    def __init__(self, entity_type = None,location=None, aggregation_paths = None, _document = None):
 
         assert _document is None or isinstance(_document, EntityDocument)
 
         self._entity_doc = _document
         if self._entity_doc is not None:
-            self._set_attr(self._entity_doc.entity_type,self._entity_doc.aggregation_trees)
+            self._set_attr(self._entity_doc.entity_type,self._entity_doc.aggregation_paths)
         else:
             self._set_attr(entity_type)
         self.add_hierarchy(attribute_names.TYPE_PATH,entity_type)
@@ -121,7 +121,7 @@ class Entity(object):
         if self._entity_doc is None:
             # create the document to be persisted to CouchDb
             self._entity_doc = EntityDocument(entity_type=self.entity_type,
-                                         aggregation_trees=self._hierarchy_tree
+                                         aggregation_paths=self._hierarchy_tree
                                          )
 
         get_db_manager().save(self._entity_doc)
@@ -163,7 +163,7 @@ class Entity(object):
         if not self._entity_doc:
             print "you cannot submit a datarecord without saving the entity" # TODO: Handle validation
             return None
-#        reporter = get(reported_by)
+        # reporter = get(reported_by)
         attributes = {}
         for key in data_record:
             val = data_record[key]

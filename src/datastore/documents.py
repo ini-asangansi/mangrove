@@ -1,8 +1,9 @@
-from couchdb.mapping import TextField, ListField, DateTimeField, DictField, Mapping, Field
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
+from couchdb.mapping import TextField, Document, DateTimeField, DictField, Field
 import datetime
 from uuid import uuid4
 from decimal import Decimal
-import json
 
 # This class can take care of non-json serializable objects. Another solution is to plug in a custom json encoder/decoder.
 class RawField(Field):
@@ -25,8 +26,11 @@ class RawField(Field):
             else:
                 collection[key] = self._to_json_serializable(collection[key])
 
-from couchdb.mapping import Document
 class DocumentBase(Document):
+    created_on = DateTimeField()
+    last_updated_on = DateTimeField()
+    document_type = TextField()
+
     def __init__(self, id=None, document_type=None, **values):
         if id is None:
             id = uuid4().hex
@@ -34,24 +38,19 @@ class DocumentBase(Document):
         self.created_on = datetime.datetime.now()
         self.document_type = document_type
 
-    created_on = DateTimeField()
-    last_updated_on = DateTimeField()
-    document_type = TextField()
-
-
 class EntityDocument(DocumentBase):
     """
         The couch entity document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
         A schema for the entity is enforced here.
     """
 
-    def __init__(self, id=None,entity_type = None, aggregation_trees = None):
-        DocumentBase.__init__(self, id=id, document_type = 'Entity')
-        self.aggregation_trees = aggregation_trees or {}
-        self.entity_type = entity_type
-
     entity_type = TextField()
-    aggregation_trees = DictField()
+    aggregation_paths = DictField()
+    
+    def __init__(self, id=None,entity_type = None, aggregation_paths = None):
+        DocumentBase.__init__(self, id=id, document_type = 'Entity')
+        self.aggregation_paths = aggregation_paths or {}
+        self.entity_type = entity_type
 
 
 class DataRecordDocument(DocumentBase):

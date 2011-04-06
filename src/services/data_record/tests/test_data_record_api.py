@@ -1,6 +1,4 @@
 import datetime as d
-from time import sleep
-from mock import  patch
 from services.repository.repository import RepositoryForTests
 from services.repository.connection import Connection
 from services.entity_management.entity_management_service import EntityManagementService
@@ -24,13 +22,13 @@ class TestDataRecordApi(object):
     def create_clinic(self,id,location,name):
 
         entity_service = EntityManagementService(self.repository)
-        clinic= Entity(id=id,entity_type = 'clinic',name=name,aggregation_trees={"location":location})
+        clinic= Entity(id=id,entity_type = 'clinic',name=name,aggregation_paths={"location":location})
         clinic = entity_service.create_entity(clinic)
         return clinic
 
     def create_reporter(self,id,name,org_chart,age):
         entity_service = EntityManagementService(self.repository)
-        reporter= Entity(id=id,entity_type = 'reporter',name=name,aggregation_trees={"org_chart":org_chart},age=age)
+        reporter= Entity(id=id,entity_type = 'reporter',name=name,aggregation_paths={"org_chart":org_chart},age=age)
         reporter = entity_service.create_entity(reporter)
         return reporter
 
