@@ -3,7 +3,7 @@ from couchdb.client import Server
 from datastore import entity
 from datastore import config
 from datastore import settings
-from datastore.documents.datarecorddocument import DataRecordDocument
+from datastore.documents import DataRecordDocument
 from datastore.entity import Entity
 from databasemanager.database_manager import DatabaseManager
 from nose.tools import *
@@ -33,7 +33,7 @@ class TestDataStoreApi(object):
     def test_should_add_location_hierarchy_on_create(self):
         e = Entity(entity_type="clinic",
                                       location=["India","MH","Pune"]
-                                      )
+                   )
         uuid = e.save()
         saved = entity.get(uuid)
         hpath = saved._entity_doc.aggregation_trees

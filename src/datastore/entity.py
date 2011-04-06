@@ -1,8 +1,8 @@
 import copy
 from datetime import datetime, date
-from datastore.documents.entitydocument import EntityDocument
+from datastore.documents import EntityDocument
 from databasemanager.database_manager import DatabaseManager
-from datastore.documents.datarecorddocument import DataRecordDocument
+from datastore.documents import DataRecordDocument
 from datastore import config
 
 
