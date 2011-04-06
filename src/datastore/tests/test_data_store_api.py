@@ -30,6 +30,33 @@ class TestDataStoreApi(object):
         assert e.id
         assert e.entity_type == "clinic"
 
+    def test_should_add_location_hierarchy_on_create(self):
+        e = Entity(entity_type="clinic",
+                                      location=["India","MH","Pune"]
+                                      )
+        uuid = e.save()
+        saved = entity.get(uuid)
+        hpath = saved._entity_doc.aggregation_trees
+        assert_equal (hpath[entity.attribute_names.GEO_PATH],["India","MH","Pune"])
+
+    def test_should_add_entity_type_on_create(self):
+        e = Entity(entity_type=["healthfacility","clinic"])
+        uuid = e.save()
+        saved = entity.get(uuid)
+        hpath = saved._entity_doc.aggregation_trees
+        assert_equal (hpath[entity.attribute_names.TYPE_PATH],["healthfacility","clinic"])
+
+    def test_should_add_passed_in_hierarchy_path_on_create(self):
+        e = Entity(entity_type=["HealthFacility","Clinic"],location=["India","MH","Pune"],aggregation_paths={"org":["TW_Global","TW_India","TW_Pune"],
+                                      "levels":["Lead Consultant", "Sr. Consultant", "Consultant"]})
+        uuid = e.save()
+        saved = entity.get(uuid)
+        hpath = saved._entity_doc.aggregation_trees
+        assert_equal (hpath["org"],["TW_Global","TW_India","TW_Pune"])
+        assert_equal (hpath["levels"],["Lead Consultant", "Sr. Consultant", "Consultant"])
+
+
+
     def test_hierarchy_addition(self):
         e = entity.get(self.uuid)
         org_hierarchy = ["TWGlobal", "TW-India", "TW-Pune"]
@@ -49,10 +76,10 @@ class TestDataStoreApi(object):
 
     def test_should_save_hierarchy_tree_only_through_api(self):
         e = entity.get(self.uuid)
-        e.hierarchy_tree["location"][0]="US"
+        e.hierarchy_tree[entity.attribute_names.GEO_PATH][0]="US"
         e.save()
         saved = entity.get(self.uuid)
-        assert saved.hierarchy_tree["location"]==["India","MH","Pune"]  # Hierarchy has not changed.
+        assert saved.hierarchy_tree[entity.attribute_names.GEO_PATH]==["India","MH","Pune"]  # Hierarchy has not changed.
 
     def test_get_entities(self):
         e2 = Entity("hospital",["India","TN","Chennai"])
@@ -118,6 +145,7 @@ class TestDataStoreApi(object):
 
 
     #    TODO: Figure out the right way to check for assertion validation
+    # Below will fail for any random assetion failure. How do you check specifically for an assertion failure?
     @raises(AssertionError)
     def test_should_fail_create_for_invalid_arguments(self):
         e = Entity(_document = "xyz")

@@ -67,6 +67,25 @@ def entities_in(geoname, attrs=None):
     pass
 
 
+#
+# Constants
+#
+
+# use 'classes' to group constants
+class attribute_names(object):
+    MODIFIED = 'modified'
+    CREATED = 'created'
+    EVENT_TIME = 'event_time'
+    ENTITY_ID = 'entity_id'
+    SUBMISSION_ID = 'submission_id'
+    AGG_PATHS = 'aggregation_paths'
+    GEO_PATH = '_geo'
+    TYPE_PATH = '_type'
+    DATA = 'data'
+
+
+
+
 # Entity class is main way of interacting with Entities AND datarecords.
 # Datarecords are always submitted/retrieved from an Entity
 
@@ -88,7 +107,15 @@ class Entity(object):
         else:
             self._set_attr(entity_type)
         self._database_manager = DatabaseManager(server=config._server,database=config._db)
-        self.add_hierarchy("location",location)
+        self.add_hierarchy(attribute_names.TYPE_PATH,entity_type)
+        self.add_hierarchy(attribute_names.GEO_PATH,location)
+
+        if aggregation_paths is not None:
+            reserved_names = (attribute_names.TYPE_PATH, attribute_names.GEO_PATH)
+            for name, path in aggregation_paths.items():
+                if name in reserved_names:
+                    raise ValueError('Attempted to add an aggregation path with a reserved name')
+                self.add_hierarchy(name,path)
 
     @property
     def id(self):
