@@ -79,19 +79,19 @@ class Entity(object):
         Entity class is main way of interacting with Entities AND datarecords.
     """
 
-    def __init__(self,name,entity_type,location=None,attributes=None):
+    def __init__(self,name,entity_type = None,location=None):
         self._entity_doc = None
         self._hierarchy_tree = {}
         self._database_manager = DatabaseManager(server=config._server,database=config._db)
         self.add_hierarchy("location",location)
-        self._set_attr(name,entity_type,self._hierarchy_tree,attributes)
+        self._set_attr(name,entity_type,self._hierarchy_tree)
 
     def save(self):
         if not self._entity_doc:
             # create the document to be persisted to CouchDb
             self._entity_doc = EntityDocument(name=self.name,entity_type=self.entity_type,
-                                         aggregation_trees=self._hierarchy_tree,
-                                         attributes=self.attributes)
+                                         aggregation_trees=self._hierarchy_tree
+                                         )
 
         self._database_manager.save(self._entity_doc)
         return self._entity_doc.id
@@ -150,13 +150,12 @@ class Entity(object):
     def _setDocument(self, entity_doc):
         self._entity_doc = entity_doc
         self._set_attr(entity_doc.name,entity_doc.entity_type,
-                       entity_doc.aggregation_trees,entity_doc.attributes)
+                       entity_doc.aggregation_trees)
 
-    def _set_attr(self, name,entity_type, hierarchy_tree, attributes):
+    def _set_attr(self, name,entity_type, hierarchy_tree):
         self.name = name
         self.entity_type = entity_type
         self._hierarchy_tree = hierarchy_tree
-        self.attributes = attributes or {}
 
     @property
     def hierarchy_tree(self):

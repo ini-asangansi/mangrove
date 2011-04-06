@@ -9,8 +9,8 @@ from nose.tools import *
 
 class TestDataStoreApi(object):
     def setup(self):
-        e = Entity(name="Test_Entity",entity_type="clinic",location=["India","MH","Pune"],
-                                  attributes={"power_type":"dc"})
+        e = Entity(name="Test_Entity",entity_type="clinic",location=["India","MH","Pune"]
+                                  )
         self.uuid = e.save()
 
     def teardown(self):
@@ -19,8 +19,8 @@ class TestDataStoreApi(object):
 
     def test_create_entity(self):
         e = Entity(name="X",entity_type="clinic",
-                                  location=["India","MH","Pune"],
-                                  attributes={"power_type":"dc"})
+                                  location=["India","MH","Pune"]
+                                  )
         uuid = e.save()
         assert uuid
         DatabaseManager().delete(e._entity_doc)
