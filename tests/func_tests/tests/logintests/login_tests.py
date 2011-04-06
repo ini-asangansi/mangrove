@@ -1,5 +1,5 @@
 from framework.baseTest import BaseTest
-from framework.mangrovetests.logintests import LoginPage
+from framework.mangrovetests.login_page import LoginPage
 
 
 __author__ = 'kumarr'

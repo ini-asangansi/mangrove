@@ -1,5 +1,5 @@
 from framework.mangrovetests.page import Page
-from framework.mangrovetests.dashboardtests import DashboardPage
+from framework.mangrovetests.dashboard_tests import DashboardPage
 from framework.mangrovetests.registrationpage import  RegistrationPage
 from framework.utils.commonUtils import CommonUtilities
 from selenium.webdriver.common.by import By
