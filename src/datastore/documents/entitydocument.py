@@ -9,19 +9,11 @@ class EntityDocument(DocumentBase):
         A schema for the entity is enforced here.
     """
 
-    def __init__(self, id=None,name = None, entity_type = None, aggregation_trees = None):
+    def __init__(self, id=None,entity_type = None, aggregation_trees = None):
         DocumentBase.__init__(self, id=id, document_type = 'Entity')
         self.aggregation_trees = aggregation_trees or {}
-        self.name=name
         self.entity_type = entity_type
 
     entity_type = TextField()
-    name = TextField()
     aggregation_trees = DictField()
-
-    def __getattr__(self,name):
-        if name in self._fields:
-            return self.name
-        else:
-            raise AttributeError('%s has no attribute %s' % (self.__class__.__name__, name))
 

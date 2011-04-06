@@ -9,8 +9,7 @@ from nose.tools import *
 
 class TestDataStoreApi(object):
     def setup(self):
-        e = Entity(name="Test_Entity",entity_type="clinic",location=["India","MH","Pune"]
-                                  )
+        e = Entity(entity_type="clinic",location=["India","MH","Pune"])
         self.uuid = e.save()
 
     def teardown(self):
@@ -18,7 +17,7 @@ class TestDataStoreApi(object):
         DatabaseManager().delete(e._entity_doc)
 
     def test_create_entity(self):
-        e = Entity(name="X",entity_type="clinic",
+        e = Entity(entity_type="clinic",
                                   location=["India","MH","Pune"]
                                   )
         uuid = e.save()
@@ -27,7 +26,7 @@ class TestDataStoreApi(object):
 
     def test_get_entity(self):
         e = entity.get(self.uuid)
-        assert e.name == "Test_Entity"
+        assert e.entity_type == "clinic"
 
     def test_hierarchy_addition(self):
         e = entity.get(self.uuid)
@@ -54,19 +53,20 @@ class TestDataStoreApi(object):
         assert saved.hierarchy_tree["location"]==["India","MH","Pune"]  # Hierarchy has not changed.
 
     def test_get_entities(self):
-        e2 = Entity("Clinic2","clinic",["India","TN","Chennai"])
+        e2 = Entity("hospital",["India","TN","Chennai"])
         id2 = e2.save()
         entities = entity.get_entities([self.uuid, id2])
         assert_equal (len(entities),2)
-        assert_equal(entities[0].name ,"Test_Entity")
-        assert_equal(entities[1].name , "Clinic2")
+        saved = dict([(e.id, e) for e in entities])
+        assert_equal (saved[id2].entity_type,"hospital")
+        assert_equal (saved[self.uuid].entity_type,"clinic")
         DatabaseManager().delete(e2._entity_doc)
 
     def _create_clinic_and_reporter(self):
-        clinic_entity = Entity(name="Clinic1", entity_type="clinic",
+        clinic_entity = Entity(entity_type="clinic",
                                location=["India", "MH", "Pune"])
         clinic_entity.save()
-        reporter_entity = Entity(name="Reporter1", entity_type="reporter")
+        reporter_entity = Entity(entity_type="reporter")
         reporter_entity.save()
         return clinic_entity, reporter_entity
 

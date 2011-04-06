@@ -11,7 +11,7 @@ _view_names = { "latest" : "by_values" }
 def get(uuid):
     database_manager = DatabaseManager(server=config._server,database=config._db)
     entity_doc = database_manager.load(uuid,EntityDocument)
-    e = Entity(entity_doc.name,entity_doc.entity_type)
+    e = Entity(entity_doc.entity_type)
     e._setDocument(entity_doc)
     return e
 
@@ -79,17 +79,23 @@ class Entity(object):
         Entity class is main way of interacting with Entities AND datarecords.
     """
 
-    def __init__(self,name,entity_type = None,location=None):
+    def __init__(self,entity_type = None,location=None):
         self._entity_doc = None
         self._hierarchy_tree = {}
         self._database_manager = DatabaseManager(server=config._server,database=config._db)
         self.add_hierarchy("location",location)
-        self._set_attr(name,entity_type,self._hierarchy_tree)
+        self._set_attr(entity_type,self._hierarchy_tree)
 
+    @property
+    def id(self):
+        assert self._entity_doc.id is not None
+        return self._entity_doc.id
+
+    
     def save(self):
         if not self._entity_doc:
             # create the document to be persisted to CouchDb
-            self._entity_doc = EntityDocument(name=self.name,entity_type=self.entity_type,
+            self._entity_doc = EntityDocument(entity_type=self.entity_type,
                                          aggregation_trees=self._hierarchy_tree
                                          )
 
@@ -149,11 +155,10 @@ class Entity(object):
 
     def _setDocument(self, entity_doc):
         self._entity_doc = entity_doc
-        self._set_attr(entity_doc.name,entity_doc.entity_type,
+        self._set_attr(entity_doc.entity_type,
                        entity_doc.aggregation_trees)
 
-    def _set_attr(self, name,entity_type, hierarchy_tree):
-        self.name = name
+    def _set_attr(self, entity_type, hierarchy_tree):
         self.entity_type = entity_type
         self._hierarchy_tree = hierarchy_tree
 

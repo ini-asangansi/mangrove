@@ -9,7 +9,7 @@ from datastore.views import views
 class TestQueryApi(object):
 
     def create_reporter(self):
-        r = Entity("Reporter X", entity_type="Reporter")
+        r = Entity(entity_type="Reporter")
         r.save()
         return r
 
@@ -25,7 +25,7 @@ class TestQueryApi(object):
 
         r = self.create_reporter()
 
-        e = Entity("clinic X",entity_type="Health_Facility.Clinic",location=['India','MH','Pune'])
+        e = Entity(entity_type="Health_Facility.Clinic",location=['India','MH','Pune'])
         id = e.save()
         e.submit_data_record({"beds" : 10,"meds" : 20, "doctors":2},reported_on=datetime.datetime(2011,01,01),reported_by=r)
         e.submit_data_record({"beds" : 15, "doctors":2},reported_on=datetime.datetime(2011,02,01),reported_by=r)
