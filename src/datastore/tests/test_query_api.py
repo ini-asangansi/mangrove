@@ -1,12 +1,11 @@
 import datetime
-from databasemanager.database_manager import DatabaseManager
-import datastore
+from datastore.database import DatabaseManager
 from datastore.entity import Entity
-from nose.tools import *
+from unittest import TestCase
 from datastore import config
 from datastore.views import views
 
-class TestQueryApi(object):
+class TestQueryApi(TestCase):
 
     def create_reporter(self):
         r = Entity(entity_type="Reporter")
@@ -33,21 +32,21 @@ class TestQueryApi(object):
 
         # values asof
         data_fetched = e.values( { "beds" : "latest", "meds" : "latest", "doctors":"latest"} ,asof=datetime.datetime(2011,01,31))
-        assert_equal (data_fetched["beds"], 10)
-        assert_equal (data_fetched["meds"], 20)
-        assert_equal (data_fetched["doctors"], 2)
+        self.assertEqual(data_fetched["beds"], 10)
+        self.assertEquals(data_fetched["meds"], 20)
+        self.assertEquals(data_fetched["doctors"], 2)
 
         # values asof
         data_fetched = e.values( { "beds" : "latest", "meds" : "latest", "doctors":"latest"} ,asof=datetime.datetime(2011,03,2))
-        assert_equal (data_fetched["beds"], 20)
-        assert_equal (data_fetched["meds"], 5)
-        assert_equal (data_fetched["doctors"], 2)
+        self.assertEquals(data_fetched["beds"], 20)
+        self.assertEquals(data_fetched["meds"], 5)
+        self.assertEquals(data_fetched["doctors"], 2)
 
         # current values
         data_fetched = e.values( { "beds" : "latest", "meds" : "latest", "doctors":"latest"} )
-        assert_equal (data_fetched["beds"], 20)
-        assert_equal (data_fetched["meds"], 5)
-        assert_equal (data_fetched["doctors"], 2)
+        self.assertEquals(data_fetched["beds"], 20)
+        self.assertEquals(data_fetched["meds"], 5)
+        self.assertEquals(data_fetched["doctors"], 2)
 
 
 

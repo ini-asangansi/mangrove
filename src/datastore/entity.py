@@ -1,16 +1,13 @@
 import copy
-from datetime import datetime, date
+from datetime import datetime
 from datastore.documents.entitydocument import EntityDocument
-from databasemanager.database_manager import DatabaseManager
+from database import get_db_manager
 from datastore.documents.datarecorddocument import DataRecordDocument
-from datastore import config
-
 
 _view_names = { "latest" : "by_values" }
 
 def get(uuid):
-    database_manager = DatabaseManager(server=config._server,database=config._db)
-    entity_doc = database_manager.load(uuid,EntityDocument)
+    entity_doc = get_db_manager().load(uuid,EntityDocument)
     e = Entity(_document = entity_doc)
     return e
 
@@ -106,7 +103,6 @@ class Entity(object):
             self._set_attr(self._entity_doc.entity_type,self._entity_doc.aggregation_trees)
         else:
             self._set_attr(entity_type)
-        self._database_manager = DatabaseManager(server=config._server,database=config._db)
         self.add_hierarchy(attribute_names.TYPE_PATH,entity_type)
         self.add_hierarchy(attribute_names.GEO_PATH,location)
 
@@ -128,7 +124,7 @@ class Entity(object):
                                          aggregation_trees=self._hierarchy_tree
                                          )
 
-        self._database_manager.save(self._entity_doc)
+        get_db_manager().save(self._entity_doc)
         return self._entity_doc.id
 
     def add_hierarchy(self,name,value):
@@ -179,7 +175,7 @@ class Entity(object):
 
         data_record_doc = DataRecordDocument(entity = self._entity_doc, reporter = reported_by._entity_doc,
                                              source = source, _reported_on = reported_on, _attributes=attributes)
-        self._database_manager.save(data_record_doc)
+        get_db_manager().save(data_record_doc)
         return data_record_doc.id
 
     def _set_attr(self, entity_type, hierarchy_tree = None):
@@ -209,8 +205,7 @@ class Entity(object):
         '''
   	 	
         self.invalidate_datarecord(uid)
-  	 	
-        return self.submit_datarecord(record_dict)
+        return self.submit_data_record(record_dict)
   	 	
   	 	
     def invalidate_datarecord(self,uid):
@@ -297,7 +292,7 @@ class Entity(object):
 
     def _get_aggregate_value(self, field, aggregate_fn,date):
         entity_id = self._entity_doc.id
-        rows = self._database_manager.load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=2,descending=False,
+        rows = get_db_manager().load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=2,descending=False,
                                                      startkey=[self.entity_type, entity_id],
                                                      endkey=[self.entity_type, entity_id, date.year, date.month, date.day, {}])
         # The above will return rows in the format described:

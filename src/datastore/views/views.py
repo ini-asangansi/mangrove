@@ -1,6 +1,6 @@
 import os
 from datastore import config
-from databasemanager.database_manager import DatabaseManager
+from datastore.database import get_db_manager
 
 file_path = os.path.dirname(__file__)
 
@@ -10,7 +10,7 @@ def create_views():
     """
     Creates a standard set of views in the database
     """
-    database_manager = DatabaseManager(server=config._server,database=config._db)
+    database_manager = get_db_manager()
     for v in view_names:
         if not exists_view(v,database_manager):
             map = open(os.path.join(file_path,v,"map.js")).read()

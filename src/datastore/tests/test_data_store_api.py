@@ -1,11 +1,8 @@
 from datetime import datetime
-from couchdb.client import Server
 from datastore import entity
-from datastore import config
-from datastore import settings
 from datastore.documents.datarecorddocument import DataRecordDocument
 from datastore.entity import Entity
-from databasemanager.database_manager import DatabaseManager
+from datastore.database import DatabaseManager
 from nose.tools import *
 
 class TestDataStoreApi(object):
