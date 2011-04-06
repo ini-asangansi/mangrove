@@ -1,3 +1,5 @@
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
 from couchdb.design import ViewDefinition
 from couchdb.http import ResourceNotFound
 from services.settings import *
