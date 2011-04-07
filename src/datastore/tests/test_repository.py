@@ -1,22 +1,22 @@
 from datastore.documents import DocumentBase
 from datastore.entity import Entity
-from datastore.database import DatabaseManager
+from datastore.database import get_db_manager, _delete_db_and_remove_db_manager
 from services.settings import *
 
 class TestDatabaseManager:
 
     def setup(self):
-        database = 'test_connection'
-        self.database_manager = DatabaseManager(server=SERVER, database=database)
+        self.database_manager = get_db_manager('http://localhost:5984/', 'mangrove-test')
 
     def teardown(self):
-        if self.database_manager and self.database_manager.database :
-            self.database_manager.server.delete(self.database_manager.database)
+        _delete_db_and_remove_db_manager(self.database_manager)
 
     def test_should_create_database_if_it_does_not_exist(self):
-        database = 'test_connection'
-        self.database_manager = DatabaseManager(server=SERVER, database=database)
-        assert self.database_manager.url == SERVER
+        _delete_db_and_remove_db_manager(self.database_manager)
+        server = 'http://localhost:5984/'
+        database = 'mangrove-test'
+        self.database_manager = get_db_manager(server, database)
+        assert self.database_manager.url == server
         assert self.database_manager.database_name == database
         assert self.database_manager.server
         assert self.database_manager.database
@@ -31,7 +31,5 @@ class TestDatabaseManager:
         assert document1
 
     def test_should_return_none_if_documentid_is_empty(self):
-        database = 'test_connection'
-        database_manager = DatabaseManager(server=SERVER, database=database)
-        user = database_manager.load('',Entity)
+        user = self.database_manager.load('',Entity)
         assert not user

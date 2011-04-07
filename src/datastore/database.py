@@ -28,14 +28,29 @@ def get_db_manager(server = None, database = None):
 
     return _dbms[k]
 
-class DatabaseManager:
+def remove_db_manager(dbm):
+    global _dbms
+    assert isinstance(dbm, DatabaseManager) and dbm in _dbms.values()
+
+    with Lock():
+        try:
+            del _dbms[(dbm.url, dbm.database_name)]
+        except KeyError:
+            pass # must have been already deleted
+
+def _delete_db_and_remove_db_manager(dbm):
+    '''This is really only used for testing puropses.'''
+    del dbm.server[dbm.database_name]
+    remove_db_manager(dbm)
+
+class DatabaseManager(object):
     def __init__(self, server = None, database = None):
         """
             Connect to the CouchDB server. If no database name is given , use the name provided in the settings
         """
         self.url = (server if server is not None else SERVER)
         self.database_name = database or DATABASE
-        self.server = Server(self.url)
+        self.server = couchdb.Server(self.url)
         try:
             self.database = self.server[self.database_name]
         except ResourceNotFound:
@@ -68,12 +83,3 @@ class DatabaseManager:
         if id:
             return document_class.load(self.database, id = id)
         return None
-
-class Server(couchdb.client.Server):
-    def delete(self, database):
-        super(Server, self).delete(database.name)
-
-class DatabaseManagerForTests(DatabaseManager):
-    def delete_database(self):
-        self.server.delete(self.database)
-
