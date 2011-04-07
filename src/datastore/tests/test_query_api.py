@@ -23,9 +23,9 @@ class TestQueryApi(TestCase):
     def test_should_get_current_values_for_entity(self):
         e = Entity(entity_type="Health_Facility.Clinic",location=['India','MH','Pune'])
         id = e.save()
-        e.submit_data_record({"beds" : 10,"meds" : 20, "doctors":2},datetime.datetime(2011,01,01))
-        e.submit_data_record({"beds" : 15, "doctors":2},datetime.datetime(2011,02,01))
-        e.submit_data_record({"beds" : 20,"meds" : 05, "doctors":2},reported_on=datetime.datetime(2011,03,01))
+        e.add_data([("beds", 10), ("meds",  20), ("doctors", 2)],datetime.datetime(2011,01,01))
+        e.add_data([("beds", 15), ("doctors",2)],datetime.datetime(2011,02,01))
+        e.add_data([("beds", 20), ("meds", 05), ("doctors",2)],reported_on=datetime.datetime(2011,03,01))
 
         # values asof
         data_fetched = e.values( { "beds" : "latest", "meds" : "latest", "doctors":"latest"} ,asof=datetime.datetime(2011,01,31))
