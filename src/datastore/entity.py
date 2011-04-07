@@ -1,16 +1,13 @@
 import copy
-from datetime import datetime, date
-from datastore.documents.entitydocument import EntityDocument
-from databasemanager.database_manager import DatabaseManager
-from datastore.documents.datarecorddocument import DataRecordDocument
-from datastore import config
 
+from datetime import datetime
+from documents import EntityDocument, DataRecordDocument
+from database import get_db_manager
 
 _view_names = { "latest" : "by_values" }
 
 def get(uuid):
-    database_manager = DatabaseManager(server=config._server,database=config._db)
-    entity_doc = database_manager.load(uuid,EntityDocument)
+    entity_doc = get_db_manager().load(uuid,EntityDocument)
     e = Entity(_document = entity_doc)
     return e
 
@@ -67,6 +64,25 @@ def entities_in(geoname, attrs=None):
     pass
 
 
+#
+# Constants
+#
+
+# use 'classes' to group constants
+class attribute_names(object):
+    MODIFIED = 'modified'
+    CREATED = 'created'
+    EVENT_TIME = 'event_time'
+    ENTITY_ID = 'entity_id'
+    SUBMISSION_ID = 'submission_id'
+    AGG_PATHS = 'aggregation_paths'
+    GEO_PATH = '_geo'
+    TYPE_PATH = '_type'
+    DATA = 'data'
+
+
+
+
 # Entity class is main way of interacting with Entities AND datarecords.
 # Datarecords are always submitted/retrieved from an Entity
 
@@ -78,17 +94,24 @@ class Entity(object):
         Entity class is main way of interacting with Entities AND datarecords.
     """
 
-    def __init__(self,entity_type = None,location=None,aggregation_paths = None,_document = None):
+    def __init__(self, entity_type = None,location=None, aggregation_paths = None, _document = None):
 
         assert _document is None or isinstance(_document, EntityDocument)
 
         self._entity_doc = _document
         if self._entity_doc is not None:
-            self._set_attr(self._entity_doc.entity_type,self._entity_doc.aggregation_trees)
+            self._set_attr(self._entity_doc.entity_type,self._entity_doc.aggregation_paths)
         else:
             self._set_attr(entity_type)
-        self._database_manager = DatabaseManager(server=config._server,database=config._db)
-        self.add_hierarchy("location",location)
+        self.add_hierarchy(attribute_names.TYPE_PATH,entity_type)
+        self.add_hierarchy(attribute_names.GEO_PATH,location)
+
+        if aggregation_paths is not None:
+            reserved_names = (attribute_names.TYPE_PATH, attribute_names.GEO_PATH)
+            for name, path in aggregation_paths.items():
+                if name in reserved_names:
+                    raise ValueError('Attempted to add an aggregation path with a reserved name')
+                self.add_hierarchy(name,path)
 
     @property
     def id(self):
@@ -98,17 +121,17 @@ class Entity(object):
         if self._entity_doc is None:
             # create the document to be persisted to CouchDb
             self._entity_doc = EntityDocument(entity_type=self.entity_type,
-                                         aggregation_trees=self._hierarchy_tree
+                                         aggregation_paths=self._hierarchy_tree
                                          )
 
-        self._database_manager.save(self._entity_doc)
+        get_db_manager().save(self._entity_doc)
         return self._entity_doc.id
 
     def add_hierarchy(self,name,value):
         if type(value) == list:
             self._hierarchy_tree[name] = list(value)
 
-    def submit_data_record(self,data_record,reported_on,reported_by = None, source = None):
+    def submit_data_record(self,data_record,reported_on = None,reported_by = None, source = None):
         """
             Add a new datarecord to this Entity.
             Return a UUID for the datarecord.
@@ -140,7 +163,7 @@ class Entity(object):
         if not self._entity_doc:
             print "you cannot submit a datarecord without saving the entity" # TODO: Handle validation
             return None
-#        reporter = get(reported_by)
+        # reporter = get(reported_by)
         attributes = {}
         for key in data_record:
             val = data_record[key]
@@ -152,7 +175,7 @@ class Entity(object):
 
         data_record_doc = DataRecordDocument(entity = self._entity_doc, reporter = reported_by._entity_doc,
                                              source = source, _reported_on = reported_on, _attributes=attributes)
-        self._database_manager.save(data_record_doc)
+        get_db_manager().save(data_record_doc)
         return data_record_doc.id
 
     def _set_attr(self, entity_type, hierarchy_tree = None):
@@ -182,8 +205,7 @@ class Entity(object):
         '''
   	 	
         self.invalidate_datarecord(uid)
-  	 	
-        return self.submit_datarecord(record_dict)
+        return self.submit_data_record(record_dict)
   	 	
   	 	
     def invalidate_datarecord(self,uid):
@@ -270,7 +292,7 @@ class Entity(object):
 
     def _get_aggregate_value(self, field, aggregate_fn,date):
         entity_id = self._entity_doc.id
-        rows = self._database_manager.load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=2,descending=False,
+        rows = get_db_manager().load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=2,descending=False,
                                                      startkey=[self.entity_type, entity_id],
                                                      endkey=[self.entity_type, entity_id, date.year, date.month, date.day, {}])
         # The above will return rows in the format described:

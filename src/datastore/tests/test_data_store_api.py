@@ -1,11 +1,9 @@
 from datetime import datetime
-from couchdb.client import Server
 from datastore import entity
-from datastore import config
-from datastore import settings
-from datastore.documents.datarecorddocument import DataRecordDocument
+
 from datastore.entity import Entity
-from databasemanager.database_manager import DatabaseManager
+from datastore.database import get_db_manager
+from datastore.documents import DataRecordDocument
 from nose.tools import *
 
 class TestDataStoreApi(object):
@@ -15,7 +13,7 @@ class TestDataStoreApi(object):
 
     def teardown(self):
         e = entity.get(self.uuid)
-        DatabaseManager().delete(e._entity_doc)
+        get_db_manager().delete(e._entity_doc)
 
     def test_create_entity(self):
         e = Entity(entity_type="clinic",
@@ -23,12 +21,39 @@ class TestDataStoreApi(object):
                                   )
         uuid = e.save()
         assert uuid
-        DatabaseManager().delete(e._entity_doc)
+        get_db_manager().delete(e._entity_doc)
 
     def test_get_entity(self):
         e = entity.get(self.uuid)
         assert e.id
         assert e.entity_type == "clinic"
+
+    def test_should_add_location_hierarchy_on_create(self):
+        e = Entity(entity_type="clinic",
+                                      location=["India","MH","Pune"]
+                   )
+        uuid = e.save()
+        saved = entity.get(uuid)
+        hpath = saved._entity_doc.aggregation_paths
+        assert_equal (hpath[entity.attribute_names.GEO_PATH],["India","MH","Pune"])
+
+    def test_should_add_entity_type_on_create(self):
+        e = Entity(entity_type=["healthfacility","clinic"])
+        uuid = e.save()
+        saved = entity.get(uuid)
+        hpath = saved._entity_doc.aggregation_paths
+        assert_equal (hpath[entity.attribute_names.TYPE_PATH],["healthfacility","clinic"])
+
+    def test_should_add_passed_in_hierarchy_path_on_create(self):
+        e = Entity(entity_type=["HealthFacility","Clinic"],location=["India","MH","Pune"],aggregation_paths={"org":["TW_Global","TW_India","TW_Pune"],
+                                      "levels":["Lead Consultant", "Sr. Consultant", "Consultant"]})
+        uuid = e.save()
+        saved = entity.get(uuid)
+        hpath = saved._entity_doc.aggregation_paths
+        assert_equal (hpath["org"],["TW_Global","TW_India","TW_Pune"])
+        assert_equal (hpath["levels"],["Lead Consultant", "Sr. Consultant", "Consultant"])
+
+
 
     def test_hierarchy_addition(self):
         e = entity.get(self.uuid)
@@ -49,10 +74,10 @@ class TestDataStoreApi(object):
 
     def test_should_save_hierarchy_tree_only_through_api(self):
         e = entity.get(self.uuid)
-        e.hierarchy_tree["location"][0]="US"
+        e.hierarchy_tree[entity.attribute_names.GEO_PATH][0]="US"
         e.save()
         saved = entity.get(self.uuid)
-        assert saved.hierarchy_tree["location"]==["India","MH","Pune"]  # Hierarchy has not changed.
+        assert saved.hierarchy_tree[entity.attribute_names.GEO_PATH]==["India","MH","Pune"]  # Hierarchy has not changed.
 
     def test_get_entities(self):
         e2 = Entity("hospital",["India","TN","Chennai"])
@@ -62,7 +87,7 @@ class TestDataStoreApi(object):
         saved = dict([(e.id, e) for e in entities])
         assert_equal (saved[id2].entity_type,"hospital")
         assert_equal (saved[self.uuid].entity_type,"clinic")
-        DatabaseManager().delete(e2._entity_doc)
+        get_db_manager().delete(e2._entity_doc)
 
     def _create_clinic_and_reporter(self):
         clinic_entity = Entity(entity_type="clinic",
@@ -81,13 +106,13 @@ class TestDataStoreApi(object):
         assert data_record_id
 
         # Assert the saved document structure is as expected
-        saved = DatabaseManager().load(data_record_id, document_class=DataRecordDocument)
+        saved = get_db_manager().load(data_record_id, document_class=DataRecordDocument)
         assert_equals(saved.beds,{"value": 10,"metadata":{"notes":"recorded by Mr. xyz","expiry" : '2011-01-12 00:00:00'}} )
         assert_equals(saved.reported_on,datetime(2011,1,12))
 
-        DatabaseManager().delete(clinic_entity._entity_doc)
-        DatabaseManager().delete(saved)
-        DatabaseManager().delete(reporter._entity_doc)
+        get_db_manager().delete(clinic_entity._entity_doc)
+        get_db_manager().delete(saved)
+        get_db_manager().delete(reporter._entity_doc)
 
 #    def test_should_switch_database_on_config_change(self):
 #        config.set_database("db1")
@@ -118,6 +143,7 @@ class TestDataStoreApi(object):
 
 
     #    TODO: Figure out the right way to check for assertion validation
+    # Below will fail for any random assetion failure. How do you check specifically for an assertion failure?
     @raises(AssertionError)
     def test_should_fail_create_for_invalid_arguments(self):
         e = Entity(_document = "xyz")

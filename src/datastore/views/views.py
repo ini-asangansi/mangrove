@@ -1,21 +1,20 @@
-import os
-from datastore import config
-from databasemanager.database_manager import DatabaseManager
+from datastore.database import get_db_manager
+import bylocation, byvalues, bytime
 
-file_path = os.path.dirname(__file__)
-
-view_names = ["by_location","by_time","by_values"]
+view_js = {
+    'by_location': (bylocation._map, bylocation._reduce),
+    'by_time': (bytime._map, bytime._reduce),
+    'by_values': (byvalues._map, byvalues._reduce)
+}
 
 def create_views():
     """
     Creates a standard set of views in the database
     """
-    database_manager = DatabaseManager(server=config._server,database=config._db)
-    for v in view_names:
+    database_manager = get_db_manager()
+    for v in view_js.keys():
         if not exists_view(v,database_manager):
-            map = open(os.path.join(file_path,v,"map.js")).read()
-            reduce = open(os.path.join(file_path,v,"reduce.js")).read()
-            database_manager.create_view(v, map, reduce)
+            database_manager.create_view(v, view_js[v][0], view_js[v][1])
 
 
 

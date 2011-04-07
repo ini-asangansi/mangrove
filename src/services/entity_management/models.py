@@ -3,9 +3,9 @@ from services.data_record.raw_field import RawField
 from services.repository.DocumentBase import DocumentBase
 
 class Entity(DocumentBase):
-    def __init__(self, id=None,name = None, entity_type = None, aggregation_trees={}, **values):
+    def __init__(self, id=None,name = None, entity_type = None, aggregation_paths={}, **values):
         DocumentBase.__init__(self, id=id, document_type = 'Entity', **values)
-        self.aggregation_trees = aggregation_trees
+        self.aggregation_paths = aggregation_paths
         self.name=name
         self.entity_type = entity_type
         if values:
@@ -13,7 +13,7 @@ class Entity(DocumentBase):
 
     entity_type = TextField()
     name = TextField()
-    aggregation_trees = DictField()
+    aggregation_paths = DictField()
     attributes = RawField()
 
     def __getattr__(self,name):

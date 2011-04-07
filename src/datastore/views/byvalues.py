@@ -1,3 +1,9 @@
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
+__author__ = 'jwishnie'
+
+
+_map = '''
 function(doc) {
     var isNotNull = function(o) {
         return !((o === undefined) || (o == null));
@@ -27,3 +33,23 @@ function(doc) {
         emit(key, value);
     }
 }
+'''
+
+_reduce = '''
+function(key, values, rereduce) {
+    var isNull = function(o) {
+        return (o === undefined) || (o == null);
+    };
+
+    var current = { entity_id : {value: key[0][0][1] } };
+
+    for (value in values) {
+        for (index in values[value]) {
+            if (isNull(current[index]) || values[value][index].timestamp_for_view > current[index].timestamp_for_view) {
+                current[index] = values[value][index];
+            }
+        }
+    }
+    return current;
+}
+'''

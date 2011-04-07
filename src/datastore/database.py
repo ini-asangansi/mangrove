@@ -1,16 +1,33 @@
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
 from couchdb.design import ViewDefinition
 from couchdb.http import ResourceNotFound
-from databasemanager.document_base import DocumentBase
-from server import Server
 from services.settings import *
+from threading import Lock
+from datastore import config
+from documents import DocumentBase
+import couchdb.client
+
+
+_dbm = None
+
+def get_db_manager():
+    global _dbm
+    if  _dbm is  None:
+        # no dbm yet, lazily instantiate, but protect with a lock
+        # and recheck so as to not do this twice
+        with Lock():
+            if _dbm is None:
+                _dbm = DatabaseManager(server=config._server,database=config._db)
+
+    return _dbm
 
 class DatabaseManager:
-
     def __init__(self, server=None, database=None,  *args, **kwargs):
         """
             Connect to the CouchDB server. If no database name is given , use the name provided in the settings
         """
-        self.url = server or SERVER
+        self.url = (server if server is not None else SERVER)
         self.database_name = database or DATABASE
         self.server = Server(self.url)
         try:
@@ -46,6 +63,11 @@ class DatabaseManager:
             return document_class.load(self.database, id)
         return None
 
+class Server(couchdb.client.Server):
+    def delete(self, database):
+        super(Server, self).delete(database.name)
+
 class DatabaseManagerForTests(DatabaseManager):
     def delete_database(self):
         self.server.delete(self.database)
+

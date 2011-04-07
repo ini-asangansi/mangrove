@@ -1,6 +1,6 @@
-from databasemanager.document_base import DocumentBase
+from datastore.documents import DocumentBase
 from datastore.entity import Entity
-from databasemanager.database_manager import DatabaseManager
+from datastore.database import DatabaseManager
 from services.settings import *
 
 class TestDatabaseManager:

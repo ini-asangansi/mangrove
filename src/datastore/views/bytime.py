@@ -1,3 +1,8 @@
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
+__author__ = 'jwishnie'
+
+_map='''
 function(doc) {
     var isNumeric = function(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
@@ -19,3 +24,9 @@ function(doc) {
         }
     }
 }
+'''
+
+_reduce='''
+ _stats
+'''
+  
