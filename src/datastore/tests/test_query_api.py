@@ -3,7 +3,7 @@ from datastore.database import DatabaseManager
 from datastore.entity import Entity
 from unittest import TestCase
 from datastore import config
-from datastore.views import views
+from datastore import views
 
 class TestQueryApi(TestCase):
 
