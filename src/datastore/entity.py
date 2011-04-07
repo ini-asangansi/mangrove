@@ -1,13 +1,16 @@
-import copy
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
+import copy
 from datetime import datetime
 from documents import EntityDocument, DataRecordDocument
+
+from utils import is_not_empty, is_sequence, is_string
 from database import get_db_manager
 
 _view_names = { "latest" : "by_values" }
 
 def get(uuid):
-    entity_doc = get_db_manager().load(uuid,EntityDocument)
+    entity_doc = get_db_manager().load(uuid, EntityDocument)
     e = Entity(_document = entity_doc)
     return e
 
@@ -95,43 +98,88 @@ class Entity(object):
     """
 
     def __init__(self, entity_type = None,location=None, aggregation_paths = None, _document = None):
+        '''Construct a new entity.
 
+        Note: _couch_document is used for 'protected' factory methods and
+        should not be passed in standard construction.
+
+        If _couch_document is passed, the other args are ignored
+
+        entity_type may be a string (flat type) or sequence (hierarchical type)
+        '''
+        assert _document is not None or entity_type is None or is_sequence(entity_type) or is_string(entity_type)
+        assert _document is not None or location is None or is_sequence(location)
+        assert _document is not None or aggregation_paths is None or isinstance(aggregation_paths, dict)
         assert _document is None or isinstance(_document, EntityDocument)
 
-        self._entity_doc = _document
-        if self._entity_doc is not None:
-            self._set_attr(self._entity_doc.entity_type,self._entity_doc.aggregation_paths)
-        else:
-            self._set_attr(entity_type)
-        self.add_hierarchy(attribute_names.TYPE_PATH,entity_type)
-        self.add_hierarchy(attribute_names.GEO_PATH,location)
+        # Are we being constructed from an existing doc?
+        if _document is not None:
+            self._doc = _document
+            return
+
+        # Not made from existing doc, so create a new one
+        self._doc = EntityDocument()
+
+        # add aggregation paths
+        if entity_type is not None:
+            if is_string(entity_type):
+                entity_type=[entity_type]
+            self.set_aggregation_path(attribute_names.TYPE_PATH, entity_type)
+
+        if location is not None:
+            self.set_aggregation_path(attribute_names.GEO_PATH, location)
 
         if aggregation_paths is not None:
             reserved_names = (attribute_names.TYPE_PATH, attribute_names.GEO_PATH)
-            for name, path in aggregation_paths.items():
+            for name in aggregation_paths.keys():
                 if name in reserved_names:
                     raise ValueError('Attempted to add an aggregation path with a reserved name')
-                self.add_hierarchy(name,path)
+                self.set_aggregation_path(name, aggregation_paths[name])
+
+        # Set 'entity_type' as it is still used in map/reduces
+        # TODO: Remove when we remove entity_type
+        if entity_type is not None:
+            self._doc['entity_type'] = ('' if entity_type is None else
+                                        '_'.join([unicode(i) for i in entity_type]))
+
+
+        # TODO: why should Entities just be saved on init??
+
+
+
+    def save(self):
+        return get_db_manager().save(self._doc).id
 
     @property
     def id(self):
-        return self._entity_doc.id if self._entity_doc is not None else None
+        return self._doc.id
 
-    def save(self):
-        if self._entity_doc is None:
-            # create the document to be persisted to CouchDb
-            self._entity_doc = EntityDocument(entity_type=self.entity_type,
-                                         aggregation_paths=self._hierarchy_tree
-                                         )
+    @property
+    def aggregation_paths(self):
+        return copy.deepcopy(self._doc.aggregation_paths)
 
-        get_db_manager().save(self._entity_doc)
-        return self._entity_doc.id
+    @property
+    def entity_type(self):
+        et = None
+        try:
+            et = self._doc['entity_type']
+        except:
+            pass
+        return et
 
-    def add_hierarchy(self,name,value):
-        if type(value) == list:
-            self._hierarchy_tree[name] = list(value)
+    def set_aggregation_path(self, name, path):
+        assert self._doc is not None
+        assert is_string(name) and is_not_empty(name)
+        assert is_sequence(path) and is_not_empty(path)
 
-    def submit_data_record(self,data_record,reported_on = None,reported_by = None, source = None):
+        assert isinstance(self._doc[attribute_names.AGG_PATHS], dict)
+        self._doc[attribute_names.AGG_PATHS][name]=list(path)
+
+        # TODO: Depending on implementation we will need to update aggregation paths
+        # on data records--in which case we need to set a dirty flag and handle this
+        # in save
+
+    def submit_data_record(self, data_record, reported_on = None, submission_id = None):
         """
             Add a new datarecord to this Entity.
             Return a UUID for the datarecord.
@@ -160,10 +208,7 @@ class Entity(object):
                             }
              }
         """
-        if not self._entity_doc:
-            print "you cannot submit a datarecord without saving the entity" # TODO: Handle validation
-            return None
-        # reporter = get(reported_by)
+
         attributes = {}
         for key in data_record:
             val = data_record[key]
@@ -173,19 +218,10 @@ class Entity(object):
             else:
                 attributes[key] = {"value":val}
 
-        data_record_doc = DataRecordDocument(entity = self._entity_doc, reporter = reported_by._entity_doc,
-                                             source = source, _reported_on = reported_on, _attributes=attributes)
-        get_db_manager().save(data_record_doc)
-        return data_record_doc.id
-
-    def _set_attr(self, entity_type, hierarchy_tree = None):
-        self.entity_type = entity_type
-        self._hierarchy_tree = hierarchy_tree or {}
-
-    @property
-    def hierarchy_tree(self):
-        return copy.deepcopy(self._hierarchy_tree)
-
+        data_record_doc = DataRecordDocument(self._doc, reported_on = reported_on,
+                                             submission_id = submission_id,
+                                             attributes = attributes)
+        return get_db_manager().save(data_record_doc).id
 
     # Note: The below has not been implemented yet.
 
@@ -230,51 +266,6 @@ class Entity(object):
   	 	
         pass
 
-  	 	
-  	 	
-    def revalidate_datarecord(self,uid):
-  	 	
-        '''
-  	 	
-        Sometimes we make mistakes and the data we thought was bad is
-
-  	 	
-        good. This lets us reverse an invalidation.
-  	 	
-        '''
-        pass
-
-    
-    def current_state(self):
-  	 	
-        '''
-  	 	
-        Returns a dict of the latest values in the entities data records.
-  	 	
-  	 	
-        ex.
-  	 	
-            >>> print patient.current_state()
-  	 	
-            { 'type':'patient', 'weight':, 'dob':'--', 'muac':'' }
-  	 	
-  	 	
-        '''
-  	 	
-        return self.state(None)
-  	 	
-  	 	
-    def state(self, asof=None):
-  	 	
-        '''
-
-        return latest attributes as-of the given date. If 'asof' is None,
-  	 	
-        return the absolute latest.
-  	 	
-        '''
-  	 	
-        pass
 
     def values(self, aggregation_rules, asof = None):
         """
@@ -291,7 +282,7 @@ class Entity(object):
 
 
     def _get_aggregate_value(self, field, aggregate_fn,date):
-        entity_id = self._entity_doc.id
+        entity_id = self._doc.id
         rows = get_db_manager().load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=2,descending=False,
                                                      startkey=[self.entity_type, entity_id],
                                                      endkey=[self.entity_type, entity_id, date.year, date.month, date.day, {}])

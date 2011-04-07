@@ -31,7 +31,7 @@ class DocumentBase(Document):
     last_updated_on = DateTimeField()
     document_type = TextField()
 
-    def __init__(self, id=None, document_type=None, **values):
+    def __init__(self, id = None, document_type=None, **values):
         if id is None:
             id = uuid4().hex
         Document.__init__(self,id=id, **values)
@@ -47,9 +47,9 @@ class EntityDocument(DocumentBase):
     entity_type = TextField()
     aggregation_paths = DictField()
     
-    def __init__(self, id=None,entity_type = None, aggregation_paths = None):
-        DocumentBase.__init__(self, id=id, document_type = 'Entity')
-        self.aggregation_paths = aggregation_paths or {}
+    def __init__(self, id=None, entity_type = None, aggregation_paths = None):
+        DocumentBase.__init__(self, id = id, document_type = 'Entity')
+        self.aggregation_paths = (aggregation_paths if aggregation_paths is not None else {})
         self.entity_type = entity_type
 
 
@@ -58,20 +58,24 @@ class DataRecordDocument(DocumentBase):
         The couch data_record document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
         A schema for the data_record is enforced here.
     """
-    def __init__(self, entity=None,reporter=None, source=None,id = None,_reported_on = None,_attributes=None):
-        DocumentBase.__init__(self, id=id, source=source,document_type = 'DataRecord')
-        self.attributes = _attributes
-        self.reported_on = _reported_on
-        if entity:
-            self.entity_backing_field = entity.__dict__.get('_data')
-        if reporter:
-            self.reporter_backing_field =reporter.__dict__.get('_data')
+    reported_on = DateTimeField()
+    attributes = RawField()
+    entity_backing_field = DictField()
+    submission_id = TextField()
+
+    def __init__(self, entity_doc = None, id = None, reported_on = None, submission_id = None, attributes = None):
+        assert entity_doc is None or isinstance(entity_doc, EntityDocument)
+        DocumentBase.__init__(self, id, 'DataRecord')
+        self.submission_id = submission_id
+        self.attributes = attributes
+        self.reported_on = reported_on
+        
+        if entity_doc:
+            self.entity_backing_field = entity_doc.__dict__.get('_data')
 
     def __getattr__(self, name):
         if name == 'entity':
             return self.load_backing_field(self.entity_backing_field)
-        elif name == 'reporter':
-            return self.load_backing_field(self.reporter_backing_field)
         elif name in self._fields:
             return self.name
         elif name in self.attributes:
@@ -79,16 +83,10 @@ class DataRecordDocument(DocumentBase):
         else:
             raise AttributeError('%s has no attribute %s' % (self.__class__.__name__, name))
 
-    reported_on = DateTimeField()
-    attributes = RawField()
-    entity_backing_field = DictField()
-    reporter_backing_field = DictField()
-    source = DictField()
     def load_backing_field(self,field):
         if field:
             entity = EntityDocument()
             entity.__dict__['_data'] = field
             return entity
         return None
-
 
