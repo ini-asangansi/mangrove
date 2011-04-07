@@ -42,6 +42,13 @@ class TestDataStoreApi(object):
         hpath = saved._doc.aggregation_paths
         assert_equal (hpath[entity.attribute_names.TYPE_PATH],["healthfacility","clinic"])
 
+    def test_should_add_entity_type_on_create_as_aggregation_tree(self):
+        e = Entity(entity_type="health_facility.clinic")
+        uuid = e.save()
+        saved = entity.get(uuid)
+        hpath = saved._doc.aggregation_paths
+        assert_equal (hpath[entity.attribute_names.TYPE_PATH],["health_facility","clinic"])
+
     def test_should_add_passed_in_hierarchy_path_on_create(self):
         e = Entity(entity_type=["HealthFacility","Clinic"],location=["India","MH","Pune"],aggregation_paths={"org": ["TW_Global","TW_India","TW_Pune"],
                                       "levels": ["Lead Consultant", "Sr. Consultant", "Consultant"]})

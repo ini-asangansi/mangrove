@@ -123,7 +123,7 @@ class Entity(object):
         # add aggregation paths
         if entity_type is not None:
             if is_string(entity_type):
-                entity_type=[entity_type]
+                entity_type = entity_type.split(".")
             self.set_aggregation_path(attribute_names.TYPE_PATH, entity_type)
 
         if location is not None:
