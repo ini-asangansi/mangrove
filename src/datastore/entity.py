@@ -4,7 +4,7 @@ import copy
 from datetime import datetime
 from documents import EntityDocument, DataRecordDocument
 
-from utils import is_not_empty, is_sequence, is_string, is_number
+from utils import is_not_empty, is_sequence, is_string, primitive_type
 from database import get_db_manager
 
 _view_names = { "latest" : "by_values" }
@@ -215,21 +215,7 @@ class Entity(object):
 
             name = d[0]
             value = d[1]
-            # figure out type. Warning, nasty if chain!
-            # TODO: make types enums
-            # TODO: Should we have a 'coordinate' or geocode type?
-            typ = 'unknown'
-            if len(d)==3:
-                typ = d[2]
-            elif is_number(value):
-                typ = 'numeric'
-            elif isinstance(value, bool):
-                typ = 'boolean'
-            elif isinstance(value, datetime):
-                typ = 'datetime'
-            elif is_string(value):
-                typ = 'text'
-
+            typ = d[2] if len(d)==3 else primitive_type(value)
             data_dict[name] = { 'value': value, 'type': typ }
 
         data_record_doc = DataRecordDocument(entity_doc = self._doc, reported_on = reported_on, attributes = data_dict)
