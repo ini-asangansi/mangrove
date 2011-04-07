@@ -1,6 +1,7 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from numbers import Number
+from datetime import datetime
 
 def is_empty(arg):
     '''Generalizes 'empty' checks on Strings, sequences, and dicts.
@@ -43,3 +44,21 @@ def string_as_bool(arg):
     if arg is not None and unicode(arg).lower() in (u'y', u'yes', u't', u'true', u'1'):
         return True
     return False
+
+def primitive_type(arg):
+    ''' Returns a string representing the primitive type.
+
+    Options are: 'unknown' 'boolean', 'numeric', 'text', 'datetime'
+    '''
+    # TODO: Should we have a 'coordinate' or geocode type?
+    typ = 'unknown'
+    if isinstance(arg, bool):
+        typ = 'boolean'
+    elif is_number(arg):
+        typ = 'numeric'
+    elif isinstance(arg, datetime):
+        typ = 'datetime'
+    elif is_string(arg):
+        typ = 'text'
+
+    return typ

@@ -4,7 +4,7 @@ import copy
 from datetime import datetime
 from documents import EntityDocument, DataRecordDocument
 
-from utils import is_not_empty, is_sequence, is_string
+from utils import is_not_empty, is_sequence, is_string, primitive_type
 from database import get_db_manager
 
 _view_names = { "latest" : "by_values" }
@@ -179,48 +179,46 @@ class Entity(object):
         # on data records--in which case we need to set a dirty flag and handle this
         # in save
 
-    def submit_data_record(self, data_record, reported_on = None, submission_id = None):
-        """
-            Add a new datarecord to this Entity.
-            Return a UUID for the datarecord.
+    def add_data(self, data = (), submission_id = None, reported_on = None):
+        '''Add a new datarecord to this Entity and return a UUID for the datarecord.
 
-            data_record is a dictionary in the below format,
+        Arguments:
+        data -- a sequence of n-tuples in form of (key, value, <optional type>)
+                e.g. [('name','bob','string'), ('age',20,'numeric')]
+        submission_id -- an id to a 'submission' document in the submission log from which
+                        this data came
+        event_time -- the time at which the event occured rather than when it was reported
 
-            Dictionary Field: Field Name
-            Dictionary Value: The value or a two tuple of (value, dictionary of meta information).
+        This is stored in couch as:
+            submission_id = "..."
+            event_time = "..."
+            attributes: {
+                            'name': {
+                                'value': 'bob',
+                                'type': 'string'
+                            },
+                            'age': {
+                                'value': '20',
+                                'type': 'numeric'
+                            },
+                        }
+        '''
+        assert is_sequence(data)
+        assert self.id is not None # should never be none, even if haven't been saved, should have a UUID
+        # TODO: should we have a flag that says that this has been saved at least once to avoid adding data
+        # records for an Entity that may never be saved? Should docs just be saved on init?
 
-            E.g.
-                Simple key value pairs: {"beds" : 10,"meds" : 20, "doctors":2}
-                Additional meta information : {"meds":(10,{"expiry_date":12/7/1988,"brand":"abc"})}
-                Both: { "beds" : 10, "medicines" : (10,{"notes":"recorded by mr xyz"}) }
+        data_dict = {}
+        for d in data:
+            if len(d)<2 or len(d)>3:
+                raise ValueError('data for a data record must be tuple of (name, value) or triple of (name,value,type)')
 
-            We store this in couch as
+            name = d[0]
+            value = d[1]
+            typ = d[2] if len(d)==3 else primitive_type(value)
+            data_dict[name] = { 'value': value, 'type': typ }
 
-             attributes:{
-                            "beds":{
-                                    "value":10
-                            }
-                            "medicines":{
-                                        "value":10,
-                                        "metadata":{
-                                                "notes":"recorded by mr xyz"
-                                        }
-                            }
-             }
-        """
-
-        attributes = {}
-        for key in data_record:
-            val = data_record[key]
-            if type(val)==tuple:
-                value,meta = val
-                attributes[key] = {"value": value,"metadata" : meta}
-            else:
-                attributes[key] = {"value":val}
-
-        data_record_doc = DataRecordDocument(self._doc, reported_on = reported_on,
-                                             submission_id = submission_id,
-                                             attributes = attributes)
+        data_record_doc = DataRecordDocument(entity_doc = self._doc, reported_on = reported_on, attributes = data_dict)
         return get_db_manager().save(data_record_doc).id
 
     # Note: The below has not been implemented yet.
