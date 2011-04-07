@@ -160,12 +160,7 @@ class Entity(object):
 
     @property
     def entity_type(self):
-        et = None
-        try:
-            et = self._doc['entity_type']
-        except:
-            pass
-        return et
+        return self._doc['entity_type'] if self._doc is not None and 'entity_type' in self._doc._data.keys() else None
 
     def set_aggregation_path(self, name, path):
         assert self._doc is not None
