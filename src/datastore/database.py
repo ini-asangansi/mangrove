@@ -9,21 +9,26 @@ from documents import DocumentBase
 import couchdb.client
 
 
-_dbm = None
+_dbms = {}
 
-def get_db_manager():
-    global _dbm
-    if  _dbm is  None:
-        # no dbm yet, lazily instantiate, but protect with a lock
-        # and recheck so as to not do this twice
+def get_db_manager(in_server = None, in_db = None):
+    global _dbms
+    assert _dbms is not None
+
+    # no dbm yet, lazily instantiate, but protect with a lock
+    # and recheck so as to not do this twice
+    server = (in_server if in_server is not None else config._server)
+    database = (in_db if in_db is not None else config._db)
+    k = (server, database)
+    if k not in _dbms or _dbms[k] is None:
         with Lock():
-            if _dbm is None:
-                _dbm = DatabaseManager(server=config._server,database=config._db)
+            if k not in _dbms or _dbms[k] is None:
+                _dbms[k] = DatabaseManager(server, database)
 
-    return _dbm
+    return _dbms[k]
 
 class DatabaseManager:
-    def __init__(self, server=None, database=None,  *args, **kwargs):
+    def __init__(self, server = None, database = None):
         """
             Connect to the CouchDB server. If no database name is given , use the name provided in the settings
         """
