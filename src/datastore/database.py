@@ -11,18 +11,19 @@ import couchdb.client
 
 _dbms = {}
 
-def get_db_manager(in_server = None, in_db = None):
+def get_db_manager(server = None, database = None):
     global _dbms
     assert _dbms is not None
 
-    # no dbm yet, lazily instantiate, but protect with a lock
-    # and recheck so as to not do this twice
-    server = (in_server if in_server is not None else config._server)
-    database = (in_db if in_db is not None else config._db)
-    k = (server, database)
+    # use defaults if not passed
+    srv = (server if server is not None else config._server)
+    db = (database if database is not None else config._db)
+    k = (srv, db)
+    # check if already created and in dict
     if k not in _dbms or _dbms[k] is None:
         with Lock():
             if k not in _dbms or _dbms[k] is None:
+                # nope, create it
                 _dbms[k] = DatabaseManager(server, database)
 
     return _dbms[k]
