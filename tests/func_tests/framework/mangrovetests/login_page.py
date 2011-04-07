@@ -1,7 +1,7 @@
 from framework.mangrovetests.page import Page
-from framework.mangrovetests.dashboard_tests import DashboardPage
-from framework.mangrovetests.registrationpage import  RegistrationPage
-from framework.utils.commonUtils import CommonUtilities
+from framework.mangrovetests.dashboard_page import DashboardPage
+from framework.mangrovetests.registration_page import  RegistrationPage
+from framework.utils.common_utils import CommonUtilities
 from selenium.webdriver.common.by import By
 
 __author__ = 'kumarr'
@@ -12,38 +12,57 @@ class LoginPage(Page):
     def __init__(self, driver):
         Page.__init__(self, driver)
 
-    def SuccessfulLogin(self, emailId, password):
-        self.driver.find_text_box("email").enter_text(emailId)
+    def successful_login(self, email_id, password):
+        """
+        Function to login into the website with valid credentials
+
+        Args:
+        'email_id' is registered email id of the user
+        'password' is the associated password with the email address
+
+        Return DashboardPage on successful login
+        """
+        self.driver.find_text_box("username").enter_text(email_id)
         self.driver.find_text_box("password").enter_text(password)
         self.driver.find_element_by_css_selector("input[value='Login']").click()
         return DashboardPage(self.driver)
 
-    def EnterCredentialsAndSubmit(self, emailId, password):
-        self.driver.find_text_box("email").enter_text(emailId)
+    def enter_credentials_and_submit(self, email_id, password):
+        """
+        Function to enter email id and password in the text boxes and click
+        on the login button. This function is used for testing error messages
+         only
+         .
+        Args:
+        'email_id' is registered email id of the user
+        'password' is the associated password with the email address
+
+        Return LoginPage 
+        """
+        self.driver.find_text_box("username").enter_text(email_id)
         self.driver.find_text_box("password").enter_text(password)
         self.driver.find_element_by_css_selector("input[value='Login']").click()
         return self
 
-    def GetErrorMessage(self):
-        errorMessage1 = None
-        errorMessage2 = None
-        errorMessage = ""
-        locator1 = CommonUtilities(self.driver).isElementPresent("div[class*='error']>input#id_email+ul>li",By.CSS_SELECTOR)
+    def get_error_message(self):
+        """
+        Function to fetch the error messages from error label of the login
+        page
+
+        Return error message
+        """
+        error_message = ""
+        locator1 = CommonUtilities(self.driver).is_element_present\
+            ("div[class*='error'][class*='message-box']",By.CSS_SELECTOR)
         if locator1:
-            errorMessage1 = locator1.text
+            error_message = error_message + locator1.text
+        return error_message
 
-        locator2 = CommonUtilities(self.driver).isElementPresent("div[class*='error']>input#id_password+ul>li",By.CSS_SELECTOR)
-        if locator2:
-            errorMessage2 = locator2.text
+    def navigate_to_registration_page(self):
+        """
+        Function to click on register page link which is available on the login page
 
-        if errorMessage1:
-            errorMessage = errorMessage + errorMessage1
-
-        if errorMessage2:
-            errorMessage = errorMessage + " " + errorMessage2
-
-        return errorMessage
-
-    def NavigateToRegistrationPage(self):
+        Return RegistrationPage
+        """
         self.driver.find_element_by_css_selector("a[href='/register']").click()
         return RegistrationPage(self.driver)
