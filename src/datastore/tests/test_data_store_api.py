@@ -5,8 +5,9 @@ from datastore.entity import Entity
 from datastore.database import get_db_manager
 from datastore.documents import DataRecordDocument
 from nose.tools import *
+from unittest import TestCase
 
-class TestDataStoreApi(object):
+class TestDataStoreApi(TestCase):
     def setup(self):
         e = Entity(entity_type="clinic",location=["India","MH","Pune"])
         self.uuid = e.save()
@@ -16,11 +17,10 @@ class TestDataStoreApi(object):
         get_db_manager().delete(e._entity_doc)
 
     def test_create_entity(self):
-        e = Entity(entity_type="clinic",
-                                  location=["India","MH","Pune"]
-                                  )
+        e = Entity(entity_type="clinic", location=["India","MH","Pune"])
         uuid = e.save()
-        assert uuid
+        print "*****************************************\n%s" % uuid
+        self.assertTrue(uuid is not None)
         get_db_manager().delete(e._entity_doc)
 
     def test_get_entity(self):
@@ -100,10 +100,8 @@ class TestDataStoreApi(object):
     def test_submit_data_record_to_entity(self):
         clinic_entity, reporter = self._create_clinic_and_reporter()
         data_record = {"medicines": 20 , "beds" :(10,{"notes":"recorded by Mr. xyz","expiry" : datetime(2011,1,12)})}
-        data_record_id = clinic_entity.submit_data_record(data_record, reported_on = datetime(2011,1,12),
-                                                          reported_by = reporter,
-                                                          source = {"phone":1234,"form_id":"hni.1234"})
-        assert data_record_id
+        data_record_id = clinic_entity.submit_data_record(data_record, reported_on = datetime(2011,1,12))
+        assert data_record_id is not None
 
         # Assert the saved document structure is as expected
         saved = get_db_manager().load(data_record_id, document_class=DataRecordDocument)

@@ -43,7 +43,7 @@ class EntityDocument(DocumentBase):
         The couch entity document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
         A schema for the entity is enforced here.
     """
-
+    
     entity_type = TextField()
     aggregation_paths = DictField()
     
@@ -58,20 +58,24 @@ class DataRecordDocument(DocumentBase):
         The couch data_record document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
         A schema for the data_record is enforced here.
     """
-    def __init__(self, entity=None,reporter=None, source=None,id = None,_reported_on = None,_attributes=None):
-        DocumentBase.__init__(self, id=id, source=source,document_type = 'DataRecord')
-        self.attributes = _attributes
-        self.reported_on = _reported_on
+    reported_on = DateTimeField()
+    submission_id = TextField()
+    attributes = RawField()
+    entity_backing_field = DictField()
+
+    def __init__(self, entity=None,id = None, reported_on = None, attributes = None, submission_id = None):
+        DocumentBase.__init__(self, id, document_type = 'DataRecord')
+        self.attributes = attributes
+        self.reported_on = reported_on
+        self.submission_id = submission_id
+
         if entity:
             self.entity_backing_field = entity.__dict__.get('_data')
-        if reporter:
-            self.reporter_backing_field =reporter.__dict__.get('_data')
+
 
     def __getattr__(self, name):
         if name == 'entity':
             return self.load_backing_field(self.entity_backing_field)
-        elif name == 'reporter':
-            return self.load_backing_field(self.reporter_backing_field)
         elif name in self._fields:
             return self.name
         elif name in self.attributes:
@@ -79,11 +83,6 @@ class DataRecordDocument(DocumentBase):
         else:
             raise AttributeError('%s has no attribute %s' % (self.__class__.__name__, name))
 
-    reported_on = DateTimeField()
-    attributes = RawField()
-    entity_backing_field = DictField()
-    reporter_backing_field = DictField()
-    source = DictField()
     def load_backing_field(self,field):
         if field:
             entity = EntityDocument()
