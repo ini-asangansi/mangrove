@@ -104,7 +104,7 @@ class TestDataStoreApi(object):
     def test_add_data_record_to_entity(self):
         clinic_entity, reporter = self._create_clinic_and_reporter()
         data_record = [("medicines", 20), ("doctor", "aroj"), ('facility', 'clinic', 'facility_type')]
-        data_record_id = clinic_entity.add_data(data = data_record, reported_on = datetime(2011,1,12), event_time = datetime(2011,01,02))
+        data_record_id = clinic_entity.add_data(data = data_record, reported_on = datetime(2011,1,12), event_time = datetime(2011,01,02), submission_id = "123456")
         assert data_record_id is not None
 
         # Assert the saved document structure is as expected
@@ -112,6 +112,7 @@ class TestDataStoreApi(object):
         assert_equals(saved.attributes['medicines']['value'], 20)
         assert_equals(saved.reported_on,datetime(2011,1,12))
         assert_equals(saved.event_time,datetime(2011,1,02))
+        assert_equals(saved.submission_id,"123456")
 
         get_db_manager().delete(clinic_entity._doc)
         get_db_manager().delete(saved)

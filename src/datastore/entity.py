@@ -219,7 +219,7 @@ class Entity(object):
             typ = d[2] if len(d)==3 else primitive_type(value)
             data_dict[name] = { 'value': value, 'type': typ }
 
-        data_record_doc = DataRecordDocument(entity_doc = self._doc, reported_on = reported_on, event_time = event_time, attributes = data_dict)
+        data_record_doc = DataRecordDocument(entity_doc = self._doc, reported_on = reported_on, event_time = event_time, attributes = data_dict, submission_id = submission_id)
         return get_db_manager().save(data_record_doc).id
 
     # Note: The below has not been implemented yet.
