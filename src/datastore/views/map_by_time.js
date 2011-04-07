@@ -7,7 +7,7 @@ function(doc) {
     };
     if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field)) {
         var value = {};
-        var date = new Date(doc.created_on);
+        var date = new Date(doc.event_time);
         for (index in doc.attributes) {
             if (isNotNull(doc.attributes[index]) && isNotNull(doc.attributes[index].value) && isNumeric(doc.attributes[index].value)) {
                 value[index] = parseFloat(doc.attributes[index].value);

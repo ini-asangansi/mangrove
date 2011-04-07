@@ -62,13 +62,15 @@ class DataRecordDocument(DocumentBase):
     attributes = RawField()
     entity_backing_field = DictField()
     submission_id = TextField()
+    event_time =  DateTimeField()
 
-    def __init__(self, entity_doc = None, id = None, reported_on = None, submission_id = None, attributes = None):
+    def __init__(self, event_time = None, entity_doc = None, id = None, reported_on = None, submission_id = None, attributes = None):
         assert entity_doc is None or isinstance(entity_doc, EntityDocument)
         DocumentBase.__init__(self, id, 'DataRecord')
         self.submission_id = submission_id
         self.attributes = attributes
         self.reported_on = reported_on
+        self.event_time = event_time
         
         if entity_doc:
             self.entity_backing_field = entity_doc.__dict__.get('_data')
