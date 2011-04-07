@@ -1,6 +1,6 @@
-from framework.utils.dropDownWebElement import DropDown
-from framework.utils.textBoxWebElement import TextBox
-from framework.utils.radioButtonWebElement import RadioButton
+from framework.utils.drop_down_web_element import DropDown
+from framework.utils.text_box_web_element import TextBox
+from framework.utils.radio_button_web_element import RadioButton
 
 __author__ = 'anandb'
 

@@ -1,6 +1,6 @@
 from framework.baseTest import BaseTest
-from framework.mangrovetests.dashboardtests import DashboardPage
-from framework.mangrovetests.logintests import LoginPage
+from framework.mangrovetests.dashboard_tests import DashboardPage
+from framework.mangrovetests.login_page import LoginPage
 
 __author__ = 'kumarr'
 

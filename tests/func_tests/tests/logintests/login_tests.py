@@ -1,36 +1,40 @@
+
 from framework.baseTest import BaseTest
 from framework.mangrovetests.login_page import LoginPage
-
+from nose.tools import *
 
 __author__ = 'kumarr'
 
 
-class LoginPageTests(BaseTest) :
+class TestLoginPage(BaseTest):
 
-    def test_LoginWithValidCredentials(self):
-
-        self.driver.get("http://localhost:8000/login")
-        loginPage = LoginPage(self.driver)
-        dashboardPage= loginPage.SuccessfulLogin("nogo@mail.com", "nogo123")
-        self.assertEqual(dashboardPage.WelcomeMessage(), "Welcome No Go", "Login Un-successful or UserName is not Present")
-
-
-    def test_LoginWithInvalidEmailAddressCredential(self):
+    def test_login_with_valid_credentials(self):
 
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
-        loginPage.EnterCredentialsAndSubmit("invalid@mail", "nogo123")
-        self.assertEqual(loginPage.GetErrorMessage(), "Enter a valid e-mail address.")
+        dashboardPage= loginPage.successful_login("nogo@mail.com", "nogo123")
+        eq_(dashboardPage.welcome_message(), "Welcome Mr. No Go",
+          "Login Un-successful or UserName is not Present")
 
-    def test_LoginWithInvalidPasswordCredential(self):
+
+    def test_login_with_invalid_email_address(self):
 
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
-        loginPage.EnterCredentialsAndSubmit("invalid@mail.com", "nogo123")
-        self.assertEqual(loginPage.GetErrorMessage(), "Email and password do not match!!!")
+        loginPage.enter_credentials_and_submit("invalid@mail", "nogo123")
+        self.assertEqual(loginPage.get_error_message(),
+                         "Enter a valid e-mail address.")
+
+    def test_login_with_invalid_password_credential(self):
+
+        self.driver.get("http://localhost:8000/login")
+        loginPage = LoginPage(self.driver)
+        loginPage.enter_credentials_and_submit("invalid@mail.com", "nogo123")
+        self.assertEqual(loginPage.get_error_message(),
+                         "Email and password do not match!!!")
 
 
-    def test_LoginWithoutEnteringEmailAddress(self):
+    def test_login_without_entering_email_address(self):
 
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
@@ -38,21 +42,21 @@ class LoginPageTests(BaseTest) :
         self.assertEqual(loginPage.GetErrorMessage(), "email This field is required.")
 
 
-    def test_LoginWithoutEnteringPassword(self):
+    def test_login_without_entering_password(self):
 
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
         loginPage.EnterCredentialsAndSubmit("nogo@mail.com", "")
         self.assertEqual(loginPage.GetErrorMessage(), "password This field is required.")
 
-    def test_LoginWithoutEnteringEmailAndPassword(self):
+    def test_login_without_entering_email_and_password(self):
 
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
         loginPage.EnterCredentialsAndSubmit("","")
         self.assertEqual(loginPage.GetErrorMessage(), "This field is required. This field is required.")
 
-    def test_RegisterLinkFunctionality(self):
+    def test_register_link_functionality(self):
 
         self.driver.get("http://localhost:8000/login")
         loginPage = LoginPage(self.driver)
