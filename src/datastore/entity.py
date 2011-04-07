@@ -123,7 +123,7 @@ class Entity(object):
         # add aggregation paths
         if entity_type is not None:
             if is_string(entity_type):
-                entity_type=[entity_type]
+                entity_type = entity_type.split(".")
             self.set_aggregation_path(attribute_names.TYPE_PATH, entity_type)
 
         if location is not None:
@@ -179,7 +179,7 @@ class Entity(object):
         # on data records--in which case we need to set a dirty flag and handle this
         # in save
 
-    def add_data(self, data = (), submission_id = None, reported_on = None):
+    def add_data(self, event_time, data = (), submission_id = None, reported_on = None):
         '''Add a new datarecord to this Entity and return a UUID for the datarecord.
 
         Arguments:
@@ -204,6 +204,7 @@ class Entity(object):
                         }
         '''
         assert is_sequence(data)
+        assert event_time is not None and isinstance(event_time, datetime)
         assert self.id is not None # should never be none, even if haven't been saved, should have a UUID
         # TODO: should we have a flag that says that this has been saved at least once to avoid adding data
         # records for an Entity that may never be saved? Should docs just be saved on init?
@@ -218,7 +219,7 @@ class Entity(object):
             typ = d[2] if len(d)==3 else primitive_type(value)
             data_dict[name] = { 'value': value, 'type': typ }
 
-        data_record_doc = DataRecordDocument(entity_doc = self._doc, reported_on = reported_on, attributes = data_dict)
+        data_record_doc = DataRecordDocument(entity_doc = self._doc, reported_on = reported_on, event_time = event_time, attributes = data_dict, submission_id = submission_id)
         return get_db_manager().save(data_record_doc).id
 
     # Note: The below has not been implemented yet.

@@ -1,31 +1,39 @@
 import datetime
-from datastore.database import DatabaseManager
-from datastore.entity import Entity
+from datastore.database import DatabaseManagerForTests
 from unittest import TestCase
 from datastore import config
 from datastore import views
+from datastore.entity import Entity
+
 
 class TestQueryApi(TestCase):
+
+
+    def setUp(self):
+        self.manager = DatabaseManagerForTests(server=config._server, database=config._db)
+
+    # TODO: Maybe we could delete database at the end of the fixture and not at the end of each test
+    def tearDown(self):
+        self.manager.delete_database()
 
     def create_reporter(self):
         r = Entity(entity_type="Reporter")
         r.save()
         return r
 
-
     def test_can_create_views(self):
         views.create_views()
-        manager = DatabaseManager(server=config._server, database=config._db)
-        assert views.exists_view("by_location", manager)
-        assert views.exists_view("by_time", manager)
-        assert views.exists_view("by_values", manager)
+        assert views.exists_view("by_location", self.manager)
+        assert views.exists_view("by_time", self.manager)
+        assert views.exists_view("by_values", self.manager)
 
     def test_should_get_current_values_for_entity(self):
+        views.create_views()
         e = Entity(entity_type="Health_Facility.Clinic",location=['India','MH','Pune'])
         id = e.save()
-        e.add_data([("beds", 10), ("meds",  20), ("doctors", 2)],datetime.datetime(2011,01,01))
-        e.add_data([("beds", 15), ("doctors",2)],datetime.datetime(2011,02,01))
-        e.add_data([("beds", 20), ("meds", 05), ("doctors",2)],reported_on=datetime.datetime(2011,03,01))
+        e.add_data(data = [("beds", 10), ("meds",  20), ("doctors", 2)],event_time=datetime.datetime(2011,01,01))
+        e.add_data(data = [("beds", 15), ("doctors",2)],event_time=datetime.datetime(2011,02,01))
+        e.add_data(data = [("beds", 20), ("meds", 05), ("doctors",2)],event_time=datetime.datetime(2011,03,01))
 
         # values asof
         data_fetched = e.values( { "beds" : "latest", "meds" : "latest", "doctors":"latest"} ,asof=datetime.datetime(2011,01,31))

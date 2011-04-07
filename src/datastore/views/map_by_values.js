@@ -4,7 +4,7 @@ function(doc) {
     };
     if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field)) {
         var value = {entity_type: { value:doc.entity_backing_field.entity_type }, document_type: { value:doc.entity_backing_field.document_type}};
-        var date = new Date(doc.reported_on);
+        var date = new Date(doc.event_time);
         if (isNotNull(doc.entity_backing_field) && isNotNull(doc.entity_backing_field.attributes)) {
             var attributes = doc.entity_backing_field.attributes;
             for (index in attributes) {

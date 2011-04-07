@@ -1,5 +1,5 @@
 from framework.perspectives.Page import Page
-from framework.utils.commonUtils import CommonUtilities
+from framework.utils.common_utils import CommonUtilities
 
 __author__ = 'kumarr'
 

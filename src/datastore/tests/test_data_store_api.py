@@ -1,6 +1,5 @@
 from datetime import datetime
 from datastore import entity
-
 from datastore.entity import Entity
 from datastore.database import get_db_manager
 from datastore.documents import DataRecordDocument
@@ -41,6 +40,13 @@ class TestDataStoreApi(object):
         saved = entity.get(uuid)
         hpath = saved._doc.aggregation_paths
         assert_equal (hpath[entity.attribute_names.TYPE_PATH],["healthfacility","clinic"])
+
+    def test_should_add_entity_type_on_create_as_aggregation_tree(self):
+        e = Entity(entity_type="health_facility.clinic")
+        uuid = e.save()
+        saved = entity.get(uuid)
+        hpath = saved._doc.aggregation_paths
+        assert_equal (hpath[entity.attribute_names.TYPE_PATH],["health_facility","clinic"])
 
     def test_should_add_passed_in_hierarchy_path_on_create(self):
         e = Entity(entity_type=["HealthFacility","Clinic"],location=["India","MH","Pune"],aggregation_paths={"org": ["TW_Global","TW_India","TW_Pune"],
@@ -97,14 +103,16 @@ class TestDataStoreApi(object):
 
     def test_add_data_record_to_entity(self):
         clinic_entity, reporter = self._create_clinic_and_reporter()
-        data_record = [("medicines", 20), ("doctor", "aroj"), ('facility', 'clinic', 'facility_type') ]
-        data_record_id = clinic_entity.add_data(data_record, reported_on = datetime(2011,1,12))
+        data_record = [("medicines", 20), ("doctor", "aroj"), ('facility', 'clinic', 'facility_type')]
+        data_record_id = clinic_entity.add_data(data = data_record, reported_on = datetime(2011,1,12), event_time = datetime(2011,01,02), submission_id = "123456")
         assert data_record_id is not None
 
         # Assert the saved document structure is as expected
         saved = get_db_manager().load(data_record_id, document_class=DataRecordDocument)
         assert_equals(saved.attributes['medicines']['value'], 20)
         assert_equals(saved.reported_on,datetime(2011,1,12))
+        assert_equals(saved.event_time,datetime(2011,1,02))
+        assert_equals(saved.submission_id,"123456")
 
         get_db_manager().delete(clinic_entity._doc)
         get_db_manager().delete(saved)

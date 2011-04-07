@@ -1,5 +1,3 @@
-__author__ = 'jwishnie'
-
 from datastore.database import get_db_manager
 import bylocation, byvalues, bytime
 import os

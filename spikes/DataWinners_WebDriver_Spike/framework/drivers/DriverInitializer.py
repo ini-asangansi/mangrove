@@ -1,7 +1,7 @@
-from framework.drivers.FirefoxDriverWrapper import FirefoxDriverWrapper
-from framework.drivers.IEDriverWrapper import IEDriverWrapper
-from framework.drivers.ChromeDriverWrapper import ChromeDriverWrapper
-from framework.drivers.RemoteDriverWrapper import RemoteDriverWrapper
+from framework.drivers.firefox_driver_wrapper import FirefoxDriverWrapper
+from framework.drivers.ie_driver_wrapper import IEDriverWrapper
+from framework.drivers.chrome_driver_wrapper import ChromeDriverWrapper
+from framework.drivers.remote_driver_wrapper import RemoteDriverWrapper
 
 __author__ = 'anandb'
 

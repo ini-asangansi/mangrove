@@ -1,4 +1,4 @@
-from framework.baseTest import BaseTest
+from framework.base_test import BaseTest
 from framework.shoppersStop.RegistrationPage import RegistrationPage
 
 __author__ = 'anandb'
