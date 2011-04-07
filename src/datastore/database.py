@@ -60,7 +60,7 @@ class DatabaseManager:
 
     def load(self, id, document_class=DocumentBase):
         if id:
-            return document_class.load(self.database, id)
+            return document_class.load(self.database, id = id)
         return None
 
 class Server(couchdb.client.Server):
