@@ -1,4 +1,4 @@
-from framework.baseTest import BaseTest
+from framework.base_test import BaseTest
 from framework.mangrovetests.dashboard_tests import DashboardPage
 from framework.mangrovetests.login_page import LoginPage
 

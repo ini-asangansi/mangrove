@@ -1,4 +1,4 @@
-from framework.baseTest import BaseTest
+from framework.base_test import BaseTest
 from framework.perspectives.HomePageTestSteps import HomePage
 from framework.perspectives.LoginTestSteps import LoginOverlay
 

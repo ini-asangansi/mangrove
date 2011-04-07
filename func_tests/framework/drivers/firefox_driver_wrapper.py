@@ -1,5 +1,5 @@
 from selenium.webdriver.firefox.webdriver import WebDriver
-from framework.drivers.DriverWrapper import DriverWrapper
+from framework.drivers.driver_wrapper import DriverWrapper
 
 __author__ = 'anandb'
 

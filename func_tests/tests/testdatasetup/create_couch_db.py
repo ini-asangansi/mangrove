@@ -1,7 +1,7 @@
 import os
-from setuptools.dist import assert_bool
 from couchdb.client import Server
-from tests.couch_http_wrapper import CouchHttpWrapper
+from tests.testdatasetup.couch_http_wrapper import CouchHttpWrapper
+from nose.tools import *
 
 class TestCouchHTTPWrapper:
     DATA_STORE = 'mangrove_web'
@@ -16,7 +16,7 @@ class TestCouchHTTPWrapper:
         http_wrapper = CouchHttpWrapper('localhost', '5984')
         http_wrapper.deleteDb(self.DATA_STORE)
         http_wrapper.createDb(self.DATA_STORE)
-        test_data_dir = os.path.join(os.path.dirname(__file__), '../../../test_data/')
-        fp = open(test_data_dir + 'functionalTestData.json')
+        test_data_dir = os.path.join(os.path.dirname(__file__), '../../testdata/')
+        fp = open(test_data_dir + 'functional_test_data.json')
         http_wrapper.saveBulkDoc(self.DATA_STORE, fp.read())
         fp.close()

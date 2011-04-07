@@ -1,4 +1,4 @@
-from framework.baseTest import BaseTest
+from framework.base_test import BaseTest
 
 __author__ = 'anandb'
 # Copyright 2008-2009 WebDriver committers

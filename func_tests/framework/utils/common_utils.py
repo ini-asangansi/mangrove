@@ -42,7 +42,7 @@ class CommonUtilities(Page):
          self.driver.find_element_by_id(element_id).click()
          return self
 
-    def is_element_present(self, element_locator, by=By.ID):
+    def is_element_present(self, element_locator, by=By.CSS_SELECTOR):
         try:
             locator = self.driver.find_element(by,element_locator)
             return locator

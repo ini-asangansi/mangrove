@@ -1,4 +1,4 @@
-from framework.drivers.DriverInitializer import DriverInitializer
+from framework.drivers.driver_initializer import DriverInitializer
 
 __author__ = 'anandb'
 
