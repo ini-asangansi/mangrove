@@ -59,7 +59,7 @@ We are detailing out the above steps for Ubuntu 10.10. For any other OS - please
 * Run chef solo(as mangrover)::
 
     $cd chef-repo
-    $chef-solo -c chef-solo/solo.rb -j chef-solo/node.json
+    $sudo chef-solo -c chef-solo/solo.rb -j chef-solo/node.json
 
 
 .. _here: http://help.opscode.com/kb/start/1-system-requirements-dependencies
