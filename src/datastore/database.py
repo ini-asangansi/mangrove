@@ -1,8 +1,8 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from couchdb.design import ViewDefinition
+from settings import *
 from couchdb.http import ResourceNotFound
-from services.settings import *
 from threading import Lock
 from datastore import config
 from documents import DocumentBase

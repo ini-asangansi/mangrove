@@ -70,12 +70,23 @@ class TestDataStoreApi(unittest.TestCase):
         saved = entity.get(self.dbm, self.uuid)
         self.assertTrue(saved.aggregation_paths["org"] == ["TW","PS","IS"])
 
-    def test_should_save_hierarchy_tree_only_through_api(self):
+    def test_save_aggregation_path_only_via_api(self):
         e = entity.get(self.dbm, self.uuid)
         e.location_path[0]="US"
         e.save()
         saved = entity.get(self.dbm, self.uuid)
         self.assertTrue(saved.location_path==["India","MH","Pune"])  # Hierarchy has not changed.
+
+#        inc
+    def test_should_save_hierarchy_tree_only_through_api(self):
+        e = entity.get(self.dbm, self.uuid)
+        org_hierarchy = ["TW", "PS", "IS"]
+        e.set_aggregation_path("org", org_hierarchy)
+        e.save()
+        e.aggregation_paths['org'][0] = "XYZ"
+        e.save()
+        saved = entity.get(self.dbm, self.uuid)
+        self.assertEqual(saved.aggregation_paths["org"], ["TW","PS","IS"])
 
     def test_get_entities(self):
         e2 = Entity(self.dbm, "hospital",["India","TN","Chennai"])
@@ -97,7 +108,7 @@ class TestDataStoreApi(unittest.TestCase):
 
     def test_add_data_record_to_entity(self):
         clinic_entity, reporter = self._create_clinic_and_reporter()
-        data_record = [("medicines", 20), ("doctor", "aroj"), ('facility', 'clinic', 'facility_type')]
+        data_record = [("medicines", 20), ("doctor", "aroj"), ('facility', 'clinic', 'facility_type'), ('opened_on', datetime(2011,01,02))]
         data_record_id = clinic_entity.add_data(data = data_record,
                                                 event_time = datetime(2011,01,02), submission_id = "123456")
         self.assertTrue(data_record_id is not None)
@@ -107,6 +118,7 @@ class TestDataStoreApi(unittest.TestCase):
         self.assertEquals(saved.data['medicines']['value'], 20)
         self.assertEquals(saved.event_time,datetime(2011,01,02))
         self.assertEquals(saved.submission_id,"123456")
+        self.assertEquals(saved.data['opened_on']['value'],"2011-01-02 00:00:00")
 
         self.dbm.delete(clinic_entity._doc)
         self.dbm.delete(saved)
