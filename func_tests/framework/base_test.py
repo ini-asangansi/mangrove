@@ -1,4 +1,5 @@
 from framework.drivers.driver_initializer import DriverInitializer
+from framework.mangrovetests.dashboard_page import DashboardPage
 
 __author__ = 'anandb'
 

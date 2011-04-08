@@ -3,6 +3,9 @@ from framework.mangrovetests.dashboard_page import DashboardPage
 from framework.mangrovetests.registration_page import  RegistrationPage
 from framework.utils.common_utils import CommonUtilities
 from selenium.webdriver.common.by import By
+from resources.element_locators import *
+from framework.utils.data_fetcher import *
+from testdata.test_data import *
 
 __author__ = 'kumarr'
 
@@ -12,7 +15,7 @@ class LoginPage(Page):
     def __init__(self, driver):
         Page.__init__(self, driver)
 
-    def successful_login(self, email_id, password):
+    def do_successful_login_with(self, login_credential):
         """
         Function to login into the website with valid credentials
 
@@ -22,7 +25,25 @@ class LoginPage(Page):
 
         Return DashboardPage on successful login
         """
-        self.driver.find_text_box("username").enter_text(email_id)
+        self.driver.find_text_box(LOGIN_USERNAME_TB[LOCATOR]).enter_text\
+            (put(USERNAME,of(login_credential)))
+        self.driver.find_text_box("password").enter_text(put(PASSWORD, of(
+             login_credential)))
+        self.driver.find_element_by_css_selector("input[value='Login']").click()
+        return DashboardPage(self.driver)
+
+    def for_successful_login(self, email_id, password):
+        """
+        Function to login into the website with valid credentials
+
+        Args:
+        'email_id' is registered email id of the user
+        'password' is the associated password with the email address
+
+        Return DashboardPage on successful login
+        """
+        self.driver.find_text_box(LOGIN_USERNAME_TB[LOCATOR]).enter_text\
+            (email_id)
         self.driver.find_text_box("password").enter_text(password)
         self.driver.find_element_by_css_selector("input[value='Login']").click()
         return DashboardPage(self.driver)
