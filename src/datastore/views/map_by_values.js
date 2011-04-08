@@ -3,27 +3,18 @@ function(doc) {
         return !((o === undefined) || (o == null));
     };
     if (doc.document_type == 'DataRecord' && isNotNull(doc.entity_backing_field)) {
-        var value = {entity_type: { value:doc.entity_backing_field.entity_type }, document_type: { value:doc.entity_backing_field.document_type}};
+        var value = {entity_type: { value:doc.entity_backing_field.aggregation_paths['_type'] }, document_type: { value:doc.entity_backing_field.document_type}};
         var date = new Date(doc.event_time);
-        if (isNotNull(doc.entity_backing_field) && isNotNull(doc.entity_backing_field.attributes)) {
-            var attributes = doc.entity_backing_field.attributes;
-            for (index in attributes) {
-                if (isNotNull(attributes[index]) && isNotNull(attributes[index]['value'])) {
-                    var attribute_object = attributes[index];
-                    attribute_object['timestamp_for_view'] = date.getTime();
-                    value[index] = attributes[index];
-                }
-            }
-        }
-        for (index in doc.attributes) {
-            var attributes = doc.attributes;
-            if (isNotNull(attributes[index]) && isNotNull(attributes[index]['value'])) {
-                var attribute_object = attributes[index];
+
+        for (index in doc.data) {
+            var data = doc.data;
+            if (isNotNull(data[index]) && isNotNull(data[index]['value'])) {
+                var attribute_object = data[index];
                 attribute_object['timestamp_for_view'] = date.getTime();
-                value[index] = attributes[index];
+                value[index] = data[index];
             }
         }
-        var key = [doc.entity_backing_field.entity_type, doc.entity_backing_field._id, date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+        var key = [doc.entity_backing_field.aggregation_paths['_type'], doc.entity_backing_field._id, date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
         emit(key, value);
     }
 }

@@ -2,7 +2,7 @@ from datetime import datetime
 from datastore import entity
 from datastore.entity import Entity
 from datastore.database import get_db_manager, _delete_db_and_remove_db_manager
-from datastore.documents import DataRecordDocument
+from datastore.documents import DataRecordDocument, attributes
 import unittest
 
 class TestDataStoreApi(unittest.TestCase):
@@ -24,28 +24,25 @@ class TestDataStoreApi(unittest.TestCase):
     def test_get_entity(self):
         e = entity.get(self.dbm, self.uuid)
         self.assertTrue(e.id)
-        self.assertTrue(e.entity_type == "clinic")
+        self.assertTrue(e.type_string == "clinic")
 
     def test_should_add_location_hierarchy_on_create(self):
         e = Entity(self.dbm, entity_type="clinic", location=["India","MH","Pune"])
         uuid = e.save()
         saved = entity.get(self.dbm, uuid)
-        hpath = saved._doc.aggregation_paths
-        self.assertEqual(hpath[entity.attribute_names.GEO_PATH],["India","MH","Pune"])
+        self.assertEqual(saved.location_path,["India","MH","Pune"])
 
     def test_should_add_entity_type_on_create(self):
         e = Entity(self.dbm, entity_type=["healthfacility","clinic"])
         uuid = e.save()
         saved = entity.get(self.dbm, uuid)
-        hpath = saved._doc.aggregation_paths
-        self.assertEqual(hpath[entity.attribute_names.TYPE_PATH],["healthfacility","clinic"])
+        self.assertEqual(saved.type_path,["healthfacility","clinic"])
 
     def test_should_add_entity_type_on_create_as_aggregation_tree(self):
         e = Entity(self.dbm, entity_type="health_facility.clinic")
         uuid = e.save()
         saved = entity.get(self.dbm, uuid)
-        hpath = saved._doc.aggregation_paths
-        self.assertEqual(hpath[entity.attribute_names.TYPE_PATH],["health_facility","clinic"])
+        self.assertEqual(saved.type_path,["health_facility","clinic"])
 
     def test_should_add_passed_in_hierarchy_path_on_create(self):
         e = Entity(self.dbm, entity_type=["HealthFacility","Clinic"],location=["India","MH","Pune"],aggregation_paths={"org": ["TW_Global","TW_India","TW_Pune"],
@@ -75,10 +72,10 @@ class TestDataStoreApi(unittest.TestCase):
 
     def test_should_save_hierarchy_tree_only_through_api(self):
         e = entity.get(self.dbm, self.uuid)
-        e.aggregation_paths[entity.attribute_names.GEO_PATH][0]="US"
+        e.location_path[0]="US"
         e.save()
         saved = entity.get(self.dbm, self.uuid)
-        self.assertTrue(saved.aggregation_paths[entity.attribute_names.GEO_PATH]==["India","MH","Pune"])  # Hierarchy has not changed.
+        self.assertTrue(saved.location_path==["India","MH","Pune"])  # Hierarchy has not changed.
 
     def test_get_entities(self):
         e2 = Entity(self.dbm, "hospital",["India","TN","Chennai"])
@@ -86,8 +83,8 @@ class TestDataStoreApi(unittest.TestCase):
         entities = entity.get_entities(self.dbm, [self.uuid, id2])
         self.assertEqual(len(entities),2)
         saved = dict([(e.id, e) for e in entities])
-        self.assertEqual(saved[id2].entity_type,"hospital")
-        self.assertEqual(saved[self.uuid].entity_type,"clinic")
+        self.assertEqual(saved[id2].type_string, "hospital")
+        self.assertEqual(saved[self.uuid].type_string,"clinic")
         self.dbm.delete(e2._doc)
 
     def _create_clinic_and_reporter(self):
@@ -101,14 +98,14 @@ class TestDataStoreApi(unittest.TestCase):
     def test_add_data_record_to_entity(self):
         clinic_entity, reporter = self._create_clinic_and_reporter()
         data_record = [("medicines", 20), ("doctor", "aroj"), ('facility', 'clinic', 'facility_type')]
-        data_record_id = clinic_entity.add_data(data = data_record, reported_on = datetime(2011,1,12), event_time = datetime(2011,01,02), submission_id = "123456")
+        data_record_id = clinic_entity.add_data(data = data_record,
+                                                event_time = datetime(2011,01,02), submission_id = "123456")
         self.assertTrue(data_record_id is not None)
 
         # Assert the saved document structure is as expected
         saved = self.dbm.load(data_record_id, document_class=DataRecordDocument)
-        self.assertEquals(saved.attributes['medicines']['value'], 20)
-        self.assertEquals(saved.reported_on,datetime(2011,1,12))
-        self.assertEquals(saved.event_time,datetime(2011,1,02))
+        self.assertEquals(saved.data['medicines']['value'], 20)
+        self.assertEquals(saved.event_time,datetime(2011,01,02))
         self.assertEquals(saved.submission_id,"123456")
 
         self.dbm.delete(clinic_entity._doc)
@@ -139,7 +136,7 @@ class TestDataStoreApi(unittest.TestCase):
         e = Entity(self.dbm, _document = existing._doc)
         self.assertTrue(e._doc is not None)
         self.assertEqual(e.id,existing.id)
-        self.assertEqual(e.entity_type,existing.entity_type)
+        self.assertEqual(e.type_path,existing.type_path)
 
     def test_should_fail_create_for_invalid_arguments(self):
         with self.assertRaises(AssertionError):
@@ -161,7 +158,7 @@ class TestDataStoreApi(unittest.TestCase):
 #       data_record = {"numbeds" :{"value": 10,"notes":"recorded by Mr. xyz"}, "nummedicines" : {"value":20}}
 #       old_data_record_id = clinic_entity.submit_data_record(data_record, reported_on = datetime(2011,1,12),reported_by = reporter_id, source = {"phone":1234,"form_id":"hni.1234"})
 #       new_data_record = {"numbeds" :{"value": 30,"notes":"recorded by Mr. xyz"}, "numdoctors" : {"value":5}}
-#       new_data_record_id=clinic_entity.update_data_record(old_data_record_id, new_data_record,reported_on = datetime(2011,1,13),reported_by = reporter_id, source = {"phone":12345,"form_id":"hni.1234"})
+#       new_data_record_id=clinic_entity.update_data_record(old_data_record_id, new_data_recordtan = datetime(2011,1,13),reported_by = reporter_id, source = {"phone":12345,"form_id":"hni.1234"})
 #       assert new_data_record_id
 #       assert new_data_record_id != old_data_record_id #Because we want to store all the submissions that come in. The old data is invalidated and the document is not overwritten
 #

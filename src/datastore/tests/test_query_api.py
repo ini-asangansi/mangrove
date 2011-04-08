@@ -28,18 +28,20 @@ class TestQueryApi(unittest.TestCase):
         views.create_views(self.manager)
         e = Entity(self.manager, entity_type=["Health_Facility.Clinic"],location=['India','MH','Pune'])
         id = e.save()
-        e.add_data(data = [("beds", 10), ("meds",  20), ("doctors", 2)],event_time=datetime.datetime(2011,01,01))
-        e.add_data(data = [("beds", 15), ("doctors",2)],event_time=datetime.datetime(2011,02,01))
-        e.add_data(data = [("beds", 20), ("meds", 05), ("doctors",2)],event_time=datetime.datetime(2011,03,01))
+        e.add_data(data = [("beds", 10), ("meds",  20), ("doctors", 2)], event_time=datetime.datetime(2011,01,01))
+        e.add_data(data = [("beds", 15), ("doctors",2)], event_time=datetime.datetime(2011,02,01))
+        e.add_data(data = [("beds", 20), ("meds", 05), ("doctors",2)], event_time=datetime.datetime(2011,03,01))
 
         # values asof
-        data_fetched = e.values( { "beds" : "latest", "meds" : "latest", "doctors":"latest"} ,asof=datetime.datetime(2011,01,31))
+        data_fetched = e.values( { "beds" : "latest", "meds" : "latest", "doctors":"latest"},
+                                 asof=datetime.datetime(2011,01,31))
         self.assertEqual(data_fetched["beds"], 10)
         self.assertEqual(data_fetched["meds"], 20)
         self.assertEqual(data_fetched["doctors"], 2)
 
         # values asof
-        data_fetched = e.values( { "beds" : "latest", "meds" : "latest", "doctors":"latest"} ,asof=datetime.datetime(2011,03,2))
+        data_fetched = e.values( { "beds" : "latest", "meds" : "latest", "doctors":"latest"},
+                                 asof=datetime.datetime(2011,03,2))
         self.assertEqual(data_fetched["beds"], 20)
         self.assertEqual(data_fetched["meds"], 5)
         self.assertEqual(data_fetched["doctors"], 2)
