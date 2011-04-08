@@ -1,21 +1,19 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
-import copy
 from datetime import datetime
-from documents import EntityDocument, DataRecordDocument
+from documents import EntityDocument, DataRecordDocument, attributes
 
 from utils import is_not_empty, is_sequence, is_string, primitive_type
-from database import get_db_manager
+from database import DatabaseManager
 
-_view_names = { "latest" : "by_values" }
-
-def get(uuid):
-    entity_doc = get_db_manager().load(uuid, EntityDocument)
-    e = Entity(_document = entity_doc)
+def get(dbm, uuid):
+    assert isinstance(dbm, DatabaseManager)
+    entity_doc = dbm.load(uuid, EntityDocument)
+    e = Entity(dbm, _document = entity_doc)
     return e
 
-def get_entities(uuids):
-    return [ get(i) for i in uuids ]
+def get_entities(dbm, uuids):
+    return [ get(dbm, i) for i in uuids ]
 
 def entities_for_attributes(attrs):
     '''
@@ -71,19 +69,6 @@ def entities_in(geoname, attrs=None):
 # Constants
 #
 
-# use 'classes' to group constants
-class attribute_names(object):
-    MODIFIED = 'modified'
-    CREATED = 'created'
-    EVENT_TIME = 'event_time'
-    ENTITY_ID = 'entity_id'
-    SUBMISSION_ID = 'submission_id'
-    AGG_PATHS = 'aggregation_paths'
-    GEO_PATH = '_geo'
-    TYPE_PATH = '_type'
-    DATA = 'data'
-
-
 
 
 # Entity class is main way of interacting with Entities AND datarecords.
@@ -97,7 +82,7 @@ class Entity(object):
         Entity class is main way of interacting with Entities AND datarecords.
     """
 
-    def __init__(self, entity_type = None,location=None, aggregation_paths = None, _document = None):
+    def __init__(self, dbm, entity_type = None,location=None, aggregation_paths = None, _document = None):
         '''Construct a new entity.
 
         Note: _couch_document is used for 'protected' factory methods and
@@ -107,10 +92,13 @@ class Entity(object):
 
         entity_type may be a string (flat type) or sequence (hierarchical type)
         '''
+        assert isinstance(dbm, DatabaseManager)
         assert _document is not None or entity_type is None or is_sequence(entity_type) or is_string(entity_type)
         assert _document is not None or location is None or is_sequence(location)
         assert _document is not None or aggregation_paths is None or isinstance(aggregation_paths, dict)
         assert _document is None or isinstance(_document, EntityDocument)
+
+        self._dbm = dbm
 
         # Are we being constructed from an existing doc?
         if _document is not None:
@@ -124,31 +112,24 @@ class Entity(object):
         if entity_type is not None:
             if is_string(entity_type):
                 entity_type = entity_type.split(".")
-            self.set_aggregation_path(attribute_names.TYPE_PATH, entity_type)
+            self._doc.entity_type = entity_type
 
         if location is not None:
-            self.set_aggregation_path(attribute_names.GEO_PATH, location)
+            self._doc.location = location
 
         if aggregation_paths is not None:
-            reserved_names = (attribute_names.TYPE_PATH, attribute_names.GEO_PATH)
+            reserved_names = (attributes.TYPE_PATH, attributes.GEO_PATH)
             for name in aggregation_paths.keys():
                 if name in reserved_names:
                     raise ValueError('Attempted to add an aggregation path with a reserved name')
                 self.set_aggregation_path(name, aggregation_paths[name])
-
-        # Set 'entity_type' as it is still used in map/reduces
-        # TODO: Remove when we remove entity_type
-        if entity_type is not None:
-            self._doc['entity_type'] = ('' if entity_type is None else
-                                        '_'.join([unicode(i) for i in entity_type]))
-
 
         # TODO: why should Entities just be saved on init??
 
 
 
     def save(self):
-        return get_db_manager().save(self._doc).id
+        return self._dbm.save(self._doc).id
 
     @property
     def id(self):
@@ -156,30 +137,42 @@ class Entity(object):
 
     @property
     def aggregation_paths(self):
-        return copy.deepcopy(self._doc.aggregation_paths)
+        '''Returns a copy of the dict'''
+        return dict(self._doc.aggregation_paths)
 
     @property
-    def entity_type(self):
-        et = None
-        try:
-            et = self._doc['entity_type']
-        except:
-            pass
-        return et
+    def type_path(self):
+        '''Returns a copy of the path'''
+        return list(self._doc.entity_type)
+
+    @property
+    def location_path(self):
+        '''Returns a copy of the path'''
+        return list(self._doc.location)
+
+    @property
+    def type_string(self):
+        p = self.type_path
+        return ('' if p is None else '.'.join(p))
+
+    @property
+    def location_string(self):
+        p = self.location_path
+        return ('' if p is None else '.'.join(p))
 
     def set_aggregation_path(self, name, path):
         assert self._doc is not None
         assert is_string(name) and is_not_empty(name)
         assert is_sequence(path) and is_not_empty(path)
 
-        assert isinstance(self._doc[attribute_names.AGG_PATHS], dict)
-        self._doc[attribute_names.AGG_PATHS][name]=list(path)
+        assert isinstance(self._doc[attributes.AGG_PATHS], dict)
+        self._doc[attributes.AGG_PATHS][name]=list(path)
 
         # TODO: Depending on implementation we will need to update aggregation paths
         # on data records--in which case we need to set a dirty flag and handle this
         # in save
 
-    def add_data(self, event_time, data = (), submission_id = None, reported_on = None):
+    def add_data(self, data = (), event_time = None, submission_id = None):
         '''Add a new datarecord to this Entity and return a UUID for the datarecord.
 
         Arguments:
@@ -204,11 +197,13 @@ class Entity(object):
                         }
         '''
         assert is_sequence(data)
-        assert event_time is not None and isinstance(event_time, datetime)
+        assert event_time is None or isinstance(event_time, datetime)
         assert self.id is not None # should never be none, even if haven't been saved, should have a UUID
         # TODO: should we have a flag that says that this has been saved at least once to avoid adding data
         # records for an Entity that may never be saved? Should docs just be saved on init?
-
+        if event_time is None:
+            event_time = datetime.utcnow()
+            
         data_dict = {}
         for d in data:
             if len(d)<2 or len(d)>3:
@@ -219,28 +214,11 @@ class Entity(object):
             typ = d[2] if len(d)==3 else primitive_type(value)
             data_dict[name] = { 'value': value, 'type': typ }
 
-        data_record_doc = DataRecordDocument(entity_doc = self._doc, reported_on = reported_on, event_time = event_time, attributes = data_dict, submission_id = submission_id)
-        return get_db_manager().save(data_record_doc).id
+        data_record_doc = DataRecordDocument(entity_doc = self._doc, event_time = event_time,
+                                             data = data_dict, submission_id = submission_id)
+        return self._dbm.save(data_record_doc).id
 
     # Note: The below has not been implemented yet.
-
-    def update_datarecord(self,uid,record_dict):
-        '''
-        Invalidates the record identified by the passed 'uid'
-  	 	
-        and creates a new one using the record_dict.
-  	 	
-  	 	
-        This can be used to _correct_ bad submissions.
-  	 	
-  	 	
-        Returns uid of new corrected record
-
-  	 	
-        '''
-  	 	
-        self.invalidate_datarecord(uid)
-        return self.submit_data_record(record_dict)
   	 	
   	 	
     def invalidate_datarecord(self,uid):
@@ -271,7 +249,7 @@ class Entity(object):
         returns the aggregated value for the given fields using the aggregation function specified for data collected till a point in time.
          Eg: data_records_func = {'arv':'latest', 'num_patients':'sum'} will return latest value for ARV and sum of number of patients
         """
-        asof = asof or datetime.now()
+        asof = asof or datetime.utcnow()
         result = {}
         
         for field,aggregate_fn in aggregation_rules.items():
@@ -282,9 +260,9 @@ class Entity(object):
 
     def _get_aggregate_value(self, field, aggregate_fn,date):
         entity_id = self._doc.id
-        rows = get_db_manager().load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=2,descending=False,
-                                                     startkey=[self.entity_type, entity_id],
-                                                     endkey=[self.entity_type, entity_id, date.year, date.month, date.day, {}])
+        rows = self._dbm.load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=2,descending=False,
+                                                     startkey=[self.type_path, entity_id],
+                                                     endkey=[self.type_path, entity_id, date.year, date.month, date.day, {}])
         # The above will return rows in the format described:
         # Row key=['clinic', 'e4540e0ae93042f4b583b54b6fa7d77a'],
         #   value={'beds': {'timestamp_for_view': 1420070400000, 'value': '15'},
@@ -296,7 +274,8 @@ class Entity(object):
         return rows[0]['value'][field]['value'] if len(rows) else None
 
     def _translate(self, aggregate_fn):
-        return _view_names.get(aggregate_fn) or aggregate_fn
+        view_names = { "latest" : "by_values" }
+        return (view_names[aggregate_fn] if aggregate_fn in view_names else aggregate_fn)
 
 
 

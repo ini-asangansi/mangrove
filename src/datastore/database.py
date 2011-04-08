@@ -7,29 +7,51 @@ from threading import Lock
 from datastore import config
 from documents import DocumentBase
 import couchdb.client
+from datetime import datetime
 
 
-_dbm = None
+_dbms = {}
 
-def get_db_manager():
-    global _dbm
-    if  _dbm is  None:
-        # no dbm yet, lazily instantiate, but protect with a lock
-        # and recheck so as to not do this twice
+def get_db_manager(server = None, database = None):
+    global _dbms
+    assert _dbms is not None
+
+    # use defaults if not passed
+    srv = (server if server is not None else config._server)
+    db = (database if database is not None else config._db)
+    k = (srv, db)
+    # check if already created and in dict
+    if k not in _dbms or _dbms[k] is None:
         with Lock():
-            if _dbm is None:
-                _dbm = DatabaseManager(server=config._server,database=config._db)
+            if k not in _dbms or _dbms[k] is None:
+                # nope, create it
+                _dbms[k] = DatabaseManager(server, database)
 
-    return _dbm
+    return _dbms[k]
 
-class DatabaseManager:
-    def __init__(self, server=None, database=None,  *args, **kwargs):
+def remove_db_manager(dbm):
+    global _dbms
+    assert isinstance(dbm, DatabaseManager) and dbm in _dbms.values()
+
+    with Lock():
+        try:
+            del _dbms[(dbm.url, dbm.database_name)]
+        except KeyError:
+            pass # must have been already deleted
+
+def _delete_db_and_remove_db_manager(dbm):
+    '''This is really only used for testing puropses.'''
+    del dbm.server[dbm.database_name]
+    remove_db_manager(dbm)
+
+class DatabaseManager(object):
+    def __init__(self, server = None, database = None):
         """
             Connect to the CouchDB server. If no database name is given , use the name provided in the settings
         """
         self.url = (server if server is not None else SERVER)
         self.database_name = database or DATABASE
-        self.server = Server(self.url)
+        self.server = couchdb.Server(self.url)
         try:
             self.database = self.server[self.database_name]
         except ResourceNotFound:
@@ -51,7 +73,10 @@ class DatabaseManager:
         view = ViewDefinition(view_document,view_name,map,reduce)
         view.sync(self.database)
 
-    def save(self, document):
+    def save(self, document, modified = None):
+        assert modified is None or isinstance(modified, datetime)
+
+        document.modified = (modified if modified is not None else datetime.utcnow())
         document.store(self.database)
         return document
 
@@ -62,12 +87,3 @@ class DatabaseManager:
         if id:
             return document_class.load(self.database, id = id)
         return None
-
-class Server(couchdb.client.Server):
-    def delete(self, database):
-        super(Server, self).delete(database.name)
-
-class DatabaseManagerForTests(DatabaseManager):
-    def delete_database(self):
-        self.server.delete(self.database)
-

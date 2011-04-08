@@ -52,8 +52,8 @@ class LoginPage(Page):
         Return error message
         """
         error_message = ""
-        locator1 = CommonUtilities(self.driver).is_element_present\
-            ("div[class*='error'][class*='message-box']",By.CSS_SELECTOR)
+        locator1 = CommonUtilities(self.driver).is_element_present \
+            ("//div[contains(@class,'error') and contains(@class, 'message-box')]", By.XPATH)
         if locator1:
             error_message = error_message + locator1.text
         return error_message
