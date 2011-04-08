@@ -1,16 +1,33 @@
 from framework.base_test import BaseTest
-from framework.mangrovetests.dashboard_tests import DashboardPage
-from framework.mangrovetests.login_page import LoginPage
+from nose.tools import *
+from framework.mangrovetests.registration_page import RegistrationPage
+
+
 
 __author__ = 'kumarr'
 
 
 class LoginPageTests(BaseTest) :
 
-    def test_RegisterNGOWithValidData(self):
+    def test_register_ngo_with_valid_data(self):
 
-        self.driver.get("http://localhost:8000/login")
-        loginPage = LoginPage(self.driver)
+        register_page = self.driver.get("http://localhost:8000/register")
 
-        loginPage.EnterCredentialsAndSubmit("nogo@mail.com", "nogo123")
-        self.assertEqual(DashboardPage(self.driver).WelcomeMessage(), "No Go!", "Login Un-successful or UserName is not Present")
+        registration_conformation_page = RegistrationPage(self.driver).enter_data_in_all_fields_and_click_register( "NGO 001",
+                                                                                                                    "PublicHealth",
+                                                                                                                    "Address Line One",
+                                                                                                                    "Address Line Two",
+                                                                                                                    "Pune",
+                                                                                                                    "Maharashtra",
+                                                                                                                    "India",
+                                                                                                                    "411028",
+                                                                                                                    "0123456789",
+                                                                                                                    "http://ngo001.com",
+                                                                                                                    "Mr",
+                                                                                                                    "No",
+                                                                                                                    "Go",
+                                                                                                                    "ngo001@ngo.com",
+                                                                                                                    "ngo001",
+                                                                                                                    "ngo001")
+        eq_(registration_conformation_page.organization_name(), "No Go 2", "Organization Name is incorrect or not displayed on Registration Confirmation Page")
+

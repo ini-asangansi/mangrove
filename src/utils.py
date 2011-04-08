@@ -36,7 +36,10 @@ def is_string(arg):
     return isinstance(arg, basestring)
 
 def is_number(arg):
-    '''True if arg is any type in Pythons "number tower"'''
+    '''True if arg is any type in Pythons "number tower"
+
+    **Note** This includes Booleans!
+    '''
     return isinstance(arg, Number)
 
 def string_as_bool(arg):

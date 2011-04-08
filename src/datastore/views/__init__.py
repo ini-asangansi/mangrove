@@ -1,15 +1,14 @@
 from datastore.database import get_db_manager
-import bylocation, byvalues, bytime
 import os
 from glob import iglob
 import string
 
-def create_views():
+def create_views(dbm):
     """
     Creates a standard set of views in the database
     """
     global view_js
-    database_manager = get_db_manager()
+    database_manager = dbm
     for v in view_js.keys():
         if not exists_view(v,database_manager):
             funcs = view_js[v]
@@ -19,7 +18,7 @@ def create_views():
 
 def exists_view(aggregation,database_manager):
     entity_type_views = database_manager.load('_design/mangrove_views')
-    if entity_type_views and entity_type_views['views'].get(aggregation):
+    if entity_type_views is not None and entity_type_views['views'].get(aggregation):
         return True
     return False
 
