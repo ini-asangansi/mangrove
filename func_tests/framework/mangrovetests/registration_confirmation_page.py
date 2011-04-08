@@ -9,9 +9,10 @@ class RegistrationConfirmationPage(Page):
         Page.__init__(self, driver)
 
 
-    def organization_name(self):
-        organization_name = self.driver.find_element_by_css_selector(".span-9 h4").text
-        pass
+    def registration_success_message(self):
+        success_message = self.driver.find_element_by_css_selector("div[class^= 'success']").text
+        print success_message
+        return success_message
 
 
 
