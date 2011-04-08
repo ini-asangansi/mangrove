@@ -7,6 +7,7 @@ from threading import Lock
 from datastore import config
 from documents import DocumentBase
 import couchdb.client
+from datetime import datetime
 
 
 _dbms = {}
@@ -72,7 +73,10 @@ class DatabaseManager(object):
         view = ViewDefinition(view_document,view_name,map,reduce)
         view.sync(self.database)
 
-    def save(self, document):
+    def save(self, document, modified = None):
+        assert modified is None or isinstance(modified, datetime)
+
+        document.modified = (modified if modified is not None else datetime.utcnow())
         document.store(self.database)
         return document
 
