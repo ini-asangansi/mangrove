@@ -256,7 +256,6 @@ class Entity(object):
         for field,aggregate_fn in aggregation_rules.items():
             view_name = self._translate(aggregate_fn)
             result[field] = self._get_aggregate_value(field,view_name,asof)
-        print result
         return result
 
 
