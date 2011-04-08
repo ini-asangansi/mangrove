@@ -6,8 +6,6 @@ from documents import EntityDocument, DataRecordDocument, attributes
 from utils import is_not_empty, is_sequence, is_string, primitive_type
 from database import DatabaseManager
 
-_view_names = { "latest" : "by_values" }
-
 def get(dbm, uuid):
     assert isinstance(dbm, DatabaseManager)
     entity_doc = dbm.load(uuid, EntityDocument)
@@ -276,7 +274,8 @@ class Entity(object):
         return rows[0]['value'][field]['value'] if len(rows) else None
 
     def _translate(self, aggregate_fn):
-        return _view_names.get(aggregate_fn) or aggregate_fn
+        view_names = { "latest" : "by_values" }
+        return (view_names[aggregate_fn] if aggregate_fn in view_names else aggregate_fn)
 
 
 
