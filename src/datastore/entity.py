@@ -256,14 +256,15 @@ class Entity(object):
         for field,aggregate_fn in aggregation_rules.items():
             view_name = self._translate(aggregate_fn)
             result[field] = self._get_aggregate_value(field,view_name,asof)
+        print result
         return result
 
 
     def _get_aggregate_value(self, field, aggregate_fn,date):
         entity_id = self._doc.id
-        rows = self._dbm.load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=2,descending=False,
-                                                     startkey=[self.type_path, entity_id],
-                                                     endkey=[self.type_path, entity_id, date.year, date.month, date.day, {}])
+        rows = self._dbm.load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=3,descending=False,
+                                                     startkey=[self.type_path, entity_id, field],
+                                                     endkey=[self.type_path, entity_id, field, date.year, date.month, date.day, {}])
         # The above will return rows in the format described:
         # Row key=['clinic', 'e4540e0ae93042f4b583b54b6fa7d77a'],
         #   value={'beds': {'timestamp_for_view': 1420070400000, 'value': '15'},
@@ -272,7 +273,7 @@ class Entity(object):
         #           }
         #  The aggregation map-reduce view will return only one row for an entity-id
         # From this we return the field we are interested in.
-        return rows[0]['value'][field]['value'] if len(rows) else None
+        return rows[0]['value']['value'] if len(rows) else None
 
     def _translate(self, aggregate_fn):
         view_names = { "latest" : "by_values" }
