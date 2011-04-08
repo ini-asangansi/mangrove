@@ -90,7 +90,7 @@ class DataRecordDocument(DocumentBase):
         The couch data_record document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
         A schema for the data_record is enforced here.
     """
-    data = DictField()
+    data = RawField()
     entity_backing_field = DictField()
     submission_id = TextField()
     event_time =  DateTimeField()

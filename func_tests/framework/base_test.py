@@ -6,7 +6,7 @@ __author__ = 'anandb'
 
 class BaseTest(object):
     def setup(self):
-        self.driver = DriverInitializer.initialize ("htmlunit")
+        self.driver = DriverInitializer.initialize ("firefox")
 
     def teardown(self):
         self.driver.quit()

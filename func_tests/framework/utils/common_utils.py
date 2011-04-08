@@ -3,7 +3,6 @@
 __author__ = 'ravi'
 
 from framework.mangrovetests.page import Page
-
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
@@ -29,15 +28,28 @@ class CommonUtilities(Page):
                 current_time = datetime.datetime.now()
         return self
 
-    def find_text_box_and_enter_text(self, text_box_id, text_to_be_entered):
+    def find_text_box_by_id_and_enter_text(self, text_box_id, text_to_be_entered):
         self.driver.find_element_by_id(text_box_id).send_keys(text_to_be_entered)
         return self
 
-    def find_drop_down_and_select_option(self, drop_down_id,
+    def find_text_box_by_name_and_enter_text(self, text_box_name, text_to_be_entered):
+        self.driver.find_element_by_name(text_box_name).send_keys(text_to_be_entered)
+        return self
+
+    def find_text_box_by_css_and_enter_text(self, text_box_css, text_to_be_entered):
+        self.driver.find_element_by_name(text_box_css).send_keys(text_to_be_entered)
+        return self
+
+    def find_drop_down_by_id_and_select_option(self, drop_down_id,
                                          option_to_be_selected):
         self.driver.find_drop_down(drop_down_id).set_selected(option_to_be_selected)
         return self
-    
+
+    def find_drop_down_by_name_and_select_option(self, drop_down_name,
+                                         option_to_be_selected):
+        self.driver.find_drop_down(drop_down_name).set_selected(option_to_be_selected)
+        return self
+
     def find_element_and_click(self, element_id):
          self.driver.find_element_by_id(element_id).click()
          return self

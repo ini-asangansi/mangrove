@@ -27,7 +27,7 @@ Project Organization
     governance
     faces
     developerpractices
-    
+    setup_dev_env    
 Design & Tech Docs
 ==================
 
