@@ -70,12 +70,23 @@ class TestDataStoreApi(unittest.TestCase):
         saved = entity.get(self.dbm, self.uuid)
         self.assertTrue(saved.aggregation_paths["org"] == ["TW","PS","IS"])
 
-    def test_should_save_hierarchy_tree_only_through_api(self):
+    def test_save_aggregation_path_only_via_api(self):
         e = entity.get(self.dbm, self.uuid)
         e.location_path[0]="US"
         e.save()
         saved = entity.get(self.dbm, self.uuid)
         self.assertTrue(saved.location_path==["India","MH","Pune"])  # Hierarchy has not changed.
+
+#        inc
+    def test_should_save_hierarchy_tree_only_through_api(self):
+        e = entity.get(self.dbm, self.uuid)
+        org_hierarchy = ["TW", "PS", "IS"]
+        e.set_aggregation_path("org", org_hierarchy)
+        e.save()
+        e.aggregation_paths['org'][0] = "XYZ"
+        e.save()
+        saved = entity.get(self.dbm, self.uuid)
+        self.assertEqual(saved.aggregation_paths["org"], ["TW","PS","IS"])
 
     def test_get_entities(self):
         e2 = Entity(self.dbm, "hospital",["India","TN","Chennai"])
