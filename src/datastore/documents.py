@@ -35,7 +35,7 @@ class TZAwareDateTimeField(DateTimeField):
             value = datetime.datetime.utcfromtimestamp(calendar.timegm(value))
         elif not isinstance(value, datetime.datetime):
             value = datetime.datetime.combine(value, datetime.time(0))
-        return to_naive_utc(value.replace(microsecond=0)).isoformat() + 'Z'
+        return to_naive_utc(value.replace(microsecond=0)).isoformat()
 
 
 class DocumentBase(Document):
