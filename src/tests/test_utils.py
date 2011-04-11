@@ -6,6 +6,10 @@ from unittest  import TestCase
 from datetime import datetime
 import utils
 import pytz
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 class TestTypeUtils(TestCase):
     an_int = 1
@@ -127,20 +131,86 @@ class TestTypeUtils(TestCase):
 
 class TestDateUtils(TestCase):
     def setUp(self):
-        datetuple = (2011, 03, 22, 16, 23, 42)
+        datetuple = (2011, 03, 22, 02, 23, 42)
         self.naive_utc = datetime(*datetuple)
         self.tz_aware_utc = datetime(*datetuple, tzinfo = pytz.UTC)
         self.us_pacific = self.tz_aware_utc.astimezone(pytz.timezone('US/Pacific'))
         self.ist = self.tz_aware_utc.astimezone(pytz.timezone('Asia/Kolkata'))
 
     def test_should_raise_ValueError_if_invalid_date_string(self):
-        self.assertRaises(ValueError,utils.js_datestring_to_py_datetime,"invalid date")
-        self.assertRaises(ValueError,utils.js_datestring_to_py_datetime,"")
-        self.assertRaises(ValueError,utils.js_datestring_to_py_datetime," ")
+        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, "invalid date")
+        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, "")
+        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, " ")
+        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, None)
+        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, 123456)
+        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, '123456')
+        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, datetime.now())
 
+    def test_to_naive_utc(self):
+        # make sure tz aware dates convert properly
+        self.assertIsNone(utils.to_naive_utc(self.ist).tzinfo)
+        self.assertEquals(utils.to_naive_utc(self.ist), self.naive_utc)
+        self.assertEquals(utils.to_naive_utc(self.tz_aware_utc), self.naive_utc)
+        self.assertEquals(utils.to_naive_utc(self.ist), utils.to_naive_utc(self.us_pacific))
 
-    def test_naive_to_aware(self):
-        self.assertEquals(self.naive_utc, utils.to_naive_utc(self.ist))
+        # make sure naives aren't messed with
+        self.assertEqual(utils.to_naive_utc(self.naive_utc), self.naive_utc)
+        
+    def test_to_aware_utc(self):
+        # make sure a naive converts properly
+        aware = utils.to_aware_utc(self.naive_utc)
+        self.assertIsNotNone(aware.tzinfo)
+        self.assertEqual(pytz.UTC.utcoffset(self.tz_aware_utc),
+                         aware.tzinfo.utcoffset(aware))
+        self.assertEqual(self.tz_aware_utc, aware)
+
+        # make sure an aware converts properly
+        aware = utils.to_aware_utc(self.us_pacific)
+        self.assertEqual(aware, self.tz_aware_utc)
+
+        # make sure the actual hour value changed by either 7
+        # or 8 hours (depends on daylight savings!)
+        self.assertTrue((self.us_pacific.hour + 7) % 24 == aware.hour or
+                        (self.us_pacific.hour + 8) % 24 == aware.hour)
+
+    def test_utcnow(self):
+        un, dn = utils.utcnow(), datetime.utcnow()
+
+        # make sure utils.utcnow constructed object has a UTC tzinfo
+        self.assertEqual(un.tzinfo.utcoffset(un), self.tz_aware_utc.tzinfo.utcoffset(self.tz_aware_utc))
+
+        # hard to test that are equal one as can't make parallel calls to utils and datetime.utcnow!
+        # so take them, throw away the microseconds on the assumption that they will be constructed
+        # in the same second
+        un = un.replace(microsecond = 0)
+        dn = dn.replace(tzinfo = pytz.UTC, microsecond = 0)
+        self.assertEqual(un, dn)
+
 
 class TestJSONUtils(TestCase):
-    pass
+    def setUp(self):
+        self.dt = utils.utcnow()
+        self.dict_with_dt = { 'now': self.dt, 'str': '12345', 'int': 12345, 'list': [1,2,3,4,5] }
+        self.list_with_dt = [self.dt, self.dt, self.dt]
+        self.dict_with_list_of_dts = {'dict': {'list': self.list_with_dt, 'int': 10}}
+        self.dict_no_dt = {'dict': {'list': [1,2,3,'a','b','c'], 'int': 10}}
+
+    def test_encode_decode(self):
+        # want to make sure this doesn't throw an exception. Not sure
+        # how to test for that
+        objs = [self.dict_with_dt, self.dict_with_dt, self.dict_with_list_of_dts]
+        strs = []
+        try:
+            for o in objs:
+                strs.append(utils.encode_json(o))
+        except Exception, ex:
+            self.assertTrue(False, ex)
+        self.assertEqual(len(objs), len(strs))
+
+        for i in range(len(strs)):
+            self.assertDictEqual(utils.decode_json(strs[i]), objs[i])
+
+
+        
+    def test_decode(self):
+        pass

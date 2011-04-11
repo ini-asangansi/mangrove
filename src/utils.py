@@ -1,10 +1,13 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from numbers import Number
-from datetime import datetime, timedelta
+from datetime import datetime
 import iso8601
-import json
 import pytz
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 def is_empty(arg):
     '''Generalizes 'empty' checks on Strings, sequences, and dicts.
@@ -20,7 +23,7 @@ def is_empty(arg):
     try:
         if len(arg) == 0:
             return True
-    except:
+    except TypeError:
         # wasn't a sequence
         pass
 
@@ -119,7 +122,7 @@ def js_datestring_to_py_datetime(s):
     # all failures
     try:
         return to_aware_utc(iso8601.parse_date(s))
-    except Exception, er:
+    except Exception:
         raise ValueError("datestring not valid format")
 
 
@@ -131,7 +134,7 @@ class _json_encoder(json.JSONEncoder):
     def default(self, o):
        try:
            return py_datetime_to_js_datestring(o)
-       except ValueError, er:
+       except ValueError:
            # wasn't a date
            pass
        return json.JSONEncoder.default(self, o)
@@ -143,9 +146,22 @@ def _decode_hook(s):
         if isinstance(v, basestring):
             try:
                 v = js_datestring_to_py_datetime(v)
-            except ValueError, er:
+            except ValueError:
                 # wasn't a date
                 pass
+        elif isinstance(v, dict):
+            # skip
+            pass
+        elif is_sequence(v):
+            newv = []
+            for i in v:
+                try:
+                    i = js_datestring_to_py_datetime(i)
+                except ValueError:
+                    # wasn't a date
+                    pass
+                newv.append(i)
+                v = newv
         out[k] = v
     return out
 
