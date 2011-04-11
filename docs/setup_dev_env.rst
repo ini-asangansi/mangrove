@@ -54,7 +54,7 @@ We are detailing out the above steps for Ubuntu 10.10. For any other OS - please
 
     $useradd mangrover
     $passwd mangrover
-    $moduser -aG sudo mangrover
+    $sudo usermod -aG sudo mangrover
 
 * Run chef solo(as mangrover)::
 

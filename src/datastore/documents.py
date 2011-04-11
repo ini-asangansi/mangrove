@@ -4,9 +4,8 @@ from couchdb.mapping import TextField, Document, DateTimeField, DictField
 import datetime
 import calendar
 from uuid import uuid4
-import dateutil.parser
 from time import struct_time
-from utils import date_to_string_for_couch, string_from_couch_to_date, utcnow
+from utils import py_datetime_to_js_datestring, js_datestring_to_py_datetime, utcnow
 
 class attributes(object):
     '''Constants for referencing standard attributes in docs.'''
@@ -25,7 +24,7 @@ class TZAwareDateTimeField(DateTimeField):
     def _to_python(self, value):
         if isinstance(value, basestring):
             try:
-                value = string_from_couch_to_date(value)
+                value = js_datestring_to_py_datetime(value)
             except ValueError:
                 raise ValueError('Invalid ISO date/time %r' % value)
         return value
@@ -35,7 +34,7 @@ class TZAwareDateTimeField(DateTimeField):
             value = datetime.datetime.utcfromtimestamp(calendar.timegm(value))
         elif not isinstance(value, datetime.datetime):
             value = datetime.datetime.combine(value, datetime.time(0))
-        return date_to_string_for_couch(value)
+        return py_datetime_to_js_datestring(value)
 
 
 class DocumentBase(Document):
