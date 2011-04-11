@@ -112,6 +112,8 @@ def date_to_string_for_couch(d):
 def string_from_couch_to_date(s):
     if not is_string(s):
         raise ValueError("Not a valid string")
+    if is_empty(s):
+        raise ValueError("Not a valid date-time string")
     return to_aware_utc(dateutil.parser.parse(s))
 #
 # JSON Helpers
