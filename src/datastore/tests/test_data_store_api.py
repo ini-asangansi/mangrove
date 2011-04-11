@@ -2,7 +2,8 @@ from datetime import datetime
 from datastore import entity
 from datastore.entity import Entity
 from datastore.database import get_db_manager, _delete_db_and_remove_db_manager
-from datastore.documents import DataRecordDocument, attributes
+from datastore.documents import DataRecordDocument
+from pytz import UTC
 import unittest
 
 class TestDataStoreApi(unittest.TestCase):
@@ -108,17 +109,20 @@ class TestDataStoreApi(unittest.TestCase):
 
     def test_add_data_record_to_entity(self):
         clinic_entity, reporter = self._create_clinic_and_reporter()
-        data_record = [("medicines", 20), ("doctor", "aroj"), ('facility', 'clinic', 'facility_type'), ('opened_on', datetime(2011,01,02))]
+        data_record = [("medicines", 20), ("doctor", "aroj"), ('facility', 'clinic', 'facility_type'),
+                       ('opened_on', datetime(2011,01,02, tzinfo = UTC)),("govt_ref_num","")]
         data_record_id = clinic_entity.add_data(data = data_record,
-                                                event_time = datetime(2011,01,02), submission_id = "123456")
+                                                event_time = datetime(2011,01,02, tzinfo = UTC),
+                                                submission_id = "123456")
         self.assertTrue(data_record_id is not None)
 
         # Assert the saved document structure is as expected
         saved = self.dbm.load(data_record_id, document_class=DataRecordDocument)
         self.assertEquals(saved.data['medicines']['value'], 20)
-        self.assertEquals(saved.event_time,datetime(2011,01,02))
+        self.assertEquals(saved.event_time,datetime(2011,01,02, tzinfo = UTC))
         self.assertEquals(saved.submission_id,"123456")
-        self.assertEquals(saved.data['opened_on']['value'],"2011-01-02 00:00:00")
+        self.assertEquals(saved.data['opened_on']['value'],datetime(2011,01,02, tzinfo = UTC))
+        self.assertEquals(saved.data['govt_ref_num']['value'],"")
 
         self.dbm.delete(clinic_entity._doc)
         self.dbm.delete(saved)

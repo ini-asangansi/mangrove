@@ -7,4 +7,8 @@ simplejson
 ipython
 mock
 selenium
+python-dateutil==1.5
+pytz
+hg+https://bitbucket.org/ubernostrum/django-registration#egg=django-registration0.8
+
 

@@ -123,3 +123,10 @@ class TestUtils(TestCase):
         self._test_a_list([None], None,
                           lambda x : utils.primitive_type(x) == 'unknown',
                           ": primitive_type returned something other than 'unknown'", "")
+
+        
+    def test_should_raise_ValueError_if_invalid_date_string(self):
+        self.assertRaises(ValueError,utils.string_from_couch_to_date,"invalid date")
+        self.assertRaises(ValueError,utils.string_from_couch_to_date,"")
+        self.assertRaises(ValueError,utils.string_from_couch_to_date," ")
+

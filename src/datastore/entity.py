@@ -4,7 +4,7 @@ import copy
 from datetime import datetime
 from documents import EntityDocument, DataRecordDocument, attributes
 
-from utils import is_not_empty, is_sequence, is_string, primitive_type
+from utils import is_not_empty, is_sequence, is_string, primitive_type, utcnow
 from database import DatabaseManager
 
 def get(dbm, uuid):
@@ -203,7 +203,7 @@ class Entity(object):
         # TODO: should we have a flag that says that this has been saved at least once to avoid adding data
         # records for an Entity that may never be saved? Should docs just be saved on init?
         if event_time is None:
-            event_time = datetime.utcnow()
+            event_time = utcnow()
             
         data_dict = {}
         for d in data:
@@ -250,7 +250,7 @@ class Entity(object):
         returns the aggregated value for the given fields using the aggregation function specified for data collected till a point in time.
          Eg: data_records_func = {'arv':'latest', 'num_patients':'sum'} will return latest value for ARV and sum of number of patients
         """
-        asof = asof or datetime.utcnow()
+        asof = asof or utcnow()
         result = {}
         
         for field,aggregate_fn in aggregation_rules.items():
