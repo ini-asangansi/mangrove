@@ -111,6 +111,9 @@ def format_date_for_couch(d):
 
     return "%sZ" % to_naive_utc(d).isoformat()
 
+def utcnow():
+    return to_aware_utc(datetime.utcnow())
+
 
 #
 # JSON Helpers

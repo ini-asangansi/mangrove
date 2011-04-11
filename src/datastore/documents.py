@@ -6,7 +6,7 @@ import calendar
 from uuid import uuid4
 import dateutil.parser
 from time import struct_time
-from utils import to_naive_utc
+from utils import to_naive_utc, utcnow
 
 class attributes(object):
     '''Constants for referencing standard attributes in docs.'''
@@ -47,7 +47,7 @@ class DocumentBase(Document):
         if id is None:
             id = uuid4().hex
         Document.__init__(self,id=id, **values)
-        self.created = datetime.datetime.utcnow()
+        self.created = utcnow()
         self.document_type = document_type
 
 class EntityDocument(DocumentBase):
