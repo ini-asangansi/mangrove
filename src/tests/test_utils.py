@@ -126,7 +126,7 @@ class TestUtils(TestCase):
 
         
     def test_should_raise_ValueError_if_invalid_date_string(self):
-        self.assertRaises(ValueError,utils.string_from_couch_to_date,"invalid date")
-        self.assertRaises(ValueError,utils.string_from_couch_to_date,"")
-        self.assertRaises(ValueError,utils.string_from_couch_to_date," ")
+        self.assertRaises(ValueError,utils.js_datestring_to_py_datetime,"invalid date")
+        self.assertRaises(ValueError,utils.js_datestring_to_py_datetime,"")
+        self.assertRaises(ValueError,utils.js_datestring_to_py_datetime," ")
 

@@ -2,7 +2,7 @@
 
 from numbers import Number
 from datetime import datetime, timedelta
-import dateutil.parser
+import iso8601
 import json
 import pytz
 
@@ -104,17 +104,25 @@ def to_naive_utc(d):
 def utcnow():
     return to_aware_utc(datetime.utcnow())
 
-def date_to_string_for_couch(d):
+def py_datetime_to_js_datestring(d):
     if not isinstance(d, datetime):
         raise ValueError("not a datetime")
     return to_aware_utc(d).isoformat()
 
-def string_from_couch_to_date(s):
+def js_datestring_to_py_datetime(s):
     if not is_string(s):
         raise ValueError("Not a valid string")
     if is_empty(s):
-        raise ValueError("Not a valid date-time string")
-    return to_aware_utc(dateutil.parser.parse(s))
+        raise ValueError("Not a valid datetime string")
+
+    # wrap call to iso8601 parser to return ValueError on
+    # all failures
+    try:
+        return to_aware_utc(iso8601.parse_date(s))
+    except Exception, er:
+        raise ValueError("datestring not valid format")
+
+
 #
 # JSON Helpers
 #
@@ -122,8 +130,8 @@ def string_from_couch_to_date(s):
 class _json_encoder(json.JSONEncoder):
     def default(self, o):
        try:
-           return date_to_string_for_couch(o)
-       except ValueError:
+           return py_datetime_to_js_datestring(o)
+       except ValueError, er:
            # wasn't a date
            pass
        return json.JSONEncoder.default(self, o)
@@ -134,7 +142,7 @@ def _decode_hook(s):
         v = s[k]
         if isinstance(v, basestring):
             try:
-                v = string_from_couch_to_date(v)
+                v = js_datestring_to_py_datetime(v)
             except ValueError, er:
                 # wasn't a date
                 pass
