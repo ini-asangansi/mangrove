@@ -110,7 +110,7 @@ class TestDataStoreApi(unittest.TestCase):
     def test_add_data_record_to_entity(self):
         clinic_entity, reporter = self._create_clinic_and_reporter()
         data_record = [("medicines", 20), ("doctor", "aroj"), ('facility', 'clinic', 'facility_type'),
-                       ('opened_on', datetime(2011,01,02, tzinfo = UTC))]
+                       ('opened_on', datetime(2011,01,02, tzinfo = UTC)),("govt_ref_num","")]
         data_record_id = clinic_entity.add_data(data = data_record,
                                                 event_time = datetime(2011,01,02, tzinfo = UTC),
                                                 submission_id = "123456")
@@ -122,6 +122,7 @@ class TestDataStoreApi(unittest.TestCase):
         self.assertEquals(saved.event_time,datetime(2011,01,02, tzinfo = UTC))
         self.assertEquals(saved.submission_id,"123456")
         self.assertEquals(saved.data['opened_on']['value'],datetime(2011,01,02, tzinfo = UTC))
+        self.assertEquals(saved.data['govt_ref_num']['value'],"")
 
         self.dbm.delete(clinic_entity._doc)
         self.dbm.delete(saved)
