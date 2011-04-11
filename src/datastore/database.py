@@ -81,6 +81,11 @@ class DatabaseManager(object):
         document.store(self.database)
         return document
 
+    def invalidate(self, uid):
+        doc = self.load(uid)
+        doc.void = True
+        self.save(doc)
+
     def delete(self, document):
         self.database.delete(document)
 

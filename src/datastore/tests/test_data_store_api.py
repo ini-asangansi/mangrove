@@ -8,13 +8,14 @@ import unittest
 
 class TestDataStoreApi(unittest.TestCase):
     def setUp(self):
-        self.dbm = get_db_manager(database='mangrove-test')
+        self.dbm = get_db_manager(database='mangrove-api')
         e = Entity(self.dbm, entity_type="clinic", location=["India","MH","Pune"])
         self.uuid = e.save()
 
     def tearDown(self):
-        del self.dbm.database[self.uuid]
-        _delete_db_and_remove_db_manager(self.dbm)
+        #del self.dbm.database[self.uuid]
+        #_delete_db_and_remove_db_manager(self.dbm)
+        pass
 
     def test_create_entity(self):
         e = Entity(self.dbm, entity_type="clinic", location=["India","MH","Pune"])
@@ -78,7 +79,6 @@ class TestDataStoreApi(unittest.TestCase):
         saved = entity.get(self.dbm, self.uuid)
         self.assertTrue(saved.location_path==["India","MH","Pune"])  # Hierarchy has not changed.
 
-#        inc
     def test_should_save_hierarchy_tree_only_through_api(self):
         e = entity.get(self.dbm, self.uuid)
         org_hierarchy = ["TW", "PS", "IS"]
@@ -118,34 +118,15 @@ class TestDataStoreApi(unittest.TestCase):
 
         # Assert the saved document structure is as expected
         saved = self.dbm.load(data_record_id, document_class=DataRecordDocument)
-        self.assertEquals(saved.data['medicines']['value'], 20)
-        self.assertEquals(saved.event_time,datetime(2011,01,02, tzinfo = UTC))
-        self.assertEquals(saved.submission_id,"123456")
-        self.assertEquals(saved.data['opened_on']['value'],datetime(2011,01,02, tzinfo = UTC))
-        self.assertEquals(saved.data['govt_ref_num']['value'],"")
+        self.assertEqual(saved.data['medicines']['value'], 20)
+        self.assertEqual(saved.event_time,datetime(2011,01,02, tzinfo = UTC))
+        self.assertEqual(saved.submission_id,"123456")
+        self.assertEqual(saved.data['opened_on']['value'],datetime(2011,01,02, tzinfo = UTC))
+        self.assertEqual(saved.data['govt_ref_num']['value'],"")
 
         self.dbm.delete(clinic_entity._doc)
         self.dbm.delete(saved)
         self.dbm.delete(reporter._doc)
-
-#    def test_should_switch_database_on_config_change(self):
-#        config.set_database("db1")
-#        e = Entity(self.dbm, "1","test")
-#        id = e.save()
-#        config.set_database("db2")  #Now change db and try to load entity
-#        try:
-#            found = entity.get(self.dbm, id)
-#        except:
-#            found = None
-#        assert not found
-#        config.set_database("db1")
-#        assert entity.get(self.dbm, id)
-#
-#        Server(config._server).delete("db1")
-#        Server(config._server).delete("db2")
-#        config.reset()
-#        assert_equal(config._db,"mangrove_web")
-#        assert_equal(config._server,settings.SERVER)
 
     def test_should_create_entity_from_document(self):
         existing = entity.get(self.dbm, self.uuid)
@@ -158,23 +139,15 @@ class TestDataStoreApi(unittest.TestCase):
         with self.assertRaises(AssertionError):
             e = Entity(self.dbm, _document = "xyz")
 
+    def test_invalidate_data(self):
+        e = Entity(self.dbm, entity_type='store', location=['nyc'])
+        e.save()
+        data = e.add_data([("apples", 20), ("oranges", 30)])
+        valid_doc = self.dbm.load(data)
+        self.assertFalse(valid_doc.void)
+        e.invalidate_data(data)
+        invalid_doc = self.dbm.load(data)
+        self.assertTrue(invalid_doc.void)
 
-
-
-#    def test_get_current_state(self):
-#        clinic_entity, reporter_id = self.create_clinic_and_reporter()
-#        data_record = {"numbeds" :{"value": 10,"notes":"recorded by Mr. xyz"}, "nummedicines" : {"value":20}}
-#        data_record_id = clinic_entity.submit_data_record(data_record, reported_on = datetime(2011,1,12),reported_by = reporter_id, source = {"phone":1234,"form_id":"hni.1234"})
-#        current_state_dict = clinic_entity.current_state()
-#        assert current_state_dict["numbeds"]== {"value": 10,"notes":"recorded by Mr. xyz"}
-#        assert current_state_dict["nummedicines"]== {"value": 20}
-#
-#    def test_update_data_record_of_entity(self):
-#       clinic_entity, reporter_id = self.create_clinic_and_reporter()
-#       data_record = {"numbeds" :{"value": 10,"notes":"recorded by Mr. xyz"}, "nummedicines" : {"value":20}}
-#       old_data_record_id = clinic_entity.submit_data_record(data_record, reported_on = datetime(2011,1,12),reported_by = reporter_id, source = {"phone":1234,"form_id":"hni.1234"})
-#       new_data_record = {"numbeds" :{"value": 30,"notes":"recorded by Mr. xyz"}, "numdoctors" : {"value":5}}
-#       new_data_record_id=clinic_entity.update_data_record(old_data_record_id, new_data_recordtan = datetime(2011,1,13),reported_by = reporter_id, source = {"phone":12345,"form_id":"hni.1234"})
-#       assert new_data_record_id
-#       assert new_data_record_id != old_data_record_id #Because we want to store all the submissions that come in. The old data is invalidated and the document is not overwritten
-#
+    def test_invalidate_entity(self):
+        pass

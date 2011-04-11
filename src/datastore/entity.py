@@ -222,27 +222,18 @@ class Entity(object):
     # Note: The below has not been implemented yet.
   	 	
   	 	
-    def invalidate_datarecord(self,uid):
+    def invalidate_data(self, uid):
   	 	
         '''
-  	 	
-        Mark datarecord identified by uid as 'invalid'
-  	 	
-  	 	
+        Mark datarecord identified by uid as 'invalid'.
+
         Can be used to mark a submitted record as 'bad' so that
-
-  	 	
         it will be ignored in reporting. This is because we
-
-  	 	
         don't want to delete submitted data, even if it is
-
-  	 	
         erroneous.
-  	 	
         '''
-  	 	
-        pass
+        self._dbm.invalidate(uid)
+
 
 
     def values(self, aggregation_rules, asof = None):

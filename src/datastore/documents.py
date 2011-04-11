@@ -1,6 +1,6 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
-from couchdb.mapping import TextField, Document, DateTimeField, DictField
+from couchdb.mapping import TextField, Document, DateTimeField, DictField, BooleanField
 import datetime
 import calendar
 from uuid import uuid4
@@ -41,6 +41,7 @@ class DocumentBase(Document):
     created = TZAwareDateTimeField()
     modified = TZAwareDateTimeField()
     document_type = TextField()
+    void = BooleanField()
 
     def __init__(self, id = None, document_type=None, **values):
         if id is None:
@@ -48,6 +49,7 @@ class DocumentBase(Document):
         Document.__init__(self,id=id, **values)
         self.created = utcnow()
         self.document_type = document_type
+        self.void = False
 
 class EntityDocument(DocumentBase):
     """
