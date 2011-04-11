@@ -1,7 +1,10 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from numbers import Number
-from datetime import datetime
+from datetime import datetime, timedelta
+import dateutil.parser
+import json
+import pytz
 
 def is_empty(arg):
     '''Generalizes 'empty' checks on Strings, sequences, and dicts.
@@ -65,3 +68,79 @@ def primitive_type(arg):
         typ = 'text'
 
     return typ
+
+#
+# Date helpers
+#
+
+
+def is_naive_datetime(d):
+    assert isinstance(d, datetime)
+    return (d.tzinfo is None)
+
+def to_aware_utc(d):
+    '''Returns a tz aware datetime in UTC for given datetime.
+
+    NOTE: if passed in datetime is naive, it assumes it is in UTC
+    '''
+    assert isinstance(d, datetime)
+    if is_naive_datetime(d):
+        # assume was in UTC!
+        d = d.replace(tzinfo = pytz.UTC)
+    else:
+        d = d.astimezone(pytz.UTC)
+    return d
+
+def to_naive_utc(d):
+    '''Returns a naive (no timezone) datetime in UTC.
+
+    NOTE: if inbound datetime is naive, it assumes it's already UTC and returns as is
+    '''
+    assert isinstance(d, datetime)
+    if not is_naive_datetime(d):
+        d = d.astimezone(pytz.UTC).replace(tzinfo = None)
+    return d
+
+def format_date_for_couch(d):
+    '''Fixes Python's default isoformat to the 'Z' style python-couchdb expects.
+
+    probably should fix python-couchdb and submit a patch to them...
+    '''
+    if not isinstance(d, datetime):
+        raise ValueError("Must pass in a datetime object")
+
+    #return "%sZ" % to_naive_utc(d).isoformat()
+    return to_aware_utc(d).isoformat()
+
+
+#
+# JSON Helpers
+#
+
+class _json_encoder(json.JSONEncoder):
+    def default(self, o):
+       try:
+           return format_date_for_couch(o)
+       except ValueError:
+           # wasn't a date
+           pass
+       return json.JSONEncoder.default(self, o)
+
+def _decode_hook(s):
+    out = {}
+    for k in s:
+        v = s[k]
+        if isinstance(v, basestring):
+            try:
+                v = to_aware_utc(dateutil.parser.parse(v))
+            except ValueError, er:
+                # wasn't a date
+                pass
+        out[k] = v
+    return out
+
+def decode_json(s):
+    return json.loads(s, object_hook = _decode_hook)
+
+def encode_json(o):
+    return json.dumps(o, cls = _json_encoder)

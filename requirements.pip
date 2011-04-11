@@ -7,4 +7,7 @@ simplejson
 ipython
 mock
 selenium
+python-dateutil
+pytz
+
 

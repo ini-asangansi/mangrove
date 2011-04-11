@@ -1,10 +1,12 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
-from couchdb.mapping import TextField, Document, DateTimeField, DictField, Field
+from couchdb.mapping import TextField, Document, DateTimeField, DictField
 import datetime
+import calendar
 from uuid import uuid4
-from decimal import Decimal
-
+import dateutil.parser
+from time import struct_time
+from utils import to_naive_utc
 
 class attributes(object):
     '''Constants for referencing standard attributes in docs.'''
@@ -19,29 +21,26 @@ class attributes(object):
     DATA = 'data'
 
 # This class can take care of non-json serializable objects. Another solution is to plug in a custom json encoder/decoder.
-class RawField(Field):
+class TZAwareDateTimeField(DateTimeField):
     def _to_python(self, value):
-       return value
-
-    def _to_json(self, value):
-        self._make_json_serializable(value)
+        if isinstance(value, basestring):
+            try:
+                value = dateutil.parser.parse(value)
+            except ValueError:
+                raise ValueError('Invalid ISO date/time %r' % value)
         return value
+    
+    def _to_json(self, value):
+        if isinstance(value, struct_time):
+            value = datetime.datetime.utcfromtimestamp(calendar.timegm(value))
+        elif not isinstance(value, datetime.datetime):
+            value = datetime.datetime.combine(value, datetime.time(0))
+        return to_naive_utc(value.replace(microsecond=0)).isoformat() + 'Z'
 
-    def _to_json_serializable(self, val):
-        if type(val) in (datetime.datetime, datetime.date, datetime.time, Decimal):  # Convert datetime etc to string for JSON serialization
-            return str(val)  # Should this be the ISO Format with 'Z' suffix for datetime? http://couchdbkit.org/docs/api/couchdbkit.schema.properties-pysrc.html#value_to_json
-        return val
-
-    def _make_json_serializable(self, collection):
-        for key in collection:
-            if isinstance(collection[key], dict) or isinstance(collection[key], list):
-                self._make_json_serializable(collection[key])
-            else:
-                collection[key] = self._to_json_serializable(collection[key])
 
 class DocumentBase(Document):
-    created = DateTimeField()
-    modified = DateTimeField()
+    created = TZAwareDateTimeField()
+    modified = TZAwareDateTimeField()
     document_type = TextField()
 
     def __init__(self, id = None, document_type=None, **values):
@@ -90,10 +89,11 @@ class DataRecordDocument(DocumentBase):
         The couch data_record document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
         A schema for the data_record is enforced here.
     """
-    data = RawField()
+    # data = RawField()
+    data = DictField()
     entity_backing_field = DictField()
     submission_id = TextField()
-    event_time =  DateTimeField()
+    event_time =  TZAwareDateTimeField()
 
     def __init__(self, id = None, entity_doc = None, event_time = None, submission_id = None, data = None):
         assert entity_doc is None or isinstance(entity_doc, EntityDocument)
@@ -104,4 +104,3 @@ class DataRecordDocument(DocumentBase):
         
         if entity_doc:
             self.entity_backing_field = entity_doc.unwrap()
-
