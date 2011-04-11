@@ -1,6 +1,6 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
-
 import copy
+
 from datetime import datetime
 from documents import EntityDocument, DataRecordDocument, attributes
 
@@ -139,8 +139,8 @@ class Entity(object):
     @property
     def aggregation_paths(self):
         '''Returns a copy of the dict'''
+#        return dict(self._doc.aggregation_paths)
         return copy.deepcopy(self._doc.aggregation_paths)
-    
     @property
     def type_path(self):
         '''Returns a copy of the path'''
