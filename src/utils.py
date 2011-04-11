@@ -107,7 +107,7 @@ def utcnow():
 def date_to_string_for_couch(d):
     if not isinstance(d, datetime):
         raise ValueError("not a datetime")
-    return to_naive_utc(d).isoformat()
+    return to_aware_utc(d).isoformat()
 
 def string_from_couch_to_date(s):
     if not is_string(s):

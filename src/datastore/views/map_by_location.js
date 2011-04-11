@@ -17,8 +17,8 @@ function(doc) {
         for (index in value) {
             for (hierarchy in aggregation_paths) {
                 var key = [index].concat([hierarchy], aggregation_paths[hierarchy],
-                        [date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(),
-                            date.getMinutes(), date.getSeconds()]);
+                        [date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(), date.getUTCHours(),
+                            date.getUTCMinutes(), date.getUTCSeconds()]);
                 key.splice(0, 0, doc.entity_backing_field.aggregation_paths['_type']);
                 emit(key, value[index]);
             }
