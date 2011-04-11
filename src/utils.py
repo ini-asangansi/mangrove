@@ -143,3 +143,4 @@ def decode_json(s):
 
 def encode_json(o):
     return json.dumps(o, cls = _json_encoder)
+
