@@ -37,7 +37,7 @@ class CommonUtilities(Page):
         return self
 
     def find_text_box_by_css_and_enter_text(self, text_box_css, text_to_be_entered):
-        self.driver.find_element_by_name(text_box_css).send_keys(text_to_be_entered)
+        self.driver.find_element_by_css_selector(text_box_css).send_keys(text_to_be_entered)
         return self
 
     def find_drop_down_by_id_and_select_option(self, drop_down_id,
