@@ -1,6 +1,9 @@
 from framework.mangrovetests.page import Page
 from framework.mangrovetests.registration_confirmation_page import RegistrationConfirmationPage
 from framework.utils.common_utils import CommonUtilities
+from resources.element_locators import *
+from framework.utils.data_fetcher import *
+from testdata.test_data import *
 
 
 __author__ = 'kumarr'
@@ -19,22 +22,48 @@ class RegistrationPage(Page):
         page_title = self.driver.title
         return page_title
 
-    def enter_data_in_all_fields_and_click_register(self, organization_name, organization_sector, organization_addressline1, organization_addressline2, organization_city, organization_state, organization_country, organization_zipcode, organization_office_phone, organization_website, title, first_name, last_name, email, password, confirm_password):
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("organization_name", organization_name)
-        CommonUtilities(self.driver).find_drop_down_by_name_and_select_option("organization_sector", organization_sector)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("organization_addressline1", organization_addressline1)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("organization_addressline1", organization_addressline2)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("organization_city", organization_city)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("organization_state", organization_state)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("organization_country", organization_country)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("organization_zipcode", organization_zipcode)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("organization_office_phone", organization_office_phone)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("organization_website", organization_website)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("title", title)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("first_name", first_name)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("last_name", last_name)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("password", password)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("email", email)
-        CommonUtilities(self.driver).find_text_box_by_name_and_enter_text("confirm_password", confirm_password)
-        self.driver.find_element_by_css_selector("input[value='Register']").click()
+    def do_successful_registration(self, registration_data_for_successful_login ):
+        self.driver.find_text_box(ORGANIZATION_NAME_TB[LOCATOR]).enter_text(put(ORGANIZATION_NAME,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_SECTOR_DD[LOCATOR]).enter_text(put(ORGANIZATION_SECTOR,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB[LOCATOR]).enter_text(put(ORGANIZATION_ADDRESS_LINE1,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB[LOCATOR]).enter_text(put(ORGANIZATION_ADDRESS_LINE1,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_CITY_TB[LOCATOR]).enter_text(put(ORGANIZATION_CITY,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_STATE_TB[LOCATOR]).enter_text(put(ORGANIZATION_STATE,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_COUNTRY_TB[LOCATOR]).enter_text(put(ORGANIZATION_COUNTRY,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_ZIPCODE_TB[LOCATOR]).enter_text(put(ORGANIZATION_ZIPCODE,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_OFFICE_PHONE_TB[LOCATOR]).enter_text(put(ORGANIZATION_OFFICE_PHONE,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_WEBSITE_TB[LOCATOR]).enter_text(put(ORGANIZATION_WEBSITE,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_TITLE_TB[LOCATOR]).enter_text(put(TITLE,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_FIRST_NAME_TB[LOCATOR]).enter_text(put(FIRST_NAME,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_LAST_NAME_TB[LOCATOR]).enter_text(put(LAST_NAME,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_EMAIL_TB[LOCATOR]).enter_text(put(EMAIL,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_PASSWORD_TB[LOCATOR]).enter_text(put(REGISTRATION_PASSWORD,of(registration_data_for_successful_login)))
+        self.driver.find_text_box(ORGANIZATION_CONFIRM_PASSWORD_TB[LOCATOR]).enter_text(put(REGISTRATION_CONFIRM_PASSWORD,of(registration_data_for_successful_login)))
+        self.driver.find_button(ORGANIZATION_REGISTER_B[LOCATOR]).click()
         return RegistrationConfirmationPage(self.driver)
+
+
+    def enter_existing_email_id_and_click_register(self, registration_data_for_existing_email_error):
+        self.driver.find_text_box(ORGANIZATION_NAME_TB[LOCATOR]).enter_text(put(ORGANIZATION_NAME,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_SECTOR_DD[LOCATOR]).enter_text(put(ORGANIZATION_SECTOR,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB[LOCATOR]).enter_text(put(ORGANIZATION_ADDRESS_LINE1,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB[LOCATOR]).enter_text(put(ORGANIZATION_ADDRESS_LINE1,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_CITY_TB[LOCATOR]).enter_text(put(ORGANIZATION_CITY,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_STATE_TB[LOCATOR]).enter_text(put(ORGANIZATION_STATE,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_COUNTRY_TB[LOCATOR]).enter_text(put(ORGANIZATION_COUNTRY,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_ZIPCODE_TB[LOCATOR]).enter_text(put(ORGANIZATION_ZIPCODE,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_OFFICE_PHONE_TB[LOCATOR]).enter_text(put(ORGANIZATION_OFFICE_PHONE,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_WEBSITE_TB[LOCATOR]).enter_text(put(ORGANIZATION_WEBSITE,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_TITLE_TB[LOCATOR]).enter_text(put(TITLE,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_FIRST_NAME_TB[LOCATOR]).enter_text(put(FIRST_NAME,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_LAST_NAME_TB[LOCATOR]).enter_text(put(LAST_NAME,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_EMAIL_TB[LOCATOR]).enter_text(put(EMAIL,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_PASSWORD_TB[LOCATOR]).enter_text(put(REGISTRATION_PASSWORD,of(registration_data_for_existing_email_error)))
+        self.driver.find_text_box(ORGANIZATION_CONFIRM_PASSWORD_TB[LOCATOR]).enter_text(put(REGISTRATION_CONFIRM_PASSWORD,of(registration_data_for_existing_email_error)))
+        self.driver.find_button(ORGANIZATION_REGISTER_B[LOCATOR]).click()
+        return RegistrationPage(self.driver)
+
+    def existing_email_error_message(self):
+        existing_email_error_message = self.driver.find_element_by_css_selector(".errorlist li").text
+        print existing_email_error_message
+        return existing_email_error_message

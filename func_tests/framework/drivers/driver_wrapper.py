@@ -1,6 +1,8 @@
+from framework.utils.button_web_element import Button
 from framework.utils.drop_down_web_element import DropDown
 from framework.utils.text_box_web_element import TextBox
 from framework.utils.radio_button_web_element import RadioButton
+
 
 __author__ = 'anandb'
 
@@ -15,12 +17,21 @@ class DriverWrapper():
         """
         return DropDown(self.find_element_by_name(name))
 
-    def find_text_box(self, name):
+    '''def find_text_box(self, name):
         """ Finds a Text Box down using the driver.find_elements_by_name(...) api
         """
-        return TextBox(self.find_element_by_name(name))
+        return TextBox(self.find_element_by_name(name))'''
+
+    def find_text_box(self, css_selector):
+        """ Finds a Text Box down using the driver.find_elements_by_name(...) api
+        """
+        return TextBox(self.find_element_by_css_selector(css_selector))
 
     def find_radio_button(self, id):
         """ Finds the Radio Button using the driver.find_elements_by_name(...) api
         """
         return RadioButton(self.find_element_by_id(id))
+
+    def find_button(self, css_selector):
+
+        return Button(self.find_element_by_css_selector(css_selector))
