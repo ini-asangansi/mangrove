@@ -1,9 +1,8 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
-import copy
 
+import copy
 from datetime import datetime
 from documents import EntityDocument, DataRecordDocument, attributes
-
 from utils import is_not_empty, is_sequence, is_string, primitive_type, utcnow
 from database import DatabaseManager
 
