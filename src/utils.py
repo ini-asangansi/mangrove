@@ -101,20 +101,18 @@ def to_naive_utc(d):
         d = d.astimezone(pytz.UTC).replace(tzinfo = None)
     return d
 
-def format_date_for_couch(d):
-    '''Fixes Python's default isoformat to the 'Z' style python-couchdb expects.
-
-    probably should fix python-couchdb and submit a patch to them...
-    '''
-    if not isinstance(d, datetime):
-        raise ValueError("Must pass in a datetime object")
-
-    return to_naive_utc(d).isoformat()
-
 def utcnow():
     return to_aware_utc(datetime.utcnow())
 
+def date_to_string_for_couch(d):
+    if not isinstance(d, datetime):
+        raise ValueError("not a datetime")
+    return to_naive_utc(d).isoformat()
 
+def string_from_couch_to_date(s):
+    if not is_string(s):
+        raise ValueError("Not a valid string")
+    return to_aware_utc(dateutil.parser.parse(s))
 #
 # JSON Helpers
 #
@@ -122,7 +120,7 @@ def utcnow():
 class _json_encoder(json.JSONEncoder):
     def default(self, o):
        try:
-           return format_date_for_couch(o)
+           return date_to_string_for_couch(o)
        except ValueError:
            # wasn't a date
            pass
@@ -134,7 +132,7 @@ def _decode_hook(s):
         v = s[k]
         if isinstance(v, basestring):
             try:
-                v = to_aware_utc(dateutil.parser.parse(v))
+                v = string_from_couch_to_date(v)
             except ValueError, er:
                 # wasn't a date
                 pass

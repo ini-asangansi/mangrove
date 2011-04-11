@@ -6,7 +6,7 @@ import calendar
 from uuid import uuid4
 import dateutil.parser
 from time import struct_time
-from utils import to_naive_utc, utcnow
+from utils import date_to_string_for_couch, string_from_couch_to_date, utcnow
 
 class attributes(object):
     '''Constants for referencing standard attributes in docs.'''
@@ -25,7 +25,7 @@ class TZAwareDateTimeField(DateTimeField):
     def _to_python(self, value):
         if isinstance(value, basestring):
             try:
-                value = dateutil.parser.parse(value)
+                value = string_from_couch_to_date(value)
             except ValueError:
                 raise ValueError('Invalid ISO date/time %r' % value)
         return value
@@ -35,7 +35,7 @@ class TZAwareDateTimeField(DateTimeField):
             value = datetime.datetime.utcfromtimestamp(calendar.timegm(value))
         elif not isinstance(value, datetime.datetime):
             value = datetime.datetime.combine(value, datetime.time(0))
-        return to_naive_utc(value.replace(microsecond=0)).isoformat()
+        return date_to_string_for_couch(value)
 
 
 class DocumentBase(Document):
