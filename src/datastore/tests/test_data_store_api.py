@@ -8,14 +8,13 @@ import unittest
 
 class TestDataStoreApi(unittest.TestCase):
     def setUp(self):
-        self.dbm = get_db_manager(database='mangrove-api')
+        self.dbm = get_db_manager(database='mangrove-test')
         e = Entity(self.dbm, entity_type="clinic", location=["India","MH","Pune"])
         self.uuid = e.save()
 
     def tearDown(self):
-        #del self.dbm.database[self.uuid]
-        #_delete_db_and_remove_db_manager(self.dbm)
-        pass
+        del self.dbm.database[self.uuid]
+        _delete_db_and_remove_db_manager(self.dbm)
 
     def test_create_entity(self):
         e = Entity(self.dbm, entity_type="clinic", location=["India","MH","Pune"])
