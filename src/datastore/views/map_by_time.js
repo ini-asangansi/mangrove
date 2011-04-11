@@ -14,8 +14,9 @@ function(doc) {
             }
         }
         for (index in value) {
-            var key = [doc.entity_backing_field.aggregation_paths['_type'], index, date.getFullYear(),
-                       date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+            var key = [doc.entity_backing_field.aggregation_paths['_type'], index, date.getUTCFullYear(),
+                       date.getUTCMonth() + 1, date.getUTCDate(), date.getUTCHours(),
+                       date.getUTCMinutes(), date.getUTCSeconds()];
             emit(key, value[index]);
         }
     }
