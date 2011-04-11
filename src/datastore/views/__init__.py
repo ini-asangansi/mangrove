@@ -1,4 +1,3 @@
-from datastore.database import get_db_manager
 import os
 from glob import iglob
 import string

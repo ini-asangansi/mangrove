@@ -19,13 +19,11 @@ class TestQueryApi(unittest.TestCase):
         return r
 
     def test_can_create_views(self):
-        views.create_views(self.manager)
         self.assertTrue(views.exists_view("by_location", self.manager))
         self.assertTrue(views.exists_view("by_time", self.manager))
         self.assertTrue(views.exists_view("by_values", self.manager))
 
     def test_should_get_current_values_for_entity(self):
-        views.create_views(self.manager)
         e = Entity(self.manager, entity_type=["Health_Facility.Clinic"],location=['India','MH','Pune'])
         id = e.save()
         e.add_data(data = [("beds", 10), ("meds",  20), ("doctors", 2)], event_time=datetime.datetime(2011,01,01, tzinfo = UTC))

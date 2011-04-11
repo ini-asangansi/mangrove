@@ -1,4 +1,5 @@
 function(doc) {
+    if (doc.void) { return null; }
     var isNumeric = function(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
     };

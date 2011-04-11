@@ -9,6 +9,7 @@ from documents import DocumentBase
 import couchdb.client
 from datetime import datetime
 import utils
+import views
 
 
 _dbms = {}
@@ -58,6 +59,9 @@ class DatabaseManager(object):
         except ResourceNotFound:
             self.database = self.server.create(self.database_name)
 
+        if self.database is not None:
+            self.create_default_views()
+
     def __unicode__(self):
         return u"Connected on %s - working on %s" % (self.url, self.database_name)
 
@@ -73,6 +77,9 @@ class DatabaseManager(object):
     def create_view(self,view_name,map,reduce, view_document='mangrove_views'):
         view = ViewDefinition(view_document,view_name,map,reduce)
         view.sync(self.database)
+
+    def create_default_views(self):
+        views.create_views(self)
 
     def save(self, document, modified = None):
         assert modified is None or isinstance(modified, datetime)
