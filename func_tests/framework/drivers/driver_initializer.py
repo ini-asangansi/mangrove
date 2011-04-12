@@ -1,3 +1,5 @@
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
 from framework.drivers.firefox_driver_wrapper import FirefoxDriverWrapper
 from framework.drivers.ie_driver_wrapper import IEDriverWrapper
 from framework.drivers.chrome_driver_wrapper import ChromeDriverWrapper

@@ -1,37 +1,66 @@
-from framework.utils.button_web_element import Button
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
 from framework.utils.drop_down_web_element import DropDown
 from framework.utils.text_box_web_element import TextBox
 from framework.utils.radio_button_web_element import RadioButton
-
+from framework.pages.loginpage.login_locator import *
 
 __author__ = 'anandb'
 
 class DriverWrapper():
-
+    """
+    DriverWrapper class is for creating an wrapper over traditional webdriver
+     class. To do some additional function on different web elements
+    """
     def __init__(self):
         """Create DriverWrapper"""
         self.driver = self
 
-    def find_drop_down(self, name):
-        """ Finds the drop down using the driver.find_elements_by_name(...) api
+    def find_drop_down(self, locator_dict):
         """
-        return DropDown(self.find_element_by_name(name))
+        Create DropDown class object with the given web element
 
-    '''def find_text_box(self, name):
-        """ Finds a Text Box down using the driver.find_elements_by_name(...) api
+        Args:
+        locator_dict is the dictionary of the locator which contains key
+        values like {"locator":"input[name='email']","by":"By.CSS_SELECTOR"}
+
+        Return DropDown
         """
-        return TextBox(self.find_element_by_name(name))'''
+        return DropDown(self.driver.find(locator_dict))
 
-    def find_text_box(self, css_selector):
-        """ Finds a Text Box down using the driver.find_elements_by_name(...) api
+    def find_text_box(self, locator_dict):
         """
-        return TextBox(self.find_element_by_css_selector(css_selector))
+        Create TextBox class object with the given web element
 
-    def find_radio_button(self, id):
-        """ Finds the Radio Button using the driver.find_elements_by_name(...) api
+        Args:
+        locator_dict is the dictionary of the locator which contains key
+        values like {"locator":"input[name='email']","by":"By.CSS_SELECTOR"}
+
+        Return TextBox
         """
-        return RadioButton(self.find_element_by_id(id))
+        return TextBox(self.driver.find(locator_dict))
 
-    def find_button(self, css_selector):
+    def find_radio_button(self, locator_dict):
+        """
+        Create RadioButton class object with the given web element
 
-        return Button(self.find_element_by_css_selector(css_selector))
+        Args:
+        locator_dict is the dictionary of the locator which contains key
+        values like {"locator":"input[name='email']","by":"By.CSS_SELECTOR"}
+
+        Return RadioButton
+        """
+        return RadioButton(self.driver.find(locator_dict))
+
+    def find(self,locator_dict):
+        """
+        Finds element on the web page using locator dictionary
+
+        Args:
+        locator_dict is the dictionary of the locator which contains key
+        values like {"locator":"input[name='email']","by":"By.CSS_SELECTOR"}
+
+        Return webelement
+        """
+        return self.driver.find_element(by=locator_dict[BY],
+                                        value=locator_dict[LOCATOR])

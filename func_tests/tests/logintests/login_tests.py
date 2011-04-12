@@ -1,9 +1,10 @@
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from framework.base_test import BaseTest
-from framework.mangrovetests.login_page import LoginPage
+from framework.pages.login_page import LoginPage
 from nose.tools import *
-from testdata.test_data import *
 from framework.utils.data_fetcher import *
+from tests.logintests.login_data import *
 
 __author__ = 'kumarr'
 
@@ -14,13 +15,9 @@ class TestLoginPage(BaseTest):
         self.driver.get("http://localhost:8000/login")
         login_page = LoginPage(self.driver)
 
-#        dashboard_page= login_page.for_successful_login\
-#            (put(USERNAME, of(LOGIN_CREDENTIALS_ID1)), put(PASSWORD, of(
-#             LOGIN_CREDENTIALS_ID1)))
-
-        dashboard_page= login_page.do_successful_login_with(LOGIN_CREDENTIALS_ID1)
-
-        eq_(dashboard_page.welcome_message(), LOGIN_CREDENTIALS_ID1[MESSAGE],
+        dashboard_page= login_page.do_successful_login_with(VALID_CREDENTIALS)
+        eq_(dashboard_page.welcome_message(),
+            fetch_(WELCOME_MESSAGE, from_(VALID_CREDENTIALS)),
           "Login Un-successful or UserName is not Present")
 
 

@@ -1,12 +1,14 @@
-
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 __author__ = 'ravi'
 
-from framework.mangrovetests.page import Page
+from framework.pages.page import Page
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
 import datetime
+
+__all__=['by_css','by_id','by_xpath','by_name']
 
 class CommonUtilities(Page):
 
@@ -60,3 +62,50 @@ class CommonUtilities(Page):
             return locator
         except NoSuchElementException:
             return False
+
+
+# End of class and Starting of normal functions
+
+def by_css(element_locator):
+    """
+    Function to create locator dictionary by css
+
+    Args:
+    element_locator is value of locator
+
+    Return dictionary of locator e.g. {"locator":element_locator,"by":By.CSS_SELECTOR}
+    """
+    return {"locator":element_locator,"by":By.CSS_SELECTOR}
+
+def by_id(element_locator):
+    """
+    Function to create locator dictionary by ID
+
+    Args:
+    element_locator is value of locator
+
+    Return dictionary of locator e.g. {"locator":element_locator,"by":By.ID}
+    """
+    return {"locator":element_locator,"by":By.ID}
+
+def by_xpath(element_locator):
+    """
+    Function to create locator dictionary by XPath
+
+    Args:
+    element_locator is value of locator
+
+    Return dictionary of locator e.g. {"locator":element_locator,"by":By.XPATH}
+    """
+    return {"locator":element_locator,"by":By.XPATH}
+
+def by_name(element_locator):
+    """
+    Function to create locator dictionary by Name
+
+    Args:
+    element_locator is value of locator
+
+    Return dictionary of locator e.g. {"locator":element_locator,"by":By.NAME}
+    """
+    return {"locator":element_locator,"by":By.NAME}

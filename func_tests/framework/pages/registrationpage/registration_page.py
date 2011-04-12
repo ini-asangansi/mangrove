@@ -1,7 +1,9 @@
-from framework.mangrovetests.page import Page
-from framework.mangrovetests.registration_confirmation_page import RegistrationConfirmationPage
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
+from framework.pages.page import Page
+from framework.pages.registration_confirmation_page import RegistrationConfirmationPage
 from framework.utils.common_utils import CommonUtilities
-from resources.element_locators import *
+from framework.pages.registrationpage.registration_locator import *
 from framework.utils.data_fetcher import *
 from testdata.test_data import *
 
