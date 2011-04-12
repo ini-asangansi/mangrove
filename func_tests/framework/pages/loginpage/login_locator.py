@@ -18,6 +18,6 @@ LOCATOR = "locator"
 BY = "by"
 
 # List of all the locators related to login page
-EMAIL_TB = by_css("input[name='username']")
-PASSWORD_TB = by_css("input[name='password']")
-LOGIN_BTN = by_css("input[value='Login']")
+EMAIL_TB = by_css("input[name=username]")
+PASSWORD_TB = by_css("input[name=password]")
+LOGIN_BTN = by_css("input[value=Login]")

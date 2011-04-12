@@ -26,10 +26,8 @@ class LoginPage(Page):
 
         Return DashboardPage on successful login
         """
-        self.driver.find_text_box(EMAIL_TB).enter_text(fetch_(USERNAME,
-                                                              from_(login_credential)))
-        self.driver.find_text_box(PASSWORD_TB).enter_text(fetch_(PASSWORD,
-                                                                 from_(login_credential)))
+        self.driver.find_text_box(EMAIL_TB).enter_text(fetch_(USERNAME, from_(login_credential)))
+        self.driver.find_text_box(PASSWORD_TB).enter_text(fetch_(PASSWORD,from_(login_credential)))
         self.driver.find(LOGIN_BTN).click()
         return DashboardPage(self.driver)
 

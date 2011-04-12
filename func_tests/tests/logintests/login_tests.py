@@ -1,7 +1,7 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from framework.base_test import BaseTest
-from framework.pages.login_page import LoginPage
+from framework.pages.loginpage.login_page import LoginPage
 from nose.tools import *
 from framework.utils.data_fetcher import *
 from tests.logintests.login_data import *
