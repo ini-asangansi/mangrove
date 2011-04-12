@@ -149,10 +149,7 @@ def _decode_hook(s):
             except ValueError:
                 # wasn't a date
                 pass
-        elif isinstance(v, dict):
-            # skip, this will come back in a later call
-            pass
-        elif is_sequence(v):
+        elif not isinstance(v, dict) and is_sequence(v):
             # it's a sequence that isn't a dict, so process it
             newv = []
             for i in v:
