@@ -3,13 +3,15 @@
 from framework.base_test import BaseTest
 from framework.pages.loginpage.login_page import LoginPage
 from nose.tools import *
+from nose.plugins.skip import SkipTest
 from framework.utils.data_fetcher import *
 from tests.logintests.login_data import *
 
 __author__ = 'kumarr'
 
-
+@SkipTest
 class TestLoginPage(BaseTest):
+
 
     def test_login_with_valid_credentials(self):
         self.driver.get("http://localhost:8000/login")
