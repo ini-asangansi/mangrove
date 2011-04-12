@@ -233,7 +233,23 @@ class Entity(object):
         '''
         self._dbm.invalidate(uid)
 
+    def invalidate(self):
+        '''Mark the entity as invalid.
 
+        This will also mark all associated data records as invalid.
+        '''
+        self._doc.void = True
+        self.save()
+        for id in self._get_data_ids():
+            self.invalidate_data(id)
+
+    def _get_data_ids(self):
+        '''Returns a list of all data documents ids for this entity.
+
+        This should only be used internally to perform update actions on data records as necessary.
+        '''
+        rows = self._dbm.load_all_rows_in_view('mangrove_views/entity_data')
+        return [row['value'] for row in rows]
 
     def values(self, aggregation_rules, asof = None):
         """

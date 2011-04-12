@@ -151,4 +151,19 @@ class TestDataStoreApi(unittest.TestCase):
         self.assertTrue(invalid_doc.void)
 
     def test_invalidate_entity(self):
-        pass
+        e = Entity(self.dbm, entity_type='store', location=['nyc'])
+        e.save()
+        self.assertFalse(e._doc.void)
+        data = [
+                [("apples", 20), ("oranges", 30)],
+                [("strawberries", 10), ("bananas", 20)]
+        ]
+        data_ids = []
+        for d in data:
+            id = e.add_data(d)
+            self.assertFalse(self.dbm.load(id).void)
+            data_ids.append(id)
+        e.invalidate()
+        self.assertTrue(e._doc.void)
+        for id in data_ids:
+            self.assertTrue(self.dbm.load(id).void)
