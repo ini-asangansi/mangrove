@@ -1,11 +1,13 @@
-__author__ = 'root'
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
+__author__ = 'ritesh'
 
 
-__all__ = ['put','of']
+__all__ = ['fetch_','from_']
 
 
-def put(identifier, data_id):
+def fetch_(identifier, data_id):
     return data_id[identifier]
 
-def of(data_id):
+def from_(data_id):
     return data_id

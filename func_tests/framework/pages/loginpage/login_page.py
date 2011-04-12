@@ -1,11 +1,12 @@
-from framework.mangrovetests.page import Page
-from framework.mangrovetests.dashboard_page import DashboardPage
-from framework.mangrovetests.registration_page import  RegistrationPage
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
+from framework.pages.page import Page
+from framework.pages.dashboardpage.dashboard_page import DashboardPage
+from framework.pages.registrationpage.registration_page import  RegistrationPage
 from framework.utils.common_utils import CommonUtilities
-from selenium.webdriver.common.by import By
-from resources.element_locators import *
 from framework.utils.data_fetcher import *
-from testdata.test_data import *
+from framework.pages.loginpage.login_locator import *
+from tests.logintests.login_data import *
 
 __author__ = 'kumarr'
 
@@ -25,11 +26,11 @@ class LoginPage(Page):
 
         Return DashboardPage on successful login
         """
-        self.driver.find_text_box(LOGIN_USERNAME_TB[LOCATOR]).enter_text\
-            (put(USERNAME,of(login_credential)))
-        self.driver.find_text_box("password").enter_text(put(PASSWORD, of(
-             login_credential)))
-        self.driver.find_element_by_css_selector("input[value='Login']").click()
+        self.driver.find_text_box(EMAIL_TB).enter_text(fetch_(USERNAME,
+                                                              from_(login_credential)))
+        self.driver.find_text_box(PASSWORD_TB).enter_text(fetch_(PASSWORD,
+                                                                 from_(login_credential)))
+        self.driver.find(LOGIN_BTN).click()
         return DashboardPage(self.driver)
 
     def for_successful_login(self, email_id, password):
@@ -42,8 +43,7 @@ class LoginPage(Page):
 
         Return DashboardPage on successful login
         """
-        self.driver.find_text_box(LOGIN_USERNAME_TB[LOCATOR]).enter_text\
-            (email_id)
+        self.driver.find_text_box(EMAIL_TB).enter_text(email_id)
         self.driver.find_text_box("password").enter_text(password)
         self.driver.find_element_by_css_selector("input[value='Login']").click()
         return DashboardPage(self.driver)

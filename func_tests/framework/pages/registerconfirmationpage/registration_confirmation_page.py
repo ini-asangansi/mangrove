@@ -1,8 +1,8 @@
-from resources.element_locators import ORGANIZATION_NAME_TB
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 __author__ = 'kumarr'
 
-from framework.mangrovetests.page import Page
+from framework.pages.page import Page
 
 
 class RegistrationConfirmationPage(Page):

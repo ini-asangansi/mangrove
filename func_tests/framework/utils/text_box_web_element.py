@@ -1,3 +1,5 @@
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
 from selenium.webdriver.remote.webelement import WebElement
 
 __author__ = 'anandb'
@@ -14,6 +16,3 @@ class TextBox (WebElement):
 
     def is_enabled(self):
         return self.webElement.is_enabled()
-
-    
-

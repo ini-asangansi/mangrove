@@ -1,5 +1,7 @@
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
 from framework.base_test import BaseTest
-from framework.mangrovetests.registration_page import RegistrationPage
+from framework.pages.registration_page import RegistrationPage
 from nose.tools import *
 from testdata.test_data import *
 
