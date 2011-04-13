@@ -8,7 +8,7 @@ from datastore import config
 from documents import DocumentBase
 import couchdb.client
 from datetime import datetime
-import utils
+from utils import dates
 import views
 
 
@@ -84,7 +84,7 @@ class DatabaseManager(object):
     def save(self, document, modified = None):
         assert modified is None or isinstance(modified, datetime)
 
-        document.modified = (modified if modified is not None else utils.utcnow())
+        document.modified = (modified if modified is not None else dates.utcnow())
         document.store(self.database)
         return document
 

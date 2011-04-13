@@ -1,6 +1,4 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
-from datastore.database import get_db_manager
-from utils import utcnow
 
 def fetch(dbm,entity_type,aggregates= {},aggregate_on = {},starttime=None,endtime=None,filter=None):
     result = {}
