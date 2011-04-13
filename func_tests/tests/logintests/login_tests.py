@@ -9,7 +9,7 @@ from tests.logintests.login_data import *
 
 __author__ = 'kumarr'
 
-@SkipTest
+#@SkipTest
 class TestLoginPage(BaseTest):
 
 
