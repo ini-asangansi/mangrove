@@ -12,7 +12,8 @@ class TestQueryApi(unittest.TestCase):
         self.manager = get_db_manager('http://localhost:5984/', 'mangrove-test')
 
     def tearDown(self):
-        _delete_db_and_remove_db_manager(self.manager)
+#        _delete_db_and_remove_db_manager(self.manager)
+        pass
 
     def create_reporter(self):
         r = Entity(self.manager, entity_type=["Reporter"])
@@ -52,10 +53,30 @@ class TestQueryApi(unittest.TestCase):
         self.assertEqual(data_fetched["doctors"], 2)
 
     #         Query API tests. Not implemented
-#    def test_should_fetch_aggregates_for_entity_type(self):
-#        # Aggregate across all instances of an entity type
-#        values = data.fetch(entity_type=['health facility', 'clinic'],aggregates = { "beds" : "avg" , "meds" : "sum"  })
-#
+    def test_should_fetch_aggregates_for_entity_type(self):
+        # Aggregate across all instances of an entity type
+
+        # Setup: Create clinic entities        
+        ENTITY_TYPE = ["Health_Facility","Clinic"]
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Pune'])
+        id = e.save()
+        e.add_data(data = [("beds", 300), ("meds",  20), ("doctors", 2)],
+                   event_time=datetime.datetime(2011,01,01, tzinfo = UTC))
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','Karnataka','Bangalore'])
+        id = e.save()
+        e.add_data(data = [("beds", 100), ("meds",  250), ("doctors", 10)],
+                   event_time=datetime.datetime(2011,05,01, tzinfo = UTC))
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Mumbai'])
+        id = e.save()
+        e.add_data(data = [("beds", 200), ("meds",  50), ("doctors", 5)],
+                   event_time=datetime.datetime(2011,03,01, tzinfo = UTC))
+
+        values = data.fetch(entity_type=ENTITY_TYPE,aggregates = { "beds" : "avg" , "meds" : "sum"  })
+        # values: {  'India' : [ ("beds" ,"avg",100), ("meds" ,"sum",10000)  ]  }
+        self.assertEqual(values, { "Health_Facility.Clinic" : [("beds" ,"avg",200), ("meds" ,"sum",320)  ] })
+
 #    def test_should_fetch_aggregates_for_entity_type_for_hierarchy_path(self):
 #        # Aggregate across all instances of an entity type in a given location..say India.
 #        # values: {  'India' : [ ("beds" ,"avg",100), ("meds" ,"sum",10000)  ]  }
