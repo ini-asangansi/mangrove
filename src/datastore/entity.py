@@ -2,7 +2,7 @@
 
 import copy
 from datetime import datetime
-from documents import EntityDocument, DataRecordDocument, attributes
+from documents import EntityDocument, DataRecordDocument, DataRecordDocument, attributes
 from utils import is_not_empty, is_sequence, is_string, primitive_type, utcnow
 from database import DatabaseManager
 

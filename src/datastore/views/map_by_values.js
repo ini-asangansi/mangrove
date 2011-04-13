@@ -9,6 +9,7 @@ function(doc) {
         value["timestamp"] = date.getTime();
         value["type"] = doc.data[k].type;
         value["value"] = doc.data[k].value;
+        value["field"] = k;
         emit(key, value);
       }
 }
