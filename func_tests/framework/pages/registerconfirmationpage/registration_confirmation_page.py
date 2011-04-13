@@ -13,6 +13,7 @@ class RegistrationConfirmationPage(Page):
 
     def registration_success_message(self):
         success_message = self.driver.find_element_by_css_selector("div[class^= 'form']").text
+        print success_message
         return success_message
 
 
