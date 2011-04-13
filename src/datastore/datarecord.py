@@ -6,15 +6,14 @@ from datastore.entity import Entity
 import entity
 from utils import is_sequence, utcnow
 
-def register(entity_type, data, location, source, aggregation_paths = None):
-
-    manager = get_db_manager()
+def register(manager,entity_type, data, location, source, aggregation_paths = None):
+#    manager = get_db_manager()
     e = Entity(manager, entity_type= entity_type, location= location, aggregation_paths = aggregation_paths)
     saved_entity_id = e.save()
-    submit(entity_id=saved_entity_id, data=data, source=source)
+    submit(manager,entity_id=saved_entity_id, data=data, source=source)
     return e
 
-def submit(entity_id,data,source):
+def submit(manager,entity_id,data,source):
     assert entity_id is not None
     assert is_sequence(data) and len(data) > 0
 
@@ -22,7 +21,7 @@ def submit(entity_id,data,source):
     # source will have channel info ie. Web/SMS etc,,
     # source will also have the reporter info.
 
-    manager = get_db_manager()
+#    manager = get_db_manager()
     e = entity.get(manager,entity_id)
     submission_log = SubmissionLogDocument(source = source)
     submission_log = manager.save(submission_log)

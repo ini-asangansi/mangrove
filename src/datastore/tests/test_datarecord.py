@@ -15,13 +15,13 @@ class TestDataRecord(unittest.TestCase):
     def test_should_be_able_to_submit_datarecord_on_entity(self):
         e = Entity(self.dbm, entity_type="clinic", location=["India","MH","Pune"])
         uuid = e.save()
-        submission_ids = datarecord.submit(entity_id=uuid, data=[("First_Name", "Jeff",)], source="web")
+        submission_ids = datarecord.submit(self.dbm, entity_id=uuid, data=[("First_Name", "Jeff",)], source="web")
         assert submission_ids[0]
         assert submission_ids[1]
 
 
     def test_should_be_able_to_submit_datarecord_on_entity(self):
-        entity = datarecord.register(entity_type = "HNI.Reporter", data=[("First_Name", "Jeff",)], location= ["India", "Pune"], source="web")
+        entity = datarecord.register(self.dbm,entity_type = "HNI.Reporter", data=[("First_Name", "Jeff",)], location= ["India", "Pune"], source="web")
         assert entity
         current_values = entity.values({"First_Name": "latest"})
         self.assertEquals("Jeff", current_values["First_Name"])

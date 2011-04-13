@@ -278,7 +278,8 @@ class Entity(object):
         #           }
         #  The aggregation map-reduce view will return only one row for an entity-id
         # From this we return the field we are interested in.
-        return rows[0]['value']['value'] if len(rows) else None
+        # TODO: Hardcoding to 'latest' for now. Generalize to any aggregation function.
+        return rows[0]['value']['latest'] if len(rows) else None
 
     def _translate(self, aggregate_fn):
         view_names = { "latest" : "by_values" }
