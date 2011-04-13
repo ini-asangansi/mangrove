@@ -6,7 +6,6 @@ from datastore.entity import Entity
 import entity
 from utils import is_sequence, utcnow
 
-
 def register(entity_type, data, location, source, aggregation_paths = None):
 
     manager = get_db_manager()

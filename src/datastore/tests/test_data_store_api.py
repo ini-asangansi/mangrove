@@ -167,3 +167,20 @@ class TestDataStoreApi(unittest.TestCase):
         self.assertTrue(e._doc.void)
         for id in data_ids:
             self.assertTrue(self.dbm.load(id).void)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
