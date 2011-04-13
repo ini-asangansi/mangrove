@@ -12,7 +12,7 @@ class TestQueryApi(unittest.TestCase):
         self.manager = get_db_manager('http://localhost:5984/', 'mangrove-test')
 
     def tearDown(self):
-#        _delete_db_and_remove_db_manager(self.manager)
+        _delete_db_and_remove_db_manager(self.manager)
         pass
 
     def create_reporter(self):
