@@ -11,6 +11,7 @@ function(doc) {
         value["value"] = doc.data[k].value;
         value["field"] = k;
         value["entity_id"] = doc.entity_backing_field._id;
+        value["location"] = doc.entity_backing_field.aggregation_paths['_geo'];
         emit(key, value);
       }
 }

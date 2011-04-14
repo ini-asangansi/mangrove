@@ -16,6 +16,7 @@ function(key, values, rereduce) {
         result.count = count;
         result.entity_id = values[0].entity_id;
         result.field = values[0].field;
+        result.location = values[0].location;
 		return result;
 	}
 	else{
@@ -35,6 +36,7 @@ function(key, values, rereduce) {
         result.count = count;
         result.entity_id = values[0].entity_id;
         result.field = values[0].field;
+        result.location = values[0].location;
         return result;
 		
 	}
