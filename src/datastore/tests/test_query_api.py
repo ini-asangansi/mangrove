@@ -81,13 +81,129 @@ class TestQueryApi(unittest.TestCase):
         values = data.fetch(self.manager,entity_type=ENTITY_TYPE,
                             aggregates = {  "director" : "latest" ,
                                              "beds" : "latest" ,
-                                             "patients" : "sum"  },
-                            aggregate_on = { 'type' : 'entity'} )
+                                             "patients" : "sum"  })
 
         self.assertEqual(len(values),3)
         self.assertEqual(values[id1],{ "director" : "Dr. A", "beds" : 500, "patients" : 30})
         self.assertEqual(values[id2],{ "director" : "Dr. B2", "beds" : 200, "patients" : 70})
         self.assertEqual(values[id3],{ "director" : "Dr. C", "beds" : 200, "patients" : 12})
+
+
+    def test_should_filter_aggregate_per_entity_for_a_location(self):
+        ENTITY_TYPE = ["Health_Facility","Clinic"]
+        FEB = datetime.datetime(2011, 02, 01, tzinfo=UTC)
+        MARCH = datetime.datetime(2011, 03, 01, tzinfo=UTC)
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Pune'])
+        id1_pune = e.save()
+
+        e.add_data(data =[("beds", 300), ("meds",  20), ("director", "Dr. A"), ("patients", 10)],
+                   event_time=FEB)
+        e.add_data(data =[("beds", 500), ("meds",  20), ("patients", 20)],
+                   event_time=MARCH)
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Pune'])
+        id2_pune = e.save()
+        e.add_data(data =[("beds", 100), ("meds",  10), ("director", "Dr. AA"), ("patients", 50)],
+                   event_time=FEB)
+        e.add_data(data =[("beds", 200), ("meds",  20), ("patients", 20)],
+                   event_time=MARCH)
+
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Pune'])
+        id3_pune = e.save()
+        e.add_data(data =[("beds", 100), ("meds",  10), ("director", "Dr. AAA"), ("patients", 50)],
+                   event_time=FEB)
+        e.add_data(data =[("beds", 200), ("meds",  20), ("patients", 50)],
+                   event_time=MARCH)
+
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','Karnataka','Bangalore'])
+        id4 = e.save()
+        e.add_data(data = [("beds", 100), ("meds",  250), ("director", "Dr. B1"),("patients", 50)],
+                   event_time=FEB)
+        e.add_data(data = [("beds", 200), ("meds",  400), ("director", "Dr. B2"),("patients", 20)],
+                   event_time=MARCH)
+
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Mumbai'])
+        id5 = e.save()
+        e.add_data(data = [("beds", 200), ("meds",  50), ("director", "Dr. C"), ("patients", 12)],
+                   event_time=MARCH)
+
+        values = data.fetch(self.manager,entity_type=ENTITY_TYPE,
+                            aggregates = {  "director" : "latest" ,
+                                             "beds" : "latest" ,
+                                             "patients" : "sum"  },
+                            filter = { 'location' : ['India','MH','Pune']}
+                            )
+
+        self.assertEqual(len(values),3)
+        self.assertEqual(values[id1_pune],{ "director" : "Dr. A", "beds" : 500, "patients" : 30})
+        self.assertEqual(values[id2_pune],{ "director" : "Dr. AA", "beds" : 200, "patients" : 70})
+        self.assertEqual(values[id3_pune],{ "director" : "Dr. AAA", "beds" : 200, "patients" : 100})
+
+
+    def test_should_fetch_aggregate_grouped_by_hierarchy_path(self):
+        ENTITY_TYPE = ["Health_Facility","Clinic"]
+        FEB = datetime.datetime(2011, 02, 01, tzinfo=UTC)
+        MARCH = datetime.datetime(2011, 03, 01, tzinfo=UTC)
+
+        # Entities for State 1: Maharashtra
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Pune'])
+        id1 = e.save()
+
+        e.add_data(data =[("beds", 300), ("meds",  20), ("director", "Dr. A"), ("patients", 10)],
+                   event_time=FEB)
+        e.add_data(data =[("beds", 500), ("meds",  20), ("patients", 20)],
+                   event_time=MARCH)
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Pune'])
+        id2 = e.save()
+        e.add_data(data =[("beds", 100), ("meds",  10), ("director", "Dr. AA"), ("patients", 50)],
+                   event_time=FEB)
+        e.add_data(data =[("beds", 200), ("meds",  20), ("patients", 20)],
+                   event_time=MARCH)
+
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Mumbai'])
+        id3 = e.save()
+        e.add_data(data =[("beds", 100), ("meds",  10), ("director", "Dr. AAA"), ("patients", 50)],
+                   event_time=FEB)
+        e.add_data(data =[("beds", 200), ("meds",  20), ("patients", 50)],
+                   event_time=MARCH)
+
+        # Entities for State 2: karnataka
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','Karnataka','Bangalore'])
+        id4 = e.save()
+        e.add_data(data = [("beds", 100), ("meds",  250), ("director", "Dr. B1"),("patients", 50)],
+                   event_time=FEB)
+        e.add_data(data = [("beds", 200), ("meds",  400), ("director", "Dr. B2"),("patients", 20)],
+                   event_time=MARCH)
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','Karnataka','Hubli'])
+        id5 = e.save()
+        e.add_data(data = [("beds", 100), ("meds",  250), ("director", "Dr. B1"),("patients", 50)],
+                   event_time=FEB)
+        e.add_data(data = [("beds", 200), ("meds",  400), ("director", "Dr. B2"),("patients", 20)],
+                   event_time=MARCH)
+
+
+        # Entities for State 3: Kerala
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','Kerala','Kochi'])
+        id6 = e.save()
+        e.add_data(data = [("beds", 200), ("meds",  50), ("director", "Dr. C"), ("patients", 12)],
+                   event_time=MARCH)
+
+        values = data.fetch(self.manager,entity_type=ENTITY_TYPE,
+                            aggregates = {  "patients" : "sum"  },
+                            aggregate_on = { 'type' : 'location', "level" : 2},
+                            )
+
+        self.assertEqual(len(values),3)
+        self.assertEqual(values[("India","MH")],{ "patients" : 200})
+        self.assertEqual(values[("India","Karnataka")],{ "patients" : 140})
+        self.assertEqual(values[("India","Kerala")],{ "patients" : 12})
+
 
 
 #
