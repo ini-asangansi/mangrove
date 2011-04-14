@@ -42,8 +42,8 @@ def deploy(build_number,home_dir,virtual_env,environment="test"):
        virtual_env : path to your virtual_env folder
     """
     ENVIRONMENT_CONFIGURATIONS = {
-                                    "showcase" :{"SITE_ID":1},
-                                    "test"   :{"SITE_ID":1}
+                                    "showcase" :{"SITE_ID":2},
+                                    "test"   :{"SITE_ID":4}
                                  }
     run("export COMMIT_SHA=`curl http://hudson.mvpafrica.org:8080/job/Mangrove-develop/%s/artifact/last_successful_commit_sha`" % (build_number,))
 
@@ -51,6 +51,7 @@ def deploy(build_number,home_dir,virtual_env,environment="test"):
     with settings(warn_only=True):
         git_clone_if_not_present(code_dir)
         with cd(code_dir):
+            run("git reset --hard HEAD")
             sync_develop_branch()
             delete_if_branch_exists(build_number)
             run("git checkout -b %s $COMMIT_SHA" % (build_number,) )

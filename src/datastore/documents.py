@@ -5,7 +5,7 @@ import datetime
 import calendar
 from uuid import uuid4
 from time import struct_time
-from utils import py_datetime_to_js_datestring, js_datestring_to_py_datetime, utcnow
+from utils.dates import py_datetime_to_js_datestring, js_datestring_to_py_datetime, utcnow
 
 class attributes(object):
     '''Constants for referencing standard attributes in docs.'''
@@ -105,3 +105,21 @@ class DataRecordDocument(DocumentBase):
         
         if entity_doc:
             self.entity_backing_field = entity_doc.unwrap()
+
+
+class SubmissionLogDocument(DocumentBase):
+    """
+        The submission log document. Will contain metadata about the submission. (Eg: source, submitted_on etc.)
+    """
+    
+    submitted_on = TZAwareDateTimeField()
+    source = TextField()
+
+    def __init__(self, source, id=None):
+        assert isinstance(source, str)
+        DocumentBase.__init__(self, id, 'SubmissionLog')
+        self.source = source
+        self.submitted_on = utcnow()
+
+
+        

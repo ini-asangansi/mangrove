@@ -22,7 +22,7 @@ REGISTRATION_CONFIRM_PASSWORD = 'registration_confirm_password'
 
 
 #Registration Page Data for Successful Registration Page
-REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION ={"organization_name":"NGO 001",
+REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION = {"organization_name":"NGO 001",
                                                 "organization_sector":"PublicHealth",
                                                 "organization_addressline1":"Address Line One",
                                                 "organization_addressline2":"Address Line Two",
@@ -39,7 +39,7 @@ REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION ={"organization_name":"NGO 001",
                                                  "registration_password":"ngo001",
                                                  "registration_confirm_password":"ngo001"}
 
-REGISTRATION_DATA_FOR_EXISTING_EMAIL_ERROR ={"organization_name":"NGO 001",
+REGISTRATION_DATA_FOR_EXISTING_EMAIL_ERROR = {"organization_name":"NGO 001",
                                                 "organization_sector":"PublicHealth",
                                                 "organization_addressline1":"Address Line One",
                                                 "organization_addressline2":"Address Line Two",
@@ -55,3 +55,37 @@ REGISTRATION_DATA_FOR_EXISTING_EMAIL_ERROR ={"organization_name":"NGO 001",
                                                  "email":"nogo@mail.com",
                                                  "registration_password":"ngo001",
                                                  "registration_confirm_password":"ngo001"}
+
+REGISTRATION_DATA_FOR_INVALID_FORMAT_EMAIL_ERROR = {"organization_name":"NGO 001",
+                                                "organization_sector":"PublicHealth",
+                                                "organization_addressline1":"Address Line One",
+                                                "organization_addressline2":"Address Line Two",
+                                                "organization_city":"Pune",
+                                                "organization_state":"Maharashtra",
+                                                "organization_country":"India",
+                                                "organization_zipcode":"411028",
+                                                "organization_office_phone":"0123456789",
+                                                "organization_website":"http://ngo001.com",
+                                                "title":"Mr",
+                                                "first_name":"No",
+                                                "last_name":"Go",
+                                                "email":"com.invalid@email",
+                                                 "registration_password":"ngo001",
+                                                 "registration_confirm_password":"ngo001"}
+
+REGISTRATION_DATA_FOR_UNMATCHED_PASSWORD = {"organization_name":"NGO 001",
+                                                "organization_sector":"PublicHealth",
+                                                "organization_addressline1":"Address Line One",
+                                                "organization_addressline2":"Address Line Two",
+                                                "organization_city":"Pune",
+                                                "organization_state":"Maharashtra",
+                                                "organization_country":"India",
+                                                "organization_zipcode":"411028",
+                                                "organization_office_phone":"0123456789",
+                                                "organization_website":"http://ngo001.com",
+                                                "title":"Mr",
+                                                "first_name":"No",
+                                                "last_name":"Go",
+                                                "email":"valid@email.com",
+                                                "registration_password":"password",
+                                                "registration_confirm_password":"different_password"}

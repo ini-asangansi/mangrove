@@ -13,6 +13,7 @@ class TestQueryApi(unittest.TestCase):
 
     def tearDown(self):
         _delete_db_and_remove_db_manager(self.manager)
+        pass
 
     def create_reporter(self):
         r = Entity(self.manager, entity_type=["Reporter"])
@@ -51,10 +52,45 @@ class TestQueryApi(unittest.TestCase):
         self.assertEqual(data_fetched["meds"], 5)
         self.assertEqual(data_fetched["doctors"], 2)
 
-    #         Query API tests. Not implemented
-#    def test_should_fetch_aggregates_for_entity_type(self):
-#        # Aggregate across all instances of an entity type
-#        values = data.fetch(entity_type=['health facility', 'clinic'],aggregates = { "beds" : "avg" , "meds" : "sum"  })
+    def test_should_fetch_aggregate_per_entity(self):
+        # Aggregate across all data records for each entity
+
+        # Setup: Create clinic entities
+        ENTITY_TYPE = ["Health_Facility","Clinic"]
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Pune'])
+        id1 = e.save()
+        e.add_data(data =[("beds", 300), ("meds",  20), ("director", "Dr. A"), ("patients", 10)],
+                   event_time=datetime.datetime(2011,02,01, tzinfo = UTC))
+        e.add_data(data =[("beds", 500), ("meds",  20), ("patients", 20)],
+                   event_time=datetime.datetime(2011,03,01, tzinfo = UTC))
+
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','Karnataka','Bangalore'])
+        id2 = e.save()
+        e.add_data(data = [("beds", 100), ("meds",  250), ("director", "Dr. B1"),("patients", 50)],
+                   event_time=datetime.datetime(2011,02,01, tzinfo = UTC))
+        e.add_data(data = [("beds", 200), ("meds",  400), ("director", "Dr. B2"),("patients", 20)],
+                   event_time=datetime.datetime(2011,03,01, tzinfo = UTC))
+
+
+        e = Entity(self.manager, entity_type=ENTITY_TYPE,location=['India','MH','Mumbai'])
+        id3 = e.save()
+        e.add_data(data = [("beds", 200), ("meds",  50), ("director", "Dr. C"), ("patients", 12)],
+                   event_time=datetime.datetime(2011,03,01, tzinfo = UTC))
+
+        values = data.fetch(self.manager,entity_type=ENTITY_TYPE,
+                            aggregates = {  "director" : "latest" ,
+                                             "beds" : "latest" ,
+                                             "patients" : "sum"  },
+                            aggregate_on = { 'type' : 'entity'} )
+
+        self.assertEqual(len(values),3)
+        self.assertEqual(values[id1],{ "director" : "Dr. A", "beds" : 500, "patients" : 30})
+        self.assertEqual(values[id2],{ "director" : "Dr. B2", "beds" : 200, "patients" : 70})
+        self.assertEqual(values[id3],{ "director" : "Dr. C", "beds" : 200, "patients" : 12})
+
+
+#
 #
 #    def test_should_fetch_aggregates_for_entity_type_for_hierarchy_path(self):
 #        # Aggregate across all instances of an entity type in a given location..say India.

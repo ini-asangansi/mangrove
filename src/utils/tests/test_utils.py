@@ -6,6 +6,7 @@ from unittest  import TestCase
 from datetime import datetime
 import utils
 import pytz
+
 try:
     import json
 except ImportError:
@@ -84,49 +85,49 @@ class TestTypeUtils(TestCase):
                 self.assertFalse(test(neg), "'%s' %s" % (unicode(neg), neg_fail_msg))
     
     def test_empty(self):
-        self._test_a_list(self.empties, self.non_empties, utils.is_empty,
+        self._test_a_list(self.empties, self.non_empties, utils.types.is_empty,
                          "failed 'is_empty'", "passed 'is_empty'")
 
     def test_not_empty(self):
-        self._test_a_list(self.non_empties, self.empties, utils.is_not_empty,
+        self._test_a_list(self.non_empties, self.empties, utils.types.is_not_empty,
                          "failed 'is_not_empty'", "passed 'is_not_empty'")
 
     def test_is_sequence(self):
-        self._test_a_list(self.seqs, self.non_seqs, utils.is_sequence,
+        self._test_a_list(self.seqs, self.non_seqs, utils.types.is_sequence,
                           "failed 'is_sequence'", "passed 'is_sequence'")
 
     def test_is_number(self):
-        self._test_a_list([True, False]+list(self.nums),  self.non_nums, utils.is_number,
+        self._test_a_list([True, False]+list(self.nums),  self.non_nums, utils.types.is_number,
                           "failed 'is_number'", "passed 'is_number'")
 
     def test_is_string(self):
-        self._test_a_list(self.strs,  self.non_strs, utils.is_string,
+        self._test_a_list(self.strs,  self.non_strs, utils.types.is_string,
                           "failed 'is_string'", "passed 'is_string'")
 
     def test_string_as_bool(self):
         self._test_a_list(self.true_strings, self.not_true_strings,
-                          lambda x : utils.string_as_bool(x),
+                          lambda x : utils.types.string_as_bool(x),
                           ": string_as_bool returned 'False'", ": string_as_bool returned 'True'")
 
     def test_primitive_type(self):
         self._test_a_list(self.strs, None,
-                          lambda x : utils.primitive_type(x) == 'text',
+                          lambda x : utils.types.primitive_type(x) == 'text',
                           ": primitive_type returned something other than 'text'", "")
 
         self._test_a_list(self.nums, None,
-                          lambda x : utils.primitive_type(x) == 'numeric',
+                          lambda x : utils.types.primitive_type(x) == 'numeric',
                           ": primitive_type returned something other than 'numeric'", "")
 
         self._test_a_list([self.a_datetime], None,
-                          lambda x : utils.primitive_type(x) == 'datetime',
+                          lambda x : utils.types.primitive_type(x) == 'datetime',
                           ": primitive_type returned something other than 'datetime'", "")
 
         self._test_a_list(self.bools, None,
-                          lambda x : utils.primitive_type(x) == 'boolean',
+                          lambda x : utils.types.primitive_type(x) == 'boolean',
                           ": primitive_type returned something other than 'boolean'", "")
 
         self._test_a_list([None], None,
-                          lambda x : utils.primitive_type(x) == 'unknown',
+                          lambda x : utils.types.primitive_type(x) == 'unknown',
                           ": primitive_type returned something other than 'unknown'", "")
 
 class TestDateUtils(TestCase):
@@ -138,34 +139,34 @@ class TestDateUtils(TestCase):
         self.ist = self.tz_aware_utc.astimezone(pytz.timezone('Asia/Kolkata'))
 
     def test_should_raise_ValueError_if_invalid_date_string(self):
-        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, "invalid date")
-        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, "")
-        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, " ")
-        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, None)
-        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, 123456)
-        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, '123456')
-        self.assertRaises(ValueError, utils.js_datestring_to_py_datetime, datetime.now())
+        self.assertRaises(ValueError, utils.dates.js_datestring_to_py_datetime, "invalid date")
+        self.assertRaises(ValueError, utils.dates.js_datestring_to_py_datetime, "")
+        self.assertRaises(ValueError, utils.dates.js_datestring_to_py_datetime, " ")
+        self.assertRaises(ValueError, utils.dates.js_datestring_to_py_datetime, None)
+        self.assertRaises(ValueError, utils.dates.js_datestring_to_py_datetime, 123456)
+        self.assertRaises(ValueError, utils.dates.js_datestring_to_py_datetime, '123456')
+        self.assertRaises(ValueError, utils.dates.js_datestring_to_py_datetime, datetime.now())
 
     def test_to_naive_utc(self):
         # make sure tz aware dates convert properly
-        self.assertIsNone(utils.to_naive_utc(self.ist).tzinfo)
-        self.assertEquals(utils.to_naive_utc(self.ist), self.naive_utc)
-        self.assertEquals(utils.to_naive_utc(self.tz_aware_utc), self.naive_utc)
-        self.assertEquals(utils.to_naive_utc(self.ist), utils.to_naive_utc(self.us_pacific))
+        self.assertIsNone(utils.dates.to_naive_utc(self.ist).tzinfo)
+        self.assertEquals(utils.dates.to_naive_utc(self.ist), self.naive_utc)
+        self.assertEquals(utils.dates.to_naive_utc(self.tz_aware_utc), self.naive_utc)
+        self.assertEquals(utils.dates.to_naive_utc(self.ist), utils.dates.to_naive_utc(self.us_pacific))
 
         # make sure naives aren't messed with
-        self.assertEqual(utils.to_naive_utc(self.naive_utc), self.naive_utc)
+        self.assertEqual(utils.dates.to_naive_utc(self.naive_utc), self.naive_utc)
         
     def test_to_aware_utc(self):
         # make sure a naive converts properly
-        aware = utils.to_aware_utc(self.naive_utc)
+        aware = utils.dates.to_aware_utc(self.naive_utc)
         self.assertIsNotNone(aware.tzinfo)
         self.assertEqual(pytz.UTC.utcoffset(self.tz_aware_utc),
                          aware.tzinfo.utcoffset(aware))
         self.assertEqual(self.tz_aware_utc, aware)
 
         # make sure an aware converts properly
-        aware = utils.to_aware_utc(self.us_pacific)
+        aware = utils.dates.to_aware_utc(self.us_pacific)
         self.assertEqual(aware, self.tz_aware_utc)
 
         # make sure the actual hour value changed by either 7
@@ -174,7 +175,7 @@ class TestDateUtils(TestCase):
                         (self.us_pacific.hour + 8) % 24 == aware.hour)
 
     def test_utcnow(self):
-        un, dn = utils.utcnow(), datetime.utcnow()
+        un, dn = utils.dates.utcnow(), datetime.utcnow()
 
         # make sure utils.utcnow constructed object has a UTC tzinfo
         self.assertEqual(un.tzinfo.utcoffset(un), self.tz_aware_utc.tzinfo.utcoffset(self.tz_aware_utc))
@@ -189,7 +190,7 @@ class TestDateUtils(TestCase):
 
 class TestJSONUtils(TestCase):
     def setUp(self):
-        self.dt = utils.utcnow()
+        self.dt = utils.dates.utcnow()
         self.dict_with_dt = { 'now': self.dt, 'str': '12345', 'int': 12345, 'list': [1,2,3,4,5] }
         self.list_with_dt = [self.dt, self.dt, self.dt]
         self.dict_with_list_of_dts = {'dict': {'list': self.list_with_dt, 'int': 10}}
@@ -202,13 +203,13 @@ class TestJSONUtils(TestCase):
         strs = []
         try:
             for o in objs:
-                strs.append(utils.encode_json(o))
+                strs.append(utils.json_codecs.encode_json(o))
         except Exception, ex:
             self.assertTrue(False, ex)
         self.assertEqual(len(objs), len(strs))
 
         for i in range(len(strs)):
-            self.assertDictEqual(utils.decode_json(strs[i]), objs[i])
+            self.assertDictEqual(utils.json_codecs.decode_json(strs[i]), objs[i])
 
 
         

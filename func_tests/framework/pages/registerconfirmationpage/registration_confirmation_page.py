@@ -3,6 +3,7 @@
 
 
 from framework.pages.page import Page
+from framework.pages.registerconfirmationpage.registration_confirmation_locator import *
 
 
 class RegistrationConfirmationPage(Page):
@@ -12,7 +13,7 @@ class RegistrationConfirmationPage(Page):
 
 
     def registration_success_message(self):
-        success_message = self.driver.find_element_by_css_selector("div[class^= 'success']").text
+        success_message = self.driver.find(WELCOME_MESSAGE_LI).text
         return success_message
 
 

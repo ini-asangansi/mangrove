@@ -9,6 +9,8 @@ function(doc) {
         value["timestamp"] = date.getTime();
         value["type"] = doc.data[k].type;
         value["value"] = doc.data[k].value;
+        value["field"] = k;
+        value["entity_id"] = doc.entity_backing_field._id;
         emit(key, value);
       }
 }

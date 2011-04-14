@@ -21,3 +21,6 @@ BY = "by"
 EMAIL_TB = by_css("input[name=username]")
 PASSWORD_TB = by_css("input[name=password]")
 LOGIN_BTN = by_css("input[value=Login]")
+
+
+ERROR_MESSAGE_LI = by_css(".errorlist li")
