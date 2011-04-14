@@ -1,7 +1,6 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 from datastore.documents import attributes
 
-
 def _get_result_key(aggregate_on, row):
     if aggregate_on.get('type') == "location":
         loc = row["location"]
@@ -10,6 +9,19 @@ def _get_result_key(aggregate_on, row):
         key = row["entity_id"]
     return key
 
+
+def _get_key_strategy(aggregate_on):
+    if aggregate_on.get('type') == "location":
+        def _aggregate_by_path(row):
+            loc = row["location"]
+            key = tuple(loc[:aggregate_on['level']])
+            return key
+        return _aggregate_by_path
+    else:
+        def _aggregate_by_entity(row):
+            key = row["entity_id"]
+            return key
+        return _aggregate_by_entity
 
 def fetch(dbm, entity_type, aggregates={}, aggregate_on={}, starttime=None, endtime=None, filter=None):
     result = {}
@@ -20,8 +32,10 @@ def fetch(dbm, entity_type, aggregates={}, aggregate_on={}, starttime=None, endt
 
     values = _apply_filter(values, filter)
 
+    key_strategy = _get_key_strategy(aggregate_on)
+
     for val in values:
-        key = _get_result_key(aggregate_on, val)
+        key = key_strategy(val)
         field = val["field"]
         if field in aggregates:
             interested_aggregate = aggregates[field]
