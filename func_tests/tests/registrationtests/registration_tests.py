@@ -10,7 +10,7 @@ from nose.plugins.skip import SkipTest
 
 __author__ = 'kumarr'
 
-#@SkipTest
+@SkipTest
 class TestRegistrationPage(BaseTest) :
 
     def test_successful_registration(self):
