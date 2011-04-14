@@ -1,13 +1,11 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from framework.base_test import BaseTest
-from framework.pages.loginpage.login_page import LoginPage
+from pages.loginpage.login_page import LoginPage
 from nose.tools import *
 from nose.plugins.skip import SkipTest
 from framework.utils.data_fetcher import *
 from tests.logintests.login_data import *
-
-__author__ = 'kumarr'
 
 @SkipTest
 class TestLoginPage(BaseTest):
@@ -71,7 +69,7 @@ class TestLoginPage(BaseTest):
         self.driver.get("http://localhost:8000/login")
         login_page = LoginPage(self.driver)
         login_page.login_with(BLANK_CREDENTIALS)
-        eq_(login_page.get_error_message(),fetch_(ERROR_MESSAGE, from_(BLANK_CREDENTIALS)), "Error Message for Blank Password Textbox is not present.")
+        eq_(login_page.get_error_message(),fetch_(ERROR_MESSAGE, from_(BLANK_CREDENTIALS)))
 
     def test_register_link_functionality(self):
 

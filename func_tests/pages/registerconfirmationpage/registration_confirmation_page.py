@@ -2,8 +2,8 @@
 
 
 
-from framework.pages.page import Page
-from framework.pages.registerconfirmationpage.registration_confirmation_locator import *
+from pages.page import Page
+from pages.registerconfirmationpage.registration_confirmation_locator import *
 
 
 class RegistrationConfirmationPage(Page):

@@ -2,9 +2,9 @@
 
 
 
-from framework.pages.page import Page
+from pages.page import Page
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.exceptions import NoSuchElementException
 
 import datetime
 
@@ -58,7 +58,7 @@ class CommonUtilities(Page):
 
     def is_element_present(self, element_locator, by=By.CSS_SELECTOR):
         try:
-            locator = self.driver.find_element(by,element_locator)
+            locator = self.driver.find_elements(by,element_locator)
             return locator
         except NoSuchElementException:
             return False

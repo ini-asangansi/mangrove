@@ -1,9 +1,9 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
-from framework.pages.page import Page
-from framework.pages.registerconfirmationpage.registration_confirmation_page import RegistrationConfirmationPage
+from pages.page import Page
+from pages.registerconfirmationpage.registration_confirmation_page import RegistrationConfirmationPage
 from framework.utils.data_fetcher import *
-from framework.pages.registrationpage.registration_locator import *
+from pages.registrationpage.registration_locator import *
 from tests.registrationtests.registration_data import *
 
 

@@ -1,8 +1,8 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from framework.base_test import BaseTest
-from framework.pages.registerconfirmationpage.registration_confirmation_page import RegistrationConfirmationPage
-from framework.pages.registrationpage.registration_page import RegistrationPage
+from pages.registerconfirmationpage.registration_confirmation_page import RegistrationConfirmationPage
+from pages.registrationpage.registration_page import RegistrationPage
 from nose.tools import *
 from registration_data import *
 from nose.plugins.skip import SkipTest

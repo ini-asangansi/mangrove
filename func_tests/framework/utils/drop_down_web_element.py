@@ -3,7 +3,6 @@
 from selenium.webdriver.remote.webelement import WebElement
 
 
-
 class DropDown (WebElement):
 
     def __init__(self, dropDownWebElement):

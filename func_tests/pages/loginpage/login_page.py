@@ -1,12 +1,12 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 from selenium.webdriver.common.by import By
 
-from framework.pages.page import Page
-from framework.pages.dashboardpage.dashboard_page import DashboardPage
-from framework.pages.registrationpage.registration_page import  RegistrationPage
+from pages.page import Page
+from pages.dashboardpage.dashboard_page import DashboardPage
+from pages.registrationpage.registration_page import  RegistrationPage
 from framework.utils.common_utils import CommonUtilities
 from framework.utils.data_fetcher import *
-from framework.pages.loginpage.login_locator import *
+from pages.loginpage.login_locator import *
 from tests.logintests.login_data import *
 
 
@@ -70,12 +70,11 @@ class LoginPage(Page):
         Return error message
         """
         error_message = ""
-        locator1 = CommonUtilities(self.driver).is_element_present \
-            ("//div[contains(@class,'error') and contains(@class, 'message-box')]", By.XPATH)
-        if locator1:
-            error_message = error_message + locator1.text
-        print error_message
-        return error_message
+        locators = self.driver.find_elements_(ERROR_MESSAGE_LABEL)
+        if locators:
+            for locator in locators:
+                error_message = error_message + locator.text
+        return error_message.replace("\n"," ")
 
     def error_message(self):
         """
@@ -84,7 +83,7 @@ class LoginPage(Page):
         Returns error messages
         """
 
-        error_message = self.driver.find(ERROR_MESSAGE_LI).text
+        error_message = self.driver.find_element(ERROR_MESSAGE_LABEL).text
         return error_message
     
     def error_messages(self):

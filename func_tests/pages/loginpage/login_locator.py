@@ -23,4 +23,4 @@ PASSWORD_TB = by_css("input[name=password]")
 LOGIN_BTN = by_css("input[value=Login]")
 
 
-ERROR_MESSAGE_LI = by_css(".errorlist li")
+ERROR_MESSAGE_LABEL = by_css("div[class~='error']")

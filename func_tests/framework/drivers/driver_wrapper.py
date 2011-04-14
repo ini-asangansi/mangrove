@@ -3,7 +3,7 @@
 from framework.utils.drop_down_web_element import DropDown
 from framework.utils.text_box_web_element import TextBox
 from framework.utils.radio_button_web_element import RadioButton
-from framework.pages.loginpage.login_locator import *
+from pages.loginpage.login_locator import *
 
 
 class DriverWrapper():
@@ -62,4 +62,17 @@ class DriverWrapper():
         Return webelement
         """
         return self.driver.find_element(by=locator_dict[BY],
+                                        value=locator_dict[LOCATOR])
+
+    def find_elements_(self,locator_dict):
+        """
+        Finds elements on the web page using locator dictionary
+
+        Args:
+        locator_dict is the dictionary of the locator which contains key
+        values like {"locator":"input[name='email']","by":"By.CSS_SELECTOR"}
+
+        Return list of webelement
+        """
+        return self.driver.find_elements(by=locator_dict[BY],
                                         value=locator_dict[LOCATOR])

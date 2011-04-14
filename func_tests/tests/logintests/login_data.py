@@ -32,4 +32,4 @@ UNACTIVATED_ACCOUNT_CREDENTIALS={"username":"nogo@mail.com","password":"nogo123"
 
 # blank username and password
 BLANK_CREDENTIALS={"username":"","password":"",
-                   "message":"This field is required.This field is required."}
+                   "message":"Email  This field is required.Password  This field is required."}

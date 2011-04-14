@@ -6,7 +6,7 @@ coverage==3.4
 simplejson
 ipython
 mock
-selenium
+selenium==2.b02
 iso8601
 pytz
 hg+https://bitbucket.org/ubernostrum/django-registration#egg=django-registration0.8
