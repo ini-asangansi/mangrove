@@ -1,10 +1,10 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
-from datastore.documents import SubmissionLogDocument
-from datastore.entity import Entity
+from documents import SubmissionLogDocument
+from entity import Entity
 import entity
-from utils.types import is_sequence
-from utils.dates import utcnow
+from mangrove.utils.types import is_sequence
+from mangrove.utils.dates import utcnow
 
 def register(manager,entity_type, data, location, source, aggregation_paths = None):
 #    manager = get_db_manager()

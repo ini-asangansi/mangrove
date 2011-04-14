@@ -1,5 +1,5 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
-from datastore.documents import attributes
+from documents import attributes
 
 def _get_result_key(aggregate_on, row):
     if aggregate_on.get('type') == "location":

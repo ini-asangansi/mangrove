@@ -1,10 +1,10 @@
 import datetime
-from datastore.database import get_db_manager, _delete_db_and_remove_db_manager
+from mangrove.datastore.database import get_db_manager, _delete_db_and_remove_db_manager
 import unittest
 from pytz import UTC
-from datastore import views
-from datastore.entity import Entity
-from datastore import data
+from mangrove.datastore import views
+from mangrove.datastore.entity import Entity
+from mangrove.datastore import data
 
 class TestQueryApi(unittest.TestCase):
 

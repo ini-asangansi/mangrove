@@ -2,7 +2,7 @@
     Holds global runtime config options like database, server settings.
     Different from settings.py which holds default startup values.
 """
-from datastore import settings
+import settings
 
 _server = settings.SERVER
 _db = settings.DATABASE

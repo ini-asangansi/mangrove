@@ -1,6 +1,6 @@
-from datastore.documents import DocumentBase
-from datastore.entity import Entity
-from datastore.database import get_db_manager, _delete_db_and_remove_db_manager
+from mangrove.datastore.documents import DocumentBase
+from mangrove.datastore.entity import Entity
+from mangrove.datastore.database import get_db_manager, _delete_db_and_remove_db_manager
 import unittest
 
 class TestDatabaseManager(unittest.TestCase):

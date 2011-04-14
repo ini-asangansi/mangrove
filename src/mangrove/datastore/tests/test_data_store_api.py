@@ -1,10 +1,10 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from datetime import datetime
-from datastore import entity
-from datastore.entity import Entity
-from datastore.database import get_db_manager, _delete_db_and_remove_db_manager
-from datastore.documents import DataRecordDocument
+from mangrove.datastore import entity
+from mangrove.datastore.entity import Entity
+from mangrove.datastore.database import get_db_manager, _delete_db_and_remove_db_manager
+from mangrove.datastore.documents import DataRecordDocument
 from pytz import UTC
 import unittest
 
