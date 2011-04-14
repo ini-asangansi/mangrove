@@ -4,11 +4,11 @@ from couchdb.design import ViewDefinition
 from settings import *
 from couchdb.http import ResourceNotFound
 from threading import Lock
-from datastore import config
+import config
 from documents import DocumentBase
 import couchdb.client
 from datetime import datetime
-from utils import dates
+from mangrove.utils import dates
 import views
 
 

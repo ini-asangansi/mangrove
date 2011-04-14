@@ -1,8 +1,8 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 import unittest
-from datastore.database import _delete_db_and_remove_db_manager, get_db_manager
-from datastore.entity import Entity
-import datastore.datarecord as datarecord
+from mangrove.datastore.database import _delete_db_and_remove_db_manager, get_db_manager
+from mangrove.datastore.entity import Entity
+import mangrove.datastore.datarecord as datarecord
 
 class TestDataRecord(unittest.TestCase):
 
