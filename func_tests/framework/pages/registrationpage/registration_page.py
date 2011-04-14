@@ -8,7 +8,7 @@ from framework.utils.data_fetcher import *
 from testdata.test_data import *
 
 
-__author__ = 'kumarr'
+
 
 
 class RegistrationPage(Page):

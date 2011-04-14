@@ -8,8 +8,6 @@ from framework.utils.data_fetcher import *
 from framework.pages.loginpage.login_locator import *
 from tests.logintests.login_data import *
 
-__author__ = 'kumarr'
-
 
 class LoginPage(Page):
 
@@ -41,7 +39,7 @@ class LoginPage(Page):
 
         Return DashboardPage on successful login
         """
-        self.driver.find_text_box(EMAIL_TB).enter_text(email_id)
+        self.driver.find_text_box(EMAIL_TB).send_keys(email_id)
         self.driver.find_text_box("password").enter_text(password)
         self.driver.find_element_by_css_selector("input[value='Login']").click()
         return DashboardPage(self.driver)

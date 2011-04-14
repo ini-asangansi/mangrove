@@ -4,7 +4,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from framework.drivers.driver_wrapper import DriverWrapper
 
-__author__ = 'anandb'
+
 
 class RemoteDriverWrapper(WebDriver, DriverWrapper):
 

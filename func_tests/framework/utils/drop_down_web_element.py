@@ -2,7 +2,7 @@
 
 from selenium.webdriver.remote.webelement import WebElement
 
-__author__ = 'anandb'
+
 
 class DropDown (WebElement):
 

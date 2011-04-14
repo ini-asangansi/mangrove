@@ -5,7 +5,6 @@ from framework.utils.text_box_web_element import TextBox
 from framework.utils.radio_button_web_element import RadioButton
 from framework.pages.loginpage.login_locator import *
 
-__author__ = 'anandb'
 
 class DriverWrapper():
     """

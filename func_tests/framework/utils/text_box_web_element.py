@@ -2,7 +2,6 @@
 
 from selenium.webdriver.remote.webelement import WebElement
 
-__author__ = 'anandb'
 
 class TextBox (WebElement):
 
@@ -15,4 +14,4 @@ class TextBox (WebElement):
         return self
 
     def is_enabled(self):
-        return self.webElement.is_enabled()
+        return self.is_enabled()
