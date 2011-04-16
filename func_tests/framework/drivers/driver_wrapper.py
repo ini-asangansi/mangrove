@@ -76,3 +76,12 @@ class DriverWrapper():
         """
         return self.driver.find_elements(by=locator_dict[BY],
                                         value=locator_dict[LOCATOR])
+
+    def go_to(self, url):
+        """
+        Open URL using get command of webdriver api
+
+        Args:
+        url is url of the website
+        """
+        self.driver.get(url)
