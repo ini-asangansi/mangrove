@@ -9,7 +9,7 @@ mock
 selenium==2.b02
 iso8601
 pytz
-hg+https://bitbucket.org/ubernostrum/django-registration#egg=django-registration0.8
+http://github.com/diptanu/django-registration/tarball/master#egg==django-registration0.8
 gdata
 
 
