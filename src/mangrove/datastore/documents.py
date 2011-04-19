@@ -91,9 +91,8 @@ class DataRecordDocument(DocumentBase):
         The couch data_record document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
         A schema for the data_record is enforced here.
     """
-    # data = RawField()
     data = DictField()
-    entity_backing_field = DictField()
+    for_entity_id = TextField()
     submission_id = TextField()
     event_time =  TZAwareDateTimeField()
 
@@ -105,9 +104,9 @@ class DataRecordDocument(DocumentBase):
         self.event_time = event_time
         
         if entity_doc:
-            self.entity_backing_field = entity_doc.unwrap()
-
-
+            self.entity_backing_field = entity_doc._id
+            
+            
 class SubmissionLogDocument(DocumentBase):
     """
         The submission log document. Will contain metadata about the submission. (Eg: source, submitted_on etc.)
