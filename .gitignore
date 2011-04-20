@@ -8,8 +8,8 @@
 *.so
 *.pyc
 
-# Auto generated files#
-#######################
+# Auto generated files #
+########################
 docs/_build/*
 .buildinfo
 .doctrees
@@ -52,5 +52,9 @@ coverage.xml
 .idea
 
 # gitflow specific files #
-############################
+##########################
 gitflow/
+
+# Local settings files #
+########################
+localsettings.py
