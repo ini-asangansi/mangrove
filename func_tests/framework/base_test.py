@@ -5,7 +5,7 @@ import unittest
 
 class BaseTest(unittest.TestCase):
     def setUp(self):
-        self.driver = DriverInitializer.initialize ("htmlunit")
+        self.driver = DriverInitializer.initialize ("firefox")
 
     def tearDown(self):
         self.driver.quit()
