@@ -13,7 +13,7 @@ We are detailing out the above steps for Ubuntu 10.10. For any other OS - please
 
 * Install ruby::
 
-    $ sudo apt get install ruby-full
+    $ sudo apt-get install ruby-full
 
 * Install rubygems::
 
