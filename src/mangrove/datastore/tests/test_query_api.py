@@ -3,7 +3,7 @@ from mangrove.datastore.database import get_db_manager, _delete_db_and_remove_db
 import unittest
 from pytz import UTC
 from mangrove.datastore import views
-from mangrove.datastore.entity import Entity
+from mangrove.datastore.entity import Entity, load_all_entity_types, define_type
 from mangrove.datastore import data
 
 class TestQueryApi(unittest.TestCase):
@@ -20,9 +20,9 @@ class TestQueryApi(unittest.TestCase):
         return r
 
     def test_can_create_views(self):
-        self.assertTrue(views.exists_view("by_location", self.manager))
-        self.assertTrue(views.exists_view("by_time", self.manager))
         self.assertTrue(views.exists_view("by_values", self.manager))
+        self.assertTrue(views.exists_view("entity_types", self.manager))
+
 
     def test_should_get_current_values_for_entity(self):
         e = Entity(self.manager, entity_type=["Health_Facility.Clinic"], location=['India', 'MH', 'Pune'])
@@ -53,6 +53,29 @@ class TestQueryApi(unittest.TestCase):
         self.assertEqual(data_fetched["meds"], 5)
         self.assertEqual(data_fetched["doctors"], 2)
 
+    def test_should_fetch_count_per_entity(self):
+       ENTITY_TYPE = ["Health_Facility", "Clinic"]
+       e = Entity(self.manager, entity_type=ENTITY_TYPE, location=['India', 'MH', 'Pune'])
+       id1 = e.save()
+       e.add_data(data=[("beds", 300), ("meds", 20), ("director", "Dr. A"), ("patients", 10)],
+                  event_time=datetime.datetime(2011, 02, 01, tzinfo=UTC))
+       e.add_data(data=[("meds", 20), ("patients", 20)],
+                  event_time=datetime.datetime(2011, 03, 01, tzinfo=UTC))
+
+       e = Entity(self.manager, entity_type=ENTITY_TYPE, location=['India', 'Karnataka', 'Bangalore'])
+       id2 = e.save()
+       e.add_data(data=[("beds", 100), ("meds", 250), ("director", "Dr. B1"), ("patients", 50)],
+                  event_time=datetime.datetime(2011, 02, 01, tzinfo=UTC))
+       e.add_data(data=[("beds", 200), ("meds", 400), ("director", "Dr. B2"), ("patients", 20)],
+                  event_time=datetime.datetime(2011, 03, 01, tzinfo=UTC))
+       values = data.fetch(self.manager, entity_type=ENTITY_TYPE,
+                           aggregates={"director": data.reduce_functions.LATEST,
+                                       "beds": data.reduce_functions.COUNT,
+                                       "patients": data.reduce_functions.COUNT},
+                            aggregate_on={'type': 'location', "level": 2})
+       self.assertEqual(len(values), 2)
+       self.assertEqual(values[("India","MH")], {"director": "Dr. A", "beds": 1, "patients": 2})
+
     def test_should_fetch_aggregate_per_entity(self):
         # Aggregate across all data records for each entity
 
@@ -78,14 +101,27 @@ class TestQueryApi(unittest.TestCase):
                    event_time=datetime.datetime(2011, 03, 01, tzinfo=UTC))
 
         values = data.fetch(self.manager, entity_type=ENTITY_TYPE,
-                            aggregates={"director": "latest",
-                                        "beds": "latest",
-                                        "patients": "sum"})
+                            aggregates={"director": data.reduce_functions.LATEST,
+                                        "beds": data.reduce_functions.LATEST,
+                                        "patients": data.reduce_functions.SUM})
 
         self.assertEqual(len(values), 3)
         self.assertEqual(values[id1], {"director": "Dr. A", "beds": 500, "patients": 30})
         self.assertEqual(values[id2], {"director": "Dr. B2", "beds": 200, "patients": 70})
         self.assertEqual(values[id3], {"director": "Dr. C", "beds": 200, "patients": 12})
+
+#        START_TIME = datetime.datetime(2011,01,01, tzinfo = UTC)
+#        END_TIME = datetime.datetime(2011,02,28, tzinfo = UTC)
+#        values = data.fetch(self.manager,entity_type=ENTITY_TYPE,
+#                            aggregates = {  "director" : "latest" ,
+#                                             "beds" : "latest" ,
+#                                             "patients" : "sum"  },
+#                            filter = { "time" : dict(start=START_TIME,end=END_TIME)}
+#                            )
+#        self.assertEqual(len(values),3)
+#        self.assertEqual(values[id1],{ "director" : "Dr. A", "beds" : 300, "patients" : 10})
+#        self.assertEqual(values[id2],{ "director" : "Dr. B1", "beds" : 100, "patients" : 50})
+#        self.assertEqual(values[id3],{ "director" : "Dr. C", "beds" : 200, "patients" : 12})
 
 
     def test_should_filter_aggregate_per_entity_for_a_location(self):
@@ -128,9 +164,9 @@ class TestQueryApi(unittest.TestCase):
                    event_time=MARCH)
 
         values = data.fetch(self.manager, entity_type=ENTITY_TYPE,
-                            aggregates={"director": "latest",
-                                        "beds": "latest",
-                                        "patients": "sum"},
+                            aggregates={"director": data.reduce_functions.LATEST,
+                                        "beds": data.reduce_functions.LATEST,
+                                        "patients": data.reduce_functions.SUM},
                             filter={'location': ['India', 'MH', 'Pune']}
         )
 
@@ -190,7 +226,7 @@ class TestQueryApi(unittest.TestCase):
                    event_time=MARCH)
 
         values = data.fetch(self.manager, entity_type=ENTITY_TYPE,
-                            aggregates={"patients": "sum"},
+                            aggregates={"patients": data.reduce_functions.SUM},
                             aggregate_on={'type': 'location', "level": 2},
                             )
 
@@ -255,7 +291,7 @@ class TestQueryApi(unittest.TestCase):
         e.add_data(data=[("beds", 200), ("meds", 50), ("director", "Dr. C"), ("patients", 12)],
                    event_time=MARCH)
         values = data.fetch(self.manager, entity_type=ENTITY_TYPE,
-                            aggregates={"patients": "sum"},
+                            aggregates={"patients": data.reduce_functions.SUM},
                             aggregate_on={'type': 'governance', "level": 2},
                             )
 
@@ -264,7 +300,7 @@ class TestQueryApi(unittest.TestCase):
         self.assertEqual(values[("Director", "Med_Supervisor")] ,{"patients": 140})
 
         values = data.fetch(self.manager, entity_type=ENTITY_TYPE,
-                                    aggregates={"patients": "sum"},
+                                    aggregates={"patients": data.reduce_functions.SUM},
                                     aggregate_on={'type': 'governance', "level": 3},
                                     )
 
@@ -273,6 +309,15 @@ class TestQueryApi(unittest.TestCase):
         self.assertEqual(values[("Director", "Med_Officer", "Doctor")], {"patients": 100})
         self.assertEqual(values[("Director", "Med_Officer", "Nurse")], {"patients": 12})
         self.assertEqual(values[("Director", "Med_Supervisor","Surgeon")] ,{"patients": 70})
+
+    def test_should_load_all_entity_types(self):
+        define_type(self.manager,["HealthFacility","Clinic"])
+        define_type(self.manager,["HealthFacility","Hospital"])
+        define_type(self.manager,["WaterPoint","Lake"])
+        define_type(self.manager,["WaterPoint","Dam"])
+        entity_types = load_all_entity_types(self.manager)
+        assert entity_types is not None
+        print entity_types
 
 #
 #
