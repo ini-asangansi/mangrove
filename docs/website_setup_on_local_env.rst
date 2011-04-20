@@ -3,7 +3,7 @@ Setting up the 'DataWinners' Web App
 ------------------------------------
 
 
-* Pre-requisites:
+* Pre-requisites::
 
 	1. Install python 2.7
 		``apt-get install python2.7``
@@ -19,7 +19,7 @@ Setting up the 'DataWinners' Web App
 		``apt-get install python-setuptools``
 
 
-* Environment Setup:
+* Environment Setup::
 
 	1. Create virtual environment 
 		``virtualenv --no-site-packages --python=python2.7 <foldername>``
@@ -39,7 +39,7 @@ Setting up the 'DataWinners' Web App
 		``pip install -E <foldername> -r <foldername>/mangrove/requirements.pip``
 
 
-* Execute Environment:
+* Execute Environment::
 
 	1. Activate virtual environment
 		``source <foldername>/bin/activate``
@@ -47,7 +47,7 @@ Setting up the 'DataWinners' Web App
 		``python <foldername>/mangrove/src/web/manage.py runserver``
 
 
-* Access URLs:
+* Access URLs::
 
 	1. Website URL: http://localhost:8000/login
 	2. Couchdb URL: http://localhost:5984/_utils
