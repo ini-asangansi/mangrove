@@ -7,7 +7,7 @@ from framework.utils.data_fetcher import *
 from testdata.test_data import DATA_WINNER_WEBSITE
 from tests.logintests.login_data import *
 
-
+@SkipTest
 class TestLoginPage(BaseTest):
 
 
