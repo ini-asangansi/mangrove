@@ -58,3 +58,4 @@ gitflow/
 # Local settings files #
 ########################
 localsettings.py
+local_settings.py
