@@ -2,10 +2,14 @@
 
 import copy
 from datetime import datetime
+from time import mktime
+
 from couchdb.http import ResourceConflict
+
 from documents import EntityDocument, DataRecordDocument, attributes
 from mangrove.datastore.documents import EntityTypeDocument
-from mangrove.datastore.exceptions import EntityTypeAlreadyDefined
+from mangrove.errors.MangroveException import EntityTypeAlreadyDefined
+from mangrove.utils.types import is_empty
 from ..utils.types import is_not_empty, is_sequence, is_string, primitive_type
 from ..utils.dates import utcnow
 from database import DatabaseManager
@@ -13,12 +17,18 @@ from database import DatabaseManager
 def load_all_entity_types(dbm):
     assert isinstance(dbm, DatabaseManager)
     rows = dbm.load_all_rows_in_view('mangrove_views/entity_types')
-    entity_types = {row["id"]:row["value"].pop() for row in rows}
-
+    entity_types = {}
+    for row in rows:
+        entity_types[row["id"]] = row["value"].pop()
     return entity_types
 
 def define_type(dbm,entity_type):
-    e = EntityTypeDocument(entity_type)
+    assert is_not_empty(entity_type)
+    if type(entity_type) == str:
+        _entity_type = [entity_type.strip()]
+    else:
+        _entity_type = entity_type
+    e = EntityTypeDocument(_entity_type)
     try:
        dbm.save(e)
     except ResourceConflict :
@@ -28,8 +38,7 @@ def define_type(dbm,entity_type):
 def get(dbm, uuid):
     assert isinstance(dbm, DatabaseManager)
     entity_doc = dbm.load(uuid, EntityDocument)
-    e = Entity(dbm, _document = entity_doc)
-    return e
+    return Entity(dbm, _document = entity_doc)
 
 def get_entities(dbm, uuids):
     return [ get(dbm, i) for i in uuids ]
@@ -73,40 +82,36 @@ def entities_near(geocode, radius=1, attrs=None):
     '''
     pass
 
-def entities_in(geoname, attrs=None):
-    '''
-    Retrieve an entity within the given fully-qualified geographic
-    placename.
+def get_entities_in(dbm, geo_path, type_path=None):
+    '''Retrieve an entity within the given fully-qualified geographic placename.'''
+    assert isinstance(dbm, DatabaseManager)
+    assert is_string(geo_path) or isinstance(geo_path, list)
+    assert is_string(type_path) or isinstance(type_path, list) or type_path is None
 
-    Include 'type' as an attr to restrict to a given entity type
+    if is_string(geo_path):
+        geo_path = [geo_path]
+    if is_string(type_path):
+        type_path = [type_path]
 
-    returns a sequence
+    entities = []
 
-    ex.
-    found = entities_in(
-    [us,ca,sanfrancisco],
-    {'type':'patient', 'phone':'4155551212'}
-    )
+    # if type is unspecified, then return all entities
+    if type_path is not None:
+        rows = dbm.load_all_rows_in_view('mangrove_views/by_type_geo', key=(type_path + geo_path))
+        entities = [get(dbm, row.id) for row in rows]
 
-    '''
-    pass
+    # otherwise, filter by type
+    if type_path is None:
+        rows = dbm.load_all_rows_in_view('mangrove_views/by_geo', key=geo_path)
+        entities = [get(dbm, row.id) for row in rows]
 
-
-#
-# Constants
-#
-
-
-
-# Entity class is main way of interacting with Entities AND datarecords.
-# Datarecords are always submitted/retrieved from an Entity
-
-
+    return entities
 
 
 class Entity(object):
     """
-        Entity class is main way of interacting with Entities AND datarecords.
+    Entity class is main way of interacting with Entities AND datarecords.
+    Datarecords are always submitted/retrieved from an Entity.
     """
 
     def __init__(self, dbm, entity_type = None,location=None, aggregation_paths = None, _document = None):
@@ -287,7 +292,7 @@ class Entity(object):
     def values(self, aggregation_rules, asof = None):
         """
         returns the aggregated value for the given fields using the aggregation function specified for data collected till a point in time.
-         Eg: data_records_func = {'arv':'latest', 'num_patients':'sum'} will return latest value for ARV and sum of number of patients
+        Eg: data_records_func = {'arv':'latest', 'num_patients':'sum'} will return latest value for ARV and sum of number of patients
         """
         asof = asof or utcnow()
         result = {}
@@ -299,9 +304,10 @@ class Entity(object):
 
     def _get_aggregate_value(self, field, aggregate_fn,date):
         entity_id = self._doc.id
+        time_since_epoch_of_date = int(mktime(date.timetuple())) * 1000
         rows = self._dbm.load_all_rows_in_view('mangrove_views/'+aggregate_fn, group_level=3,descending=False,
                                                      startkey=[self.type_path, entity_id, field],
-                                                     endkey=[self.type_path, entity_id, field, date.year, date.month, date.day, {}])
+                                                     endkey=[self.type_path, entity_id, field, time_since_epoch_of_date])
         # The above will return rows in the format described:
         # Row key=['clinic', 'e4540e0ae93042f4b583b54b6fa7d77a'],
         #   value={'beds': {'timestamp_for_view': 1420070400000, 'value': '15'},
