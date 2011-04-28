@@ -52,7 +52,7 @@ REGISTRATION_DATA_FOR_EXISTING_EMAIL_ERROR = {"organization_name":"NGO 001",
                                                 "title":"Mr",
                                                 "first_name":"No",
                                                 "last_name":"Go",
-                                                 "email":"nogo@mail.com",
+                                                 "email":"tester150411@gmail.com",
                                                  "registration_password":"ngo001",
                                                  "registration_confirm_password":"ngo001"}
 

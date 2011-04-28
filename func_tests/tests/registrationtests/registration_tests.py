@@ -1,4 +1,5 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+from nose.plugins.attrib import attr
 
 from framework.base_test import BaseTest
 from pages.registerconfirmationpage.registration_confirmation_page import RegistrationConfirmationPage
@@ -10,18 +11,19 @@ from nose.plugins.skip import SkipTest
 
 __author__ = 'kumarr'
 
-@SkipTest
 class TestRegistrationPage(BaseTest) :
 
+    @attr('functional_test')
     def test_successful_registration(self):
 
         self.driver.get("http://localhost:8000/register")
         registration_page = RegistrationPage(self.driver)
         registration_page.register_with(REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION)
         registration_confirmation_page = RegistrationConfirmationPage(self.driver)
-        eq_(registration_confirmation_page.registration_success_message(), "You have successfully registered!! An activation email has been sent to your email address. Please activate before login in.", "Organization Name is incorrect or not displayed on Registration Confirmation Page")
+        eq_(registration_confirmation_page.registration_success_message(), "You have successfully registered!! An activation email has been sent to your email address. Please activate before login.", "The Registration Confirmation is not present or incorrect.")
 
 
+    @attr('functional_test')
     def test_register_ngo_with_existing_email_address(self):
         self.driver.get("http://localhost:8000/register")
         registration_page = RegistrationPage(self.driver)
@@ -29,6 +31,7 @@ class TestRegistrationPage(BaseTest) :
         eq_(registration_page.error_message(), "This email address is already in use. Please supply a different email address.", "Error Message for existing email id is not present or incorrect")
 
 
+    @attr('functional_test')
     def test_register_ngo_with_invalid_email_address(self):
         self.driver.get("http://localhost:8000/register")
         registration_page = RegistrationPage(self.driver)
@@ -36,6 +39,7 @@ class TestRegistrationPage(BaseTest) :
         eq_(registration_page.error_message(), "Enter a valid e-mail address.", "Error Message for invalid format email id is not present or incorrect")
 
 
+    @attr('functional_test')
     def test_register_ngo_with_unmatched_passwords(self):
         self.driver.get("http://localhost:8000/register")
         registration_page = RegistrationPage(self.driver)
