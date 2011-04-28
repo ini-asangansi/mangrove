@@ -22,3 +22,12 @@ class FieldDoesNotExistsException(MangroveException):
 class EntityQuestionCodeNotSubmitted(MangroveException):
     def __init__(self):
         MangroveException.__init__(self,"The submission does not contain entity question code")
+
+class EntityQuestionAlreadyExistsException(MangroveException):
+    pass
+
+class QuestionCodeAlreadyExistsException(MangroveException):
+    pass
+
+class NumberNotRegisteredException(MangroveException):
+    pass

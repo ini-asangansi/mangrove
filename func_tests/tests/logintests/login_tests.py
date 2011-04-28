@@ -1,4 +1,5 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+from nose.plugins.attrib import attr
 
 from framework.base_test import BaseTest
 from pages.loginpage.login_page import LoginPage
@@ -7,10 +8,9 @@ from framework.utils.data_fetcher import *
 from testdata.test_data import DATA_WINNER_WEBSITE
 from tests.logintests.login_data import *
 
-@SkipTest
 class TestLoginPage(BaseTest):
 
-
+    @attr('functional_test')
     def test_login_with_valid_credentials(self):
         self.driver.get(DATA_WINNER_WEBSITE)
         login_page = LoginPage(self.driver)
@@ -21,6 +21,7 @@ class TestLoginPage(BaseTest):
           "Login Un-successful or Welcome Message is not Present")
 
 
+    @attr('functional_test')
     def test_login_with_unactivated_account_credentials(self):
         self.driver.go_to(DATA_WINNER_WEBSITE)
         login_page = LoginPage(self.driver)
@@ -28,7 +29,7 @@ class TestLoginPage(BaseTest):
         self.assertEqual(login_page.get_error_message(), fetch_(ERROR_MESSAGE,
                                            from_(UNACTIVATED_ACCOUNT_CREDENTIALS)))
 
-
+    @attr('functional_test')
     def test_login_with_invalid_format_email_address(self):
 
         self.driver.go_to(DATA_WINNER_WEBSITE)
@@ -37,7 +38,7 @@ class TestLoginPage(BaseTest):
         self.assertEqual(login_page.get_error_message(),
                          fetch_(ERROR_MESSAGE, from_(INVALID_EMAIL_ID_FORMAT)))
 
-
+    @attr('functional_test')
     def test_login_with_invalid_password_credential(self):
 
         self.driver.go_to(DATA_WINNER_WEBSITE)
@@ -46,7 +47,7 @@ class TestLoginPage(BaseTest):
         self.assertEqual(login_page.get_error_message(), fetch_(ERROR_MESSAGE, from_(INVALID_PASSWORD)))
 
 
-
+    @attr('functional_test')
     def test_login_without_entering_email_address(self):
 
         self.driver.go_to(DATA_WINNER_WEBSITE)
@@ -55,8 +56,7 @@ class TestLoginPage(BaseTest):
         self.assertEqual(login_page.get_error_message(),
                          fetch_(ERROR_MESSAGE, from_(BLANK_EMAIL_ADDRESS)))
 
-
-
+    @attr('functional_test')
     def test_login_without_entering_password(self):
 
         self.driver.go_to(DATA_WINNER_WEBSITE)
@@ -65,7 +65,7 @@ class TestLoginPage(BaseTest):
         self.assertEqual(login_page.get_error_message(),
                          fetch_(ERROR_MESSAGE, from_(BLANK_PASSWORD)))
 
-
+    @attr('functional_test')
     def test_login_without_entering_email_and_password(self):
 
         self.driver.go_to(DATA_WINNER_WEBSITE)
@@ -73,7 +73,7 @@ class TestLoginPage(BaseTest):
         login_page.login_with(BLANK_CREDENTIALS)
         self.assertEqual(login_page.get_error_message(),fetch_(ERROR_MESSAGE,
                                                 from_(BLANK_CREDENTIALS)))
-
+    @attr('functional_test')
     def test_register_link_functionality(self):
 
         self.driver.go_to(DATA_WINNER_WEBSITE)
