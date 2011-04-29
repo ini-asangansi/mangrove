@@ -23,7 +23,7 @@ class CommonUtilities(Page):
 
         while current_time < end_time:
             try:
-                self.driver.find_element_by_id(object_id)
+                self.driver.find(object_id)
                 print "Object", object_id, "is present."
                 break
             except NoSuchElementException:
