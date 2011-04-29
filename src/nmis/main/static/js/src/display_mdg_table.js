@@ -62,11 +62,12 @@
 				thR.append($("<td />", {'class': mH + ' year'}).text(year))
 			});
 			tb.append(thR);
-			$.each(goals[''+gn], function(ii, gvar){
+			var goalsInDisplayOrder = goals[''+gn].sort(function(a,b){return a.display_order - b.display_order;})
+			$.each(goalsInDisplayOrder, function(ii, gvar){
 				tb.append(createRowForVariable(gvar))
 			})
 		});
-		return $("<table />", {'class':'mdg-table f'}).html(tb);
+		return $('<div />', {'id':'mdg-table-wrap'}).html($("<table />", {'class':'mdg-table f'}).html(tb));
 	}
 	
 	$.createMdgTable = CreateMDGTable;
