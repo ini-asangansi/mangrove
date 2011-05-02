@@ -1,6 +1,12 @@
 First Install Steps:
 =====================
 
+Requirements
+-------------------
+
+* Python 2.7
+* Python headers
+
 1. Create a virtualenv
 --------------------
 virtualenv ve && source ve/bin/activate
