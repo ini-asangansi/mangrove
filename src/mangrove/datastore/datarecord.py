@@ -6,6 +6,9 @@ import entity
 from ..utils.types import is_sequence
 from ..utils.dates import utcnow
 
+
+
+
 def register(manager,entity_type, data, location, source, aggregation_paths = None):
 #    manager = get_db_manager()
     e = Entity(manager, entity_type= entity_type, location= location, aggregation_paths = aggregation_paths)
@@ -14,14 +17,13 @@ def register(manager,entity_type, data, location, source, aggregation_paths = No
     return e
 
 def submit(manager,entity_id,data,source):
+    """
+        create and persist a submission doc.
+        source will have channel info ie. Web/SMS etc,,
+        source will also have the reporter info.
+    """
     assert entity_id is not None
     assert is_sequence(data) and len(data) > 0
-
-    # create and persist a submission doc.
-    # source will have channel info ie. Web/SMS etc,,
-    # source will also have the reporter info.
-
-#    manager = get_db_manager()
     e = entity.get(manager,entity_id)
     submission_log = SubmissionLogDocument(source = source)
     submission_log = manager.save(submission_log)

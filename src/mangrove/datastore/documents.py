@@ -5,7 +5,7 @@ import datetime
 import calendar
 from uuid import uuid4
 from time import struct_time
-from mangrove.utils.types import is_sequence
+from mangrove.utils.types import is_sequence, is_string
 from ..utils.dates import py_datetime_to_js_datestring, js_datestring_to_py_datetime, utcnow
 
 class attributes(object):
@@ -89,7 +89,9 @@ class EntityDocument(DocumentBase):
 
 class DataRecordDocument(DocumentBase):
     """
-        The couch data_record document. It abstracts out the couch related functionality and inherits from the Document class of couchdb-python.
+        The couch data_record document. It abstracts out the couch related functionality and inherits from the Document
+        class of couchdb-python.
+
         A schema for the data_record is enforced here.
     """
     # data = RawField()
@@ -116,12 +118,18 @@ class SubmissionLogDocument(DocumentBase):
     
     submitted_on = TZAwareDateTimeField()
     source = TextField()
+    destination = TextField()
+    channel = TextField()
+    message = TextField()
 
-    def __init__(self, source, id=None):
-        assert isinstance(source, str)
+    def __init__(self, source, channel = None,destination = None,message = None, id=None):
+        assert is_string(source)
         DocumentBase.__init__(self, id, 'SubmissionLog')
         self.source = source
         self.submitted_on = utcnow()
+        self.channel = channel
+        self.destination = destination
+        self.message = message
 
 
 class EntityTypeDocument(DocumentBase):
@@ -134,9 +142,6 @@ class EntityTypeDocument(DocumentBase):
         assert is_sequence(name_)
         DocumentBase.__init__(self, document_type = 'EntityType', id = ".".join([v for v in name_]))
         self.name = name_
-
-
-
 
         
 class FormModelDocument(DocumentBase):
@@ -155,13 +160,13 @@ class FormModelDocument(DocumentBase):
 
     @property
     def active_languages(self):
-        return self.metadata.get(attributes.ACTIVE_LANGUAGES)
+        return self.metadata[attributes.ACTIVE_LANGUAGES]
 
     @active_languages.setter
-    def active_languages(self,langauge):
-        active_langauges = self.metadata[attributes.ACTIVE_LANGUAGES]
-        if not filter(lambda x:x==langauge, active_langauges):
-            active_langauges.append(langauge)
+    def active_languages(self,language):
+        active_languages = self.metadata[attributes.ACTIVE_LANGUAGES]
+        if not filter(lambda x:x==language, active_languages):
+            active_languages.append(language)
 
     def add_label(self,language,label):
         self.label[language]=label
