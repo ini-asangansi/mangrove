@@ -11,6 +11,9 @@ import json
 
 def main(request):
     return render_to_response('index.html')
+    
+import widgets
+import widget_data
 
 def region_navigation(request, region_path):
     context = RequestContext(request)
@@ -23,13 +26,15 @@ def region_navigation(request, region_path):
     #query country for sub sections
     region_thing_object = country_root_object.find_child_by_slug_array(region_path.split("/"))
     
-    # see nmis/static/mdg_sample.json for the example of how the MDG data should be
-    # structured
-    context.mdg_data_url = "/static/mdg_sample.json"
-    # if we want to specify parameters to be appended to the URL, 
-    # we can pass them here
-    mdg_data_query_params = {}
-    context.mdg_data_query_params = json.dumps(mdg_data_query_params)
+    widget_ids, include_templates = widgets.widget_includes_by_region_level(len(region_thing_object.ancestors()))
+    context.widgets = include_templates
+    context.entity = region_thing_object.entity
+    
+    for widget_id in widget_ids:
+        try:
+            context.__dict__[widget_id] = getattr(widget_data, widget_id)(context.entity)
+        except:
+            context.__dict__[widget_id] = False
     
     sample_dict = region_thing_object.to_dict()
     context.region_hierarchy = region_thing_object.context_dict(2)
