@@ -3,10 +3,10 @@
     {% include 'application_scss.html' %}
 {% endblock %}
 {% block body %}
-    <div id="container_header">
-        <div class="container_24">
+
+        {% block header %}
             {% include 'header_application.html' %}
-        </div>
+        {% endblock %}
     </div>
     {% block main_content %}
         <div id="container_content">

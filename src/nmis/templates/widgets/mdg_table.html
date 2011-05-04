@@ -1,4 +1,4 @@
-<div class="widget" data-entity-id="{{mdg_table.entity_id}}">
+<div id="mdg-data-widget" class="widget" data-entity-id="{{mdg_table.entity_id}}">
 	<h2>
 		MDG Table for {{ mdg_table.name }}
 	</h2>
@@ -8,7 +8,8 @@
 </div>
 
 <script type="text/javascript" charset="utf-8">
+	var mdgData = {{ mdg_table.mdg_data|safe }};
 	widgetActivators['mdg_table'] = (function(){
-		console.log("mdg_table");
+		$.createMdgTable(mdgData).appendTo('#mdg-data-widget');
 	});
 </script>

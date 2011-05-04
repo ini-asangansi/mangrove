@@ -26,7 +26,7 @@
             {% templatetag openvariable %}each(i,question) questions{% templatetag closevariable %}
              <li>
                 <a href="#"
-                   data-bind="text: question.display, click: function() { viewModel.changeSelectedQuestion(question); } ">
+                   data-bind="text: question.display, click: function() {$('#question_form').validate(); if($('#question_form').valid()) viewModel.changeSelectedQuestion(question); } ">
                 </a>
              <div>
                  <span data-bind="visible: question.canBeDeleted()" class="delete">
@@ -52,7 +52,9 @@
          <li>
             <h5>Your Questionnaire</h5>
             <label>Questionnaire Code :</label>
-            <input id='questionnaire-code'/>
+            <input id='project-id' type='hidden' value={{ project_id }} />
+            <input id='questionnaire-code' class='required' value={{ questionnaire_code }} />
+             <span id="questionnaire-code-error"/>
         </li>
     </ul>
     <div class="questionnare_header grid_22 alpha omega">Header</div>
@@ -85,10 +87,6 @@
                                 <label>Code</label>
                                 <input id="code" name="code" type="text" class="required"
                                        data-bind="value: selectedQuestion().code"/>
-                            </li>
-                            <li>
-                                <label>Description</label>
-                                <textarea data-bind="value: selectedQuestion().description" ></textarea>
                             </li>
                             <li class="margin_null">
                                 <label>Type</label>
