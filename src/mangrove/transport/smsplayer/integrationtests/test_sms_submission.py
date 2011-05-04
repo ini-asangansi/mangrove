@@ -5,8 +5,9 @@ from unittest.case import TestCase
 from mangrove.datastore.database import get_db_manager, remove_db_manager, _delete_db_and_remove_db_manager
 from mangrove.datastore.entity import define_type
 from mangrove.datastore import datarecord
-from mangrove.datastore.field import TextField, IntegerField, SelectField
+from mangrove.form_model.field import TextField, IntegerField, SelectField
 from mangrove.form_model.form_model import FormModel
+from mangrove.form_model.validation import IntegerConstraint
 from mangrove.transport.submissions import SubmissionHandler, Request
 from mangrove.datastore.datadict import DataDictType
 
@@ -28,7 +29,7 @@ class TestShouldSaveSMSSubmission(TestCase):
         question2 = TextField(name="Name", question_code="NAME", label="Clinic Name",
                               defaultValue="some default value", language="eng")
         question3 = IntegerField(name="Arv stock", question_code="ARV", label="ARV Stock",
-                                 range={"min": 15, "max": 120})
+                                 range=IntegerConstraint(min=15,max=120))
         question4 = SelectField(name="Color", question_code="COL", label="Color",
                                 options=[("RED", 1), ("YELLOW", 2)])
 
