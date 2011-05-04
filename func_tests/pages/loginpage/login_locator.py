@@ -11,7 +11,7 @@ from framework.utils.common_utils import *
 # BTN - Button
 # DD - Drop Down
 # LINK - Links
-#LABEL - Label
+# LABEL - Label
 
 
 # variable to access locators

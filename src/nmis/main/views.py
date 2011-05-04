@@ -7,8 +7,10 @@ from django.template.defaultfilters import slugify
 from mangrove.datastore.database import DatabaseManager
 from mangrove.datastore.entity import get_entities_by_type, get_entities_in
 from main.region_thing import RegionThing, import_region_thing_from_dict
+from helpers import read_required
 import json
 
+@read_required()
 def main(request):
     return render_to_response('index.html')
     
@@ -30,9 +32,10 @@ def region_navigation(request, region_path):
     context.widgets = include_templates
     context.entity = region_thing_object.entity
     
+    #what goes on behind the scenes that you don't need to edit--
     for widget_id in widget_ids:
         try:
-            context.__dict__[widget_id] = getattr(widget_data, widget_id)(context.entity)
+            context.__dict__[widget_id] = getattr(widget_data, widget_id)(region_thing=region_thing_object)
         except:
             context.__dict__[widget_id] = False
     

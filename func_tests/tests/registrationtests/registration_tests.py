@@ -2,46 +2,65 @@
 from nose.plugins.attrib import attr
 
 from framework.base_test import BaseTest
+from framework.utils.data_fetcher import fetch_, from_
 from pages.registerconfirmationpage.registration_confirmation_page import RegistrationConfirmationPage
 from pages.registrationpage.registration_page import RegistrationPage
 from nose.tools import *
 from registration_data import *
 from nose.plugins.skip import SkipTest
-
-
-__author__ = 'kumarr'
+from testdata.test_data import DATA_WINNER_WEBSITE, DATA_WINNER_REGISTER_PAGE
 
 class TestRegistrationPage(BaseTest) :
 
     @attr('functional_test')
     def test_successful_registration(self):
 
-        self.driver.get("http://localhost:8000/register")
+        self.driver.get(DATA_WINNER_REGISTER_PAGE)
         registration_page = RegistrationPage(self.driver)
-        registration_page.register_with(REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION)
-        registration_confirmation_page = RegistrationConfirmationPage(self.driver)
-        eq_(registration_confirmation_page.registration_success_message(), "You have successfully registered!! An activation email has been sent to your email address. Please activate before login.", "The Registration Confirmation is not present or incorrect.")
+        registration_confirmation_page = registration_page.successful_registration_with(REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION)
+        self.assertEquals(registration_confirmation_page.registration_success_message(),
+            fetch_(SUCCESS_MESSAGE,
+                   from_(REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION)))
 
 
     @attr('functional_test')
     def test_register_ngo_with_existing_email_address(self):
-        self.driver.get("http://localhost:8000/register")
+        self.driver.get(DATA_WINNER_REGISTER_PAGE)
         registration_page = RegistrationPage(self.driver)
-        registration_page.register_with(REGISTRATION_DATA_FOR_EXISTING_EMAIL_ERROR)
-        eq_(registration_page.error_message(), "This email address is already in use. Please supply a different email address.", "Error Message for existing email id is not present or incorrect")
+        registration_page.register_with(EXISTING_EMAIL_ADDRESS)
+        self.assertEquals(registration_page.get_error_message(), fetch_(ERROR_MESSAGE,
+                   from_(EXISTING_EMAIL_ADDRESS)))
 
 
     @attr('functional_test')
     def test_register_ngo_with_invalid_email_address(self):
-        self.driver.get("http://localhost:8000/register")
+        self.driver.get(DATA_WINNER_REGISTER_PAGE)
         registration_page = RegistrationPage(self.driver)
-        registration_page.register_with(REGISTRATION_DATA_FOR_INVALID_FORMAT_EMAIL_ERROR)
-        eq_(registration_page.error_message(), "Enter a valid e-mail address.", "Error Message for invalid format email id is not present or incorrect")
+        registration_page.register_with(INVALID_EMAIL_FORMAT)
+        self.assertEquals(registration_page.get_error_message(), fetch_(ERROR_MESSAGE,
+                   from_(INVALID_EMAIL_FORMAT)))
 
 
     @attr('functional_test')
     def test_register_ngo_with_unmatched_passwords(self):
-        self.driver.get("http://localhost:8000/register")
+        self.driver.get(DATA_WINNER_REGISTER_PAGE)
         registration_page = RegistrationPage(self.driver)
-        registration_page = registration_page.register_with(REGISTRATION_DATA_FOR_UNMATCHED_PASSWORD)
-        eq_(registration_page.error_message(), "The two password fields didn't match.", "Error Message for unmatched passwords is not present or incorrect" )
+        registration_page.register_with(UNMATCHED_PASSWORD)
+        self.assertEquals(registration_page.get_error_message(), fetch_(ERROR_MESSAGE,
+                   from_(UNMATCHED_PASSWORD)))
+
+    @attr('functional_test')
+    def test_register_ngo_without_entering_data(self):
+        self.driver.get(DATA_WINNER_REGISTER_PAGE)
+        registration_page = RegistrationPage(self.driver)
+        registration_page.register_with(WITHOUT_ENTERING_REQUIRED_FIELDS)
+        self.assertEquals(registration_page.get_error_message(), fetch_(ERROR_MESSAGE,
+                   from_(WITHOUT_ENTERING_REQUIRED_FIELDS)))
+
+    @attr('functional_test')
+    def test_register_ngo_with_invalid_web_url(self):
+        self.driver.get(DATA_WINNER_REGISTER_PAGE)
+        registration_page = RegistrationPage(self.driver)
+        registration_page.register_with(INVALID_WEBSITE_URL)
+        self.assertEquals(registration_page.get_error_message(), fetch_(ERROR_MESSAGE,
+                   from_(INVALID_WEBSITE_URL)))
