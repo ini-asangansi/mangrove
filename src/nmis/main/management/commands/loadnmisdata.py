@@ -49,9 +49,9 @@ class Command(BaseCommand):
 
         print "Importing location entities from 'Nigeria LGAs ALL' worksheet"
         for row in nims_data['Nigeria LGAs ALL']:
-            country  = row['country'].strip()
-            state    = row['states'].strip()
-            lga      = row['lga'].strip()
+            country = row['country'].strip()
+            state = row['states'].strip()
+            lga = row['lga'].strip()
             location = (country, state, lga)
             if country not in countries:
                 e = Entity(dbm, entity_type=["Location", "Country"], location=[country])
@@ -88,9 +88,9 @@ class Command(BaseCommand):
             if not data_row:
                 continue
 
-            lga              = row['_cpzh4'].strip()
-            state            = row['_cn6ca'].strip()
-            location         = ("Nigeria", state, lga)
+            lga = row['_cpzh4'].strip()
+            state = row['_cn6ca'].strip()
+            location = ("Nigeria", state, lga)
             pop_types = [
                     ('population', 'Population'),
                     ('population_ratio_male', 'Population ratio (male)'),
