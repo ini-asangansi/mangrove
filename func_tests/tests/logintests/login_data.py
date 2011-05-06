@@ -34,4 +34,5 @@ UNACTIVATED_ACCOUNT_CREDENTIALS = {"username": "tester@gmail.com",
 
 # blank username and password
 BLANK_CREDENTIALS = {"username": "", "password": "",
-                   "message": "Email  This field is required.Password  This field is required."}
+                   "message": "Email  This field is required.\
+                   Password  This field is required."}
