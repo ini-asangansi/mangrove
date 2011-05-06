@@ -19,7 +19,7 @@ DATABASES = {
         'NAME': 'mangrovedb',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST':  '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -136,8 +136,8 @@ INSTALLED_APPS = (
     'registration',
     'django.contrib.admin',
     'compressor',
-    'tabs',
-    'datawinners.main'
+    'datawinners.main',
+    'datawinners.project'
 )
 
 COMPILER_FORMATS = {

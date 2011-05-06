@@ -1,4 +1,7 @@
-from mangrove.utils.validate import is_integer, is_string
+# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+
+from validate import is_integer, is_string
+
 
 
 class ConstraintAttributes(object):
@@ -37,4 +40,4 @@ class TextConstraint(object):
         return dict
 
     def validate(self, value):
-        return is_string(value, min=self.min, max=self.max)
+        return is_string(value.strip(), min=self.min, max=self.max)

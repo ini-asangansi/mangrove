@@ -33,6 +33,8 @@ def create_profile(request):
 
     form = ProjectProfile(request.POST)
     if form.is_valid():
+#        if form.cleaned_data['entity_type'] == 'new':
+#            return HttpResponseRedirect('/admin/entity_management.html')
         project = Project(name=form.cleaned_data["name"], goals=form.cleaned_data["goals"],
                           project_type=form.cleaned_data['project_type'], entity_type=form.cleaned_data['entity_type'],
                           devices=form.cleaned_data['devices'])
@@ -130,7 +132,12 @@ def project_results(request, questionnaire_code=None):
     results = {
                 'questionnaire': ('code', 'Title',),
                 'questions': [('Q1Code', 'Q1Text'), ('Q2Code', 'Q2Text')],
-                'submissions': [(datetime.utcnow(), 'sms', True, 'Raw Message 1', 'Q1 Ans', 'Q2 Ans',), (datetime.utcnow(), 'sms', False, 'Raw Message 2', None, 'Q2 Ans',)]
+                'submissions': [(datetime.utcnow(), 'sms', True, 'Raw Message 1',
+                                                        'Q1 Ans', 'Q2 Ans',), (datetime.utcnow(),
+                                                        'sms', False, 'Raw Message 2', None, 'Q2 Ans',)
+                               ]
               }
     pages = range(1, 10)
-    return render_to_response('project/results.html', {'questionnaire_code': questionnaire_code, 'results': results, 'pages': pages, current_page: current_page})
+    return render_to_response('project/results.html',
+                              {'questionnaire_code': questionnaire_code, 'results': results, 'pages': pages, current_page: current_page}
+                              )
