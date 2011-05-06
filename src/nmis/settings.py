@@ -19,8 +19,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'nmis.db',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'nmis.db',                       # Or path to database file if using sqlite3.
     }
 }
 
@@ -28,6 +28,17 @@ MANGROVE_DATABASES = {
     'default': {
         'SERVER': 'http://localhost:5984/',
         'DATABASE': 'nmis'
+    }
+}
+
+COMPILER_FORMATS = {
+    '.sass': {
+        'binary_path': 'sass',
+        'arguments': '*.sass *.css'
+    },
+    '.scss': {
+        'binary_path': 'sass',
+        'arguments': '*.scss *.css'
     }
 }
 
@@ -79,7 +90,9 @@ STATIC_URL = '/static/'
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Additional locations of static files
-#STATICFILES_DIRS = ('/other/static/files',)
+STATICFILES_DIRS = (
+    ('cache', os.path.join(CURRENT_DIR, 'cache')),
+)
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -123,6 +136,7 @@ INSTALLED_APPS = (
     'nmis.main',
     'registration',
     'django.contrib.admin',
+    'compressor',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

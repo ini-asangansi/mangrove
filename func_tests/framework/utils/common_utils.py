@@ -53,8 +53,8 @@ class CommonUtilities(Page):
         return self
 
     def find_element_and_click(self, element_id):
-         self.driver.find_element_by_id(element_id).click()
-         return self
+        self.driver.find_element_by_id(element_id).click()
+        return self
 
     def is_element_present(self, element_locator, by=By.CSS_SELECTOR):
         try:
