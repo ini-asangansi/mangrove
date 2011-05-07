@@ -13,4 +13,5 @@ http://github.com/diptanu/django-registration/tarball/master#egg=django-registra
 gdata
 django-css
 BeautifulSoup
+networkx
 
