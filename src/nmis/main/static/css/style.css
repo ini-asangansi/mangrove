@@ -275,7 +275,6 @@ p.region-breadcrumbs a.mode-link span.c {
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
-
 .map-h {
 	height: 345px;
 }
@@ -334,6 +333,7 @@ p.region-breadcrumbs a.mode-link span.c {
 }
 #key-indicators, #country-state-nav {
 	border: 1px solid black;
+
 	margin: 3px 15px 3px 10px;
 }
 h3.mock-up {

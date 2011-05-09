@@ -51,7 +51,7 @@ class DriverWrapper():
         """
         return RadioButton(self.driver.find(locator_dict))
 
-    def find(self,locator_dict):
+    def find(self, locator_dict):
         """
         Finds element on the web page using locator dictionary
 
@@ -64,7 +64,7 @@ class DriverWrapper():
         return self.driver.find_element(by=locator_dict[BY],
                                         value=locator_dict[LOCATOR])
 
-    def find_elements_(self,locator_dict):
+    def find_elements_(self, locator_dict):
         """
         Finds elements on the web page using locator dictionary
 

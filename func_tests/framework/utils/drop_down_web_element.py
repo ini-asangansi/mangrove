@@ -10,12 +10,10 @@ class DropDown (WebElement):
         self.webElement = dropDownWebElement
         self.selectOptions = self.webElement.find_elements_by_tag_name("option")
 
-
     def get_options(self):
         """Gets the list of options in the drop down
         """
-        return [ option.get_text() for option in self.selectOptions   ]
-
+        return [option.get_text() for option in self.selectOptions]
 
     def get_selected(self):
         """ Gets the currently selected item in the drop down
@@ -40,6 +38,3 @@ class DropDown (WebElement):
         for option in self.selectOptions:
             if option.get_attribute("title") == itemText:
                 option.select()
-        
-
-  

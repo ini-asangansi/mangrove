@@ -5,7 +5,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 class TextBox (WebElement):
 
-    def __init__(self, textBoxWebElement ):
+    def __init__(self, textBoxWebElement):
         super(TextBox, self).__init__(textBoxWebElement.parent, textBoxWebElement.id)
         self.webElement = textBoxWebElement
 

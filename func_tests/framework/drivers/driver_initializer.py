@@ -6,7 +6,6 @@ from framework.drivers.chrome_driver_wrapper import ChromeDriverWrapper
 from framework.drivers.remote_driver_wrapper import RemoteDriverWrapper
 
 
-
 class DriverInitializer:
     @classmethod
     def initialize(self, browser):
@@ -21,5 +20,3 @@ class DriverInitializer:
         elif browser == "htmlunit":
             self.wrapper = RemoteDriverWrapper()
         return self.wrapper.driver
-
-  
