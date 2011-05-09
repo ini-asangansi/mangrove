@@ -11,9 +11,8 @@ class TestCouchHTTPWrapper(unittest.TestCase):
     def test_exported_data_to_couch(self):
         self.export_test_data_to_couch()
         server = Server()
-        db=server[self.DATA_STORE]
+        db = server[self.DATA_STORE]
         assert db['nogo@mail.com']
-
 
     def export_test_data_to_couch(self):
         http_wrapper = CouchHttpWrapper('localhost', '5984')
@@ -24,5 +23,5 @@ class TestCouchHTTPWrapper(unittest.TestCase):
         http_wrapper.saveBulkDoc(self.DATA_STORE, fp.read())
         fp.close()
 
-if __name__=="__main__":
+if __name__ == "__main__":
     unittest.main()

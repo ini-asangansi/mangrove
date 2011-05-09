@@ -11,7 +11,7 @@ from framework.utils.common_utils import *
 # BTN - Button
 # DD - Drop Down
 # LINK - Links
-#LABEL - Label
+# LABEL - Label
 
 
 # variable to access locators
@@ -19,3 +19,5 @@ LOCATOR = "locator"
 BY = "by"
 
 WELCOME_MESSAGE_LABEL = by_css("div.span-9>h4")
+REGISTER_REPORTER_LINK = by_css("a[href='reporter/register']")
+CREATE_PROJECT_LINK = by_css("a[href='/project/profile/create']")

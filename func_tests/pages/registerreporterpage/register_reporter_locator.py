@@ -18,10 +18,11 @@ from framework.utils.common_utils import *
 LOCATOR = "locator"
 BY = "by"
 
-# List of all the locators related to login page
-EMAIL_TB = by_css("input[name=username]")
-PASSWORD_TB = by_css("input[name=password]")
-LOGIN_BTN = by_css("input[value=Login]")
+FIRST_NAME_TB = by_css("input#id_first_name")
+LAST_NAME_TB = by_css("input#id_last_name")
+TELEPHONE_NUMBER_TB = by_css("input#id_telephone_number")
+COMMUNE_TB = by_css("input#id_commune")
 
-
+REGISTER_BTN = by_css("input[value='Register']")
 ERROR_MESSAGE_LABEL = by_css("div[class~='error']")
+FLASH_MESSAGE_LABEL = by_xpath("//div[@id='flash-message' and not(contains(@id, 'none'))]")

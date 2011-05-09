@@ -1,14 +1,13 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
-
-
 from pages.page import Page
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.exceptions import NoSuchElementException
 
 import datetime
 
-__all__=['by_css','by_id','by_xpath','by_name']
+__all__ = ['by_css', 'by_id', 'by_xpath', 'by_name']
+
 
 class CommonUtilities(Page):
 
@@ -19,7 +18,7 @@ class CommonUtilities(Page):
         """Finds elements by their id by waiting till timeout."""
 
         current_time = datetime.datetime.now()
-        end_time = current_time + datetime.timedelta(0,time_out_in_seconds)
+        end_time = current_time + datetime.timedelta(0, time_out_in_seconds)
 
         while current_time < end_time:
             try:
@@ -58,14 +57,13 @@ class CommonUtilities(Page):
 
     def is_element_present(self, element_locator, by=By.CSS_SELECTOR):
         try:
-            locator = self.driver.find_elements(by,element_locator)
+            locator = self.driver.find_elements(by, element_locator)
             return locator
         except NoSuchElementException:
             return False
 
 
 # End of class and Starting of normal functions
-
 def by_css(element_locator):
     """
     Function to create locator dictionary by css
@@ -75,7 +73,8 @@ def by_css(element_locator):
 
     Return dictionary of locator e.g. {"locator":element_locator,"by":By.CSS_SELECTOR}
     """
-    return {"locator":element_locator,"by":By.CSS_SELECTOR}
+    return {"locator": element_locator, "by": By.CSS_SELECTOR}
+
 
 def by_id(element_locator):
     """
@@ -86,7 +85,8 @@ def by_id(element_locator):
 
     Return dictionary of locator e.g. {"locator":element_locator,"by":By.ID}
     """
-    return {"locator":element_locator,"by":By.ID}
+    return {"locator": element_locator, "by": By.ID}
+
 
 def by_xpath(element_locator):
     """
@@ -97,7 +97,8 @@ def by_xpath(element_locator):
 
     Return dictionary of locator e.g. {"locator":element_locator,"by":By.XPATH}
     """
-    return {"locator":element_locator,"by":By.XPATH}
+    return {"locator": element_locator, "by": By.XPATH}
+
 
 def by_name(element_locator):
     """
@@ -108,4 +109,4 @@ def by_name(element_locator):
 
     Return dictionary of locator e.g. {"locator":element_locator,"by":By.NAME}
     """
-    return {"locator":element_locator,"by":By.NAME}
+    return {"locator": element_locator, "by": By.NAME}

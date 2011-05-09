@@ -9,4 +9,3 @@ BY = "by"
 
 #Registration Confirmation Page Locator
 WELCOME_MESSAGE_LI = by_css("div[class^= 'form']")
-  

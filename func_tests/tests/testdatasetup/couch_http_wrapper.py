@@ -1,13 +1,16 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
-import httplib, json
+import httplib
+import json
 import simplejson
+
 
 def prettyPrint(s):
     """Prettyprints the json response of an HTTPResponse object"""
 
     # HTTPResponse instance -> Python object -> str
     print simplejson.dumps(json.loads(s.read()), sort_keys=True, indent=4)
+
 
 class CouchHttpWrapper:
     """Basic wrapper class for operations on a couchDB"""
@@ -24,13 +27,13 @@ class CouchHttpWrapper:
     def createDb(self, dbName):
         """Creates a new database on the server"""
 
-        r = self.put(''.join(['/',dbName,'/']), "")
+        r = self.put(''.join(['/', dbName,'/']), "")
         prettyPrint(r)
 
     def deleteDb(self, dbName):
         """Deletes the database on the server"""
 
-        r = self.delete(''.join(['/',dbName,'/']))
+        r = self.delete(''.join(['/', dbName,'/']))
         prettyPrint(r)
 
     def listDb(self):
@@ -53,7 +56,7 @@ class CouchHttpWrapper:
 
     def openDoc(self, dbName, docId):
         """Open a document in a given database"""
-        r = self.get(''.join(['/', dbName, '/', docId,]))
+        r = self.get(''.join(['/', dbName, '/', docId, ]))
         prettyPrint(r)
         return r
 
@@ -104,4 +107,3 @@ class CouchHttpWrapper:
         c = self.connect()
         c.request("DELETE", uri)
         return c.getresponse()
-

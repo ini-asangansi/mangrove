@@ -3,9 +3,10 @@
 from framework.drivers.driver_initializer import DriverInitializer
 import unittest
 
+
 class BaseTest(unittest.TestCase):
     def setUp(self):
-        self.driver = DriverInitializer.initialize ("firefox")
+        self.driver = DriverInitializer.initialize("firefox")
 
     def tearDown(self):
         self.driver.quit()

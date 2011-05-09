@@ -21,42 +21,74 @@ class RegistrationPage(Page):
         return page_title
 
     def successful_registration_with(self, registration_data):
-        self.driver.find_text_box(ORGANIZATION_NAME_TB).enter_text(fetch_(ORGANIZATION_NAME, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_SECTOR_DD).enter_text(fetch_(ORGANIZATION_SECTOR, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB).enter_text(fetch_(ORGANIZATION_ADDRESS_LINE1, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB).enter_text(fetch_(ORGANIZATION_ADDRESS_LINE1, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_CITY_TB).enter_text(fetch_(ORGANIZATION_CITY, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_STATE_TB).enter_text(fetch_(ORGANIZATION_STATE, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_COUNTRY_TB).enter_text(fetch_(ORGANIZATION_COUNTRY,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_ZIPCODE_TB).enter_text(fetch_(ORGANIZATION_ZIPCODE,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_OFFICE_PHONE_TB).enter_text(fetch_(ORGANIZATION_OFFICE_PHONE,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_WEBSITE_TB).enter_text(fetch_(ORGANIZATION_WEBSITE,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_TITLE_TB).enter_text(fetch_(TITLE,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_FIRST_NAME_TB).enter_text(fetch_(FIRST_NAME,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_LAST_NAME_TB).enter_text(fetch_(LAST_NAME,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_EMAIL_TB).enter_text(fetch_(EMAIL,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_PASSWORD_TB).enter_text(fetch_(REGISTRATION_PASSWORD,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_CONFIRM_PASSWORD_TB).enter_text(fetch_(REGISTRATION_CONFIRM_PASSWORD,from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_NAME_TB).enter_text(
+            fetch_(ORGANIZATION_NAME, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_SECTOR_DD).enter_text(
+            fetch_(ORGANIZATION_SECTOR, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB).enter_text(
+            fetch_(ORGANIZATION_ADDRESS_LINE1, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB).enter_text(
+            fetch_(ORGANIZATION_ADDRESS_LINE1, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_CITY_TB).enter_text(
+            fetch_(ORGANIZATION_CITY, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_STATE_TB).enter_text(
+            fetch_(ORGANIZATION_STATE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_COUNTRY_TB).enter_text(
+            fetch_(ORGANIZATION_COUNTRY, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_ZIPCODE_TB).enter_text(
+            fetch_(ORGANIZATION_ZIPCODE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_OFFICE_PHONE_TB).enter_text(
+            fetch_(ORGANIZATION_OFFICE_PHONE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_WEBSITE_TB).enter_text(
+            fetch_(ORGANIZATION_WEBSITE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_TITLE_TB).enter_text(
+            fetch_(TITLE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_FIRST_NAME_TB).enter_text(
+            fetch_(FIRST_NAME, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_LAST_NAME_TB).enter_text(
+            fetch_(LAST_NAME, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_EMAIL_TB).enter_text(
+            fetch_(EMAIL, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_PASSWORD_TB).enter_text(
+            fetch_(REGISTRATION_PASSWORD, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_CONFIRM_PASSWORD_TB).enter_text(
+            fetch_(REGISTRATION_CONFIRM_PASSWORD, from_(registration_data)))
         self.driver.find(ORGANIZATION_REGISTER_BTN).click()
         return RegistrationConfirmationPage(self.driver)
 
     def register_with(self, registration_data):
-        self.driver.find_text_box(ORGANIZATION_NAME_TB).enter_text(fetch_(ORGANIZATION_NAME, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_SECTOR_DD).enter_text(fetch_(ORGANIZATION_SECTOR, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB).enter_text(fetch_(ORGANIZATION_ADDRESS_LINE1, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB).enter_text(fetch_(ORGANIZATION_ADDRESS_LINE1, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_CITY_TB).enter_text(fetch_(ORGANIZATION_CITY, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_STATE_TB).enter_text(fetch_(ORGANIZATION_STATE, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_COUNTRY_TB).enter_text(fetch_(ORGANIZATION_COUNTRY,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_ZIPCODE_TB).enter_text(fetch_(ORGANIZATION_ZIPCODE,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_OFFICE_PHONE_TB).enter_text(fetch_(ORGANIZATION_OFFICE_PHONE,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_WEBSITE_TB).enter_text(fetch_(ORGANIZATION_WEBSITE,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_TITLE_TB).enter_text(fetch_(TITLE,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_FIRST_NAME_TB).enter_text(fetch_(FIRST_NAME,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_LAST_NAME_TB).enter_text(fetch_(LAST_NAME,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_EMAIL_TB).enter_text(fetch_(EMAIL,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_PASSWORD_TB).enter_text(fetch_(REGISTRATION_PASSWORD,from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_CONFIRM_PASSWORD_TB).enter_text(fetch_(REGISTRATION_CONFIRM_PASSWORD,from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_NAME_TB).enter_text(
+            fetch_(ORGANIZATION_NAME, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_SECTOR_DD).enter_text(
+            fetch_(ORGANIZATION_SECTOR, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB).enter_text(
+            fetch_(ORGANIZATION_ADDRESS_LINE1, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_ADDRESS_LINE1_TB).enter_text(
+            fetch_(ORGANIZATION_ADDRESS_LINE1, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_CITY_TB).enter_text(
+            fetch_(ORGANIZATION_CITY, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_STATE_TB).enter_text(
+            fetch_(ORGANIZATION_STATE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_COUNTRY_TB).enter_text(
+            fetch_(ORGANIZATION_COUNTRY, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_ZIPCODE_TB).enter_text(
+            fetch_(ORGANIZATION_ZIPCODE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_OFFICE_PHONE_TB).enter_text(
+            fetch_(ORGANIZATION_OFFICE_PHONE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_WEBSITE_TB).enter_text(
+            fetch_(ORGANIZATION_WEBSITE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_TITLE_TB).enter_text(
+            fetch_(TITLE, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_FIRST_NAME_TB).enter_text(
+            fetch_(FIRST_NAME, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_LAST_NAME_TB).enter_text(
+            fetch_(LAST_NAME, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_EMAIL_TB).enter_text(
+            fetch_(EMAIL, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_PASSWORD_TB).enter_text(
+            fetch_(REGISTRATION_PASSWORD, from_(registration_data)))
+        self.driver.find_text_box(ORGANIZATION_CONFIRM_PASSWORD_TB).enter_text(
+            fetch_(REGISTRATION_CONFIRM_PASSWORD, from_(registration_data)))
         self.driver.find(ORGANIZATION_REGISTER_BTN).click()
         return self
 
@@ -72,8 +104,4 @@ class RegistrationPage(Page):
         if locators:
             for locator in locators:
                 error_message = error_message + locator.text
-        return error_message.replace("\n"," ")
-
-    
-
-    
+        return error_message.replace("\n", " ")
