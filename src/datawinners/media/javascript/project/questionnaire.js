@@ -17,14 +17,20 @@ DW.question = function(question){
           max : ""
         }
     };
+
+    // Extend will override the default values with the passed values(question), And take the values from defaults when its not present in question
     this.options = $.extend({},defaults, question);
     this._init();
 }
 DW.question.prototype = {
     _init : function(){
         var q = this.options;
+        console.log(q)
         this.range_min = ko.observable(q.range.min);
-        this.range_max = ko.observable(q.range.max);
+        
+        //This condition required especially because in DB range_max is a mandatory field
+        this.range_max = ko.observable(q.range.max ? q.range.max : "");
+
         this.min_length = ko.observable(q.length.min);
         this.max_length = ko.observable(q.length.max);
         this.title = ko.observable(q.name);
@@ -41,6 +47,7 @@ DW.question.prototype = {
             },
             owner: this
         });
+        this.date_format = ko.observable(q.date_format);
     }
 };
 
@@ -82,7 +89,20 @@ $(document).ready(function(){
             },
             type:{
                 required: true
+            },
+            min_length:{
+                digits: true
+            },
+            max_length:{
+                digits:true
+            },
+            range_min:{
+                number: true
+            },
+            range_max:{
+                number: true
             }
+
         }
     });
 
