@@ -20,20 +20,20 @@ class CouchHttpWrapper:
         self.port = port
 
     def connect(self):
-        return httplib.HTTPConnection(self.host, self.port) # No close()
+        return httplib.HTTPConnection(self.host, self.port)  # No close()
 
     # Database operations
 
     def createDb(self, dbName):
         """Creates a new database on the server"""
 
-        r = self.put(''.join(['/', dbName,'/']), "")
+        r = self.put(''.join(['/', dbName, '/']), "")
         prettyPrint(r)
 
     def deleteDb(self, dbName):
         """Deletes the database on the server"""
 
-        r = self.delete(''.join(['/', dbName,'/']))
+        r = self.delete(''.join(['/', dbName, '/']))
         prettyPrint(r)
 
     def listDb(self):

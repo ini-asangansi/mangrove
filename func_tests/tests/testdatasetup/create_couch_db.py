@@ -5,6 +5,7 @@ import os
 from couchdb.client import Server
 from tests.testdatasetup.couch_http_wrapper import CouchHttpWrapper
 
+
 class TestCouchHTTPWrapper(unittest.TestCase):
     DATA_STORE = 'mangrove_web'
 
