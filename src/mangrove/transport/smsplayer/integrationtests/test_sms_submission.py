@@ -11,6 +11,7 @@ from mangrove.form_model.validation import IntegerConstraint, TextConstraint
 from mangrove.transport.submissions import SubmissionHandler, Request
 from mangrove.datastore.datadict import DataDictType
 
+
 class TestShouldSaveSMSSubmission(TestCase):
     def setUp(self):
         self.dbm = get_db_manager(database='mangrove-test')
@@ -24,12 +25,13 @@ class TestShouldSaveSMSSubmission(TestCase):
         self.entity = datarecord.register(self.dbm, entity_type="HealthFacility.Clinic",
                                           data=[("Name", "Ruby", self.name_type)], location=["India", "Pune"],
                                           source="sms")
+
         datarecord.register(self.dbm, entity_type=["Reporter"],
                             data=[("telephone_number", '1234', self.telephone_number_type),
                                   ("first_name", "Test_reporter", self.first_name_type)], location=[],
                             source="sms")
-        question1 = TextField(name="entity_question", question_code="ID", label="What is associated entity"
-                              , language="eng", entity_question_flag=True)
+        question1 = TextField(name="entity_question", question_code="ID", label="What is associated entity",
+                              language="eng", entity_question_flag=True)
         question2 = TextField(name="Name", question_code="NAME", label="Clinic Name",
                               defaultValue="some default value", language="eng", length=TextConstraint(4, 15))
         question3 = IntegerField(name="Arv stock", question_code="ARV", label="ARV Stock",
@@ -41,7 +43,6 @@ class TestShouldSaveSMSSubmission(TestCase):
                                     form_code="CLINIC", type='survey', fields=[question1, question2, question3])
         self.form_model.add_field(question4)
         self.form_model__id = self.form_model.save()
-
 
     def tearDown(self):
         del self.dbm.database[self.form_model__id]
@@ -69,7 +70,15 @@ class TestShouldSaveSMSSubmission(TestCase):
         self.assertEqual(len(response.errors), 1)
 
     def test_should_give_error_for_wrong_text_value(self):
-        text = "CLINIC +ID %s +NAME ABC" % self.entity.id
+        text = "CLINIC +ID CID001 +NAME ABC"
+        s = SubmissionHandler(self.dbm)
+
+        response = s.accept(Request("sms", text, "1234", "5678"))
+        self.assertFalse(response.success)
+        self.assertEqual(len(response.errors), 1)
+
+    def test_should_give_error_for_no_value(self):
+        text = "+"
         s = SubmissionHandler(self.dbm)
 
         response = s.accept(Request("sms", text, "1234", "5678"))

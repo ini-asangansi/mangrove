@@ -5,7 +5,7 @@ from mock import Mock, patch
 from mangrove.datastore.database import DatabaseManager
 from mangrove.datastore.documents import SubmissionLogDocument
 from mangrove.errors.MangroveException import FormModelDoesNotExistsException, NumberNotRegisteredException
-from mangrove.transport.submissions import Request, SubmissionHandler, Response
+from mangrove.transport.submissions import Request, SubmissionHandler
 
 
 class TestSubmissions(TestCase):
@@ -23,27 +23,20 @@ class TestSubmissions(TestCase):
         self.entity_patcher.stop()
         self.reporter_patcher.stop()
 
-    def test_should_accept_sms_submission(self):
-        request = Request(transport="sms", message="hello world", source="1234", destination="5678")
-        dbm = Mock(spec=DatabaseManager)
-        s = SubmissionHandler(dbm)
-        response = s.accept(request)
-        self.assertIsNotNone(response)
-        self.assertIsInstance(response, Response)
-        self.assertIsNotNone(response.submission_id)
-        self.assertIsNotNone(response.message)
-        self.assertIsNotNone(response.success)
-
     def test_should_log_submission(self):
-        request = Request(transport="sms", message="hello world", source="1234", destination="5678")
+        request = Request(transport="sms", message="QR1 +EID 100 +Q1 20", source="1234", destination="5678")
         dbm = Mock(spec=DatabaseManager)
         s = SubmissionHandler(dbm)
+        self.form_model_module.get_questionnaire.side_effect = FormModelDoesNotExistsException("hello")
         s.accept(request)
-        submission_log = dbm.save.call_args[0][0]
+        submission_log = dbm.save.call_args_list[0][0][0]
         self.assertIsInstance(submission_log, SubmissionLogDocument)
         self.assertEquals(request.transport, submission_log.channel)
-        self.assertEquals(request.message, submission_log.message)
         self.assertEquals(request.source, submission_log.source)
+        self.assertEquals(request.destination, submission_log.destination)
+        self.assertEquals(False, submission_log. status)
+        self.assertEquals("QR1", submission_log.form_code)
+        self.assertEquals({'Q1': '20', 'EID': '100'}, submission_log.values)
         self.assertEquals(request.destination, submission_log.destination)
 
     def test_should_check_if_submission_by_registered_reporter(self):
@@ -54,7 +47,6 @@ class TestSubmissions(TestCase):
         response = s.accept(request)
         self.assertEqual(1, len(response.errors))
         self.assertEqual("Sorry, This number 1234 is not registered with us", response.errors[0])
-
 
     def test_should_fail_submission_if_invalid_form_code(self):
         request = Request(transport="sms", message="INVALID_CODE +name xyz +age 10",
@@ -67,15 +59,16 @@ class TestSubmissions(TestCase):
         self.assertEqual("The questionnaire with code INVALID_CODE does not exists", response.errors[0])
         self.assertEqual("The questionnaire with code INVALID_CODE does not exists", response.message)
 
-    def test_should_return_success_message_with_reporter_name(self):
-        request = Request(transport="sms", message="hello world", source="1234", destination="5678")
-        dbm = Mock(spec=DatabaseManager)
-        self.reporter_module.find_reporter.return_value = [
-                    {"first_name": "Reporter A", "telephone_number": "1234"},
-                    ]
-        s = SubmissionHandler(dbm)
-        response = s.accept(request)
-        self.assertEqual("Thank You Reporter A for your submission.", response.message)
+#TODO : need to rewrite this test when Submission handler is broken in two part
+#    def test_should_return_success_message_with_reporter_name(self):
+#        request = Request(transport="sms", message="hello world", source="1234", destination="5678")
+#        dbm = Mock(spec=DatabaseManager)
+#        self.reporter_module.find_reporter.return_value = [
+#                    {"first_name": "Reporter A", "telephone_number": "1234"},
+#                    ]
+#        s = SubmissionHandler(dbm)
+#        response = s.accept(request)
+#        self.assertEqual("Thank You Reporter A for your submission.", response.message)
 
 
 #test_get_player

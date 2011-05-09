@@ -60,5 +60,9 @@ gitflow/
 localsettings.py
 local_settings.py
 
+# Local cache files #
+#####################
+nigeria_regions.json
+
 # SCSS Generated Files #
 src/datawinners/.sass-cache/

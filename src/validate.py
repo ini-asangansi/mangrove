@@ -17,7 +17,7 @@
 # Comments, suggestions and bug reports welcome.
 
 """
-    The Validator object is used to check that supplied values 
+    The Validator object is used to check that supplied values
     conform to a specification.
     
     The value can be supplied as a string - e.g. from a config file.
