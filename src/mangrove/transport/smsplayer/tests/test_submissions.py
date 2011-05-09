@@ -69,7 +69,5 @@ class TestSubmissions(TestCase):
 #        s = SubmissionHandler(dbm)
 #        response = s.accept(request)
 #        self.assertEqual("Thank You Reporter A for your submission.", response.message)
-
-
 #test_get_player
 #test_authorize

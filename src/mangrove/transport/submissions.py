@@ -4,6 +4,7 @@
 Common entry point for all submissions to Mangrove via multiple channels.
 Will log the submission and forward to the appropriate channel handler.
 """
+from mangrove.datastore.database import get_db_manager
 from mangrove.datastore.documents import  SubmissionLogDocument
 from mangrove.datastore import entity
 from mangrove.datastore import reporter
@@ -11,6 +12,7 @@ from mangrove.errors.MangroveException import MangroveException, FormModelDoesNo
 from mangrove.form_model import form_model
 from mangrove.form_model.form_model import FormSubmission
 from mangrove.transport.smsplayer.smsplayer import SMSPlayer
+from mangrove.utils.types import is_string
 
 
 class Request(object):
@@ -94,3 +96,12 @@ class SubmissionHandler(object):
             return SMSPlayer()
         else:
             raise UnknownTransportException(("No handler defined for transport %s") % request.transport)
+
+
+def get_submissions_made_for_questionnaire(dbm, form_code, page_number=0, page_size=20, count_only=False):
+    assert is_string(form_code)
+    if count_only:
+        rows = dbm.load_all_rows_in_view('mangrove_views/submissionlog', startkey=[form_code], endkey=[form_code, {}], group=True, group_level=1, reduce=True)
+    else:
+        rows = dbm.load_all_rows_in_view('mangrove_views/submissionlog', reduce=False, startkey=[form_code], endkey=[form_code, {}], skip=page_number * page_size, limit=page_size)
+    return [each.value for each in rows]
