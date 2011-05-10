@@ -5,7 +5,8 @@ Requirements
 -------------------
 
 * Python 2.7
-* Python headers
+* Python headers (sudo apt-get install python-dev)
+* CouchDB (sudo apt-get install couchdb)
 
 1. Create a virtualenv
 --------------------
