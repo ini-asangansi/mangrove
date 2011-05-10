@@ -58,7 +58,6 @@ gitflow/
 # Local settings files #
 ########################
 localsettings.py
-settings.py
 local_settings.py
 
 # Local cache files #
