@@ -55,9 +55,9 @@ class CommonUtilities(Page):
         self.driver.find_element_by_id(element_id).click()
         return self
 
-    def is_element_present(self, element_locator, by=By.CSS_SELECTOR):
+    def is_element_present(self, element_locator):
         try:
-            locator = self.driver.find_elements(by, element_locator)
+            locator = self.driver.find(element_locator)
             return locator
         except NoSuchElementException:
             return False
