@@ -50,7 +50,7 @@ class CreateProjectPage(Page):
 #            self.driver.find(by_css("option[value*='" + subject + "']"))\.click()
             self.driver.find(by_xpath("//option[text()='Clinic']")).select()
             time.sleep(3)
-            self.driver.find(by_xpath("//option[text()='Clinic']")).send_keys("\\10")
+            self.driver.find(by_xpath("//option[text()='Clinic']")).send_keys("\\13")
 
             print "I m here"
         # Selecting check box according to given options
