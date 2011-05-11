@@ -1,4 +1,5 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+from pages.createprojectpage.create_project_page import CreateProjectPage
 from pages.dashboardpage.dashboard_locator import *
 from pages.page import Page
 from pages.registerreporterpage.register_reporter_page import ReporterRegistrationPage
@@ -27,3 +28,12 @@ class DashboardPage(Page):
          """
         self.driver.find(REGISTER_REPORTER_LINK).click()
         return ReporterRegistrationPage(self.driver)
+
+    def navigate_to_create_project_page(self):
+        """
+        Function to navigate to register a reporter page of the website.
+
+        Return register reporter page
+         """
+        self.driver.find(CREATE_PROJECT_LINK).click()
+        return CreateProjectPage(self.driver)
