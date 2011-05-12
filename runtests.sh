@@ -1,35 +1,37 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ $# -eq 0 ]; then
-    echo "Please specify test to execute. e.g. ft for functional tests, ut for unit tests, all for all the tests"
-    exit 1
+    export TESTCHOICE="all"
+else
+    case $1 in
+	"ft")
+	    export TESTCHOICE="ft"
+	    ;;
+	"ut")
+	    export TESTCHOICE="ut"
+	    ;;
+	"all")
+	    export TESTCHOICE="all"
+	    ;;
+	*)
+	    export TESTCHOICE="all"
+	    ;;
+    esac
 fi
-
-case $1 in
-"ft")
-     export TESTCHOICE="ft"
-     ;;
-"ut")
-     export TESTCHOICE="ut"
-     ;;
-"all")
-     export TESTCHOICE="all"
-     ;;
-*) echo "Please specify proper test type to execute. e.g. ft for functional tests, ut for unit tests, all for all the tests"
-   exit 1
-;;
-esac
 
 set RECREATEDB = "x"
 while [ "${RECREATEDB}" != "Y" -a "${RECREATEDB}" != "y" -a "${RECREATEDB}" != "N" -a "${RECREATEDB}" != "n" ]
 do
-echo "Do you want to recreate db in couch (*** recommended y ***)? [Y/N]"
-read RECREATEDB
+    read -s -n1 -p "Do you want to recreate db in couch (*** recommended y ***)? [Y/n]" RECREATEDB
+    echo
+    if [ -z ${RECREATEDB} ]; then
+	break
+    fi
 done
 
 cd src/datawinners
 
-if [ "${RECREATEDB}" = "Y" -o "${RECREATEDB}" = "y" ]; then
+if [ "${RECREATEDB}" != "N" -a "${RECREATEDB}" != "n" ]; then
     python manage.py recreatedb
 fi
 
