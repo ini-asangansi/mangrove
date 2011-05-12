@@ -14,7 +14,7 @@ PAGE_TITLE = "page_title"
 VALID_DATA = {PROJECT_NAME: "Water Point Morondava",
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
-              SUBJECT: "Clinic",
+              SUBJECT: "[u\\'Clinic\\']",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Create a Questionnaire"}
 

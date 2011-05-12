@@ -64,5 +64,9 @@ local_settings.py
 #####################
 nigeria_regions.json
 
+# Local data files #
+#####################
+src/nmis/data
+
 # SCSS Generated Files #
 src/datawinners/.sass-cache/

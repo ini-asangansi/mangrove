@@ -6,7 +6,6 @@ from mangrove.datastore.datarecord import register
 from mangrove.datastore.entity import Entity, define_type
 from mangrove.datastore.database import get_db_manager
 from pytz import UTC
-from mangrove.errors.MangroveException import EntityTypeAlreadyDefined
 from mangrove.form_model.field import TextField, IntegerField
 from mangrove.form_model.form_model import FormModel, RegistrationFormModel
 from mangrove.form_model.validation import IntegerConstraint
@@ -137,12 +136,31 @@ def load_data():
         e.save()
     except Exception:
         pass
+
+
+
+    location_type =  DataDictType(manager, name='Location Type', slug='location', primitive_type='string')
+    description_type =  DataDictType(manager, name='description Type', slug='description', primitive_type='string')
+    mobile_number_type =  DataDictType(manager, name='Mobile Number Type', slug='mobile_number', primitive_type='string')
+    name_type = DataDictType(manager, name='Name', slug='Name', primitive_type='string')
+    entity_id_type =  DataDictType(manager, name='Entity Id Type', slug='entity_id', primitive_type='string')
+    age_type =  DataDictType(manager, name='Age Type', slug='age', primitive_type='integer')
+
+
+    location_type.save()
+    description_type.save()
+    mobile_number_type.save()
+    name_type.save()
+    entity_id_type.save()
+    age_type.save()
+
+
     question1 = TextField(name="entity_question", question_code="EID", label="What is associated entity",
-                          language="eng", entity_question_flag=True)
+                          language="eng", entity_question_flag=True, ddtype=entity_id_type)
     question2 = TextField(name="Name", question_code="Q1", label="What is your name",
-                          defaultValue="some default value", language="eng")
+                          defaultValue="some default value", language="eng", ddtype=name_type)
     question3 = IntegerField(name="Father's age", question_code="Q2", label="What is your Father's Age",
-                             range=IntegerConstraint(min=15, max=120))
+                             range=IntegerConstraint(min=15, max=120), ddtype=age_type)
 
     form_model = FormModel(manager, name="AIDS", label="Aids form_model",
                            form_code="QRID01", type='survey', fields=[
@@ -154,24 +172,26 @@ def load_data():
         project.save()
     except Exception:
         pass
+    
+
     #Create registration questionnaire
     question1 = TextField(name="entity_type", question_code="ET", label="What is associated entity type?",
-                          language="eng", entity_question_flag=False)
+                          language="eng", entity_question_flag=False,ddtype=entity_id_type)
     question2 = TextField(name="name", question_code="N", label="What is the entity's name?",
-                          defaultValue="some default value", language="eng")
+                          defaultValue="some default value", language="eng",ddtype=name_type)
     question3 = TextField(name="short_name", question_code="S", label="What is the entity's short name?",
-                          defaultValue="some default value", language="eng")
+                          defaultValue="some default value", language="eng", ddtype=name_type)
     question4 = TextField(name="location", question_code="L", label="What is the entity's location?",
-                          defaultValue="some default value", language="eng")
+                          defaultValue="some default value", language="eng",ddtype=location_type)
     question5 = TextField(name="description", question_code="D", label="Describe the entity",
-                          defaultValue="some default value", language="eng")
+                          defaultValue="some default value", language="eng",ddtype=description_type)
     question6 = TextField(name="short_name", question_code="M", label="What is the associated mobile number?",
-                          defaultValue="some default value", language="eng")
+                          defaultValue="some default value", language="eng",ddtype=mobile_number_type)
 
     form_model = RegistrationFormModel(manager, name="REG", form_code="REG", fields=[
                     question1, question2, question3, question4, question5, question6])
     qid = form_model.save()
-    
+
     #Register Reporter
     phone_number_type = DataDictType(manager, name='Telephone Number', slug='telephone_number', primitive_type='string')
     first_name_type = DataDictType(manager, name='First Name', slug='first_name', primitive_type='string')
@@ -179,4 +199,3 @@ def load_data():
     first_name_type.save()
     register(manager, entity_type=["Reporter"], data=[("telephone_number", "1234567890", phone_number_type), ("first_name", "Shweta", first_name_type)], location=[],
                         source="sms")
-
