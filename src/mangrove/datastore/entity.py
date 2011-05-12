@@ -62,7 +62,7 @@ def get_entities_by_type(dbm, entity_type):
     assert is_string(entity_type)
 
     rows = dbm.load_all_rows_in_view('mangrove_views/by_type', key=entity_type)
-    entities = [dbm.get(row['value']['_id'], Entity) for row in rows]
+    entities = [dbm.get(row.id, Entity) for row in rows]
 
     return entities
 
@@ -228,6 +228,14 @@ class Entity(DataObject):
         p = self.location_path
         return ('' if p is None else '.'.join(p))
 
+    @property
+    def geometry(self):
+        return self._doc.geometry
+
+    @property
+    def centroid(self):
+        return self._doc.centroid
+
     def set_aggregation_path(self, name, path):
         assert self._doc is not None
         assert is_string(name) and is_not_empty(name)
@@ -316,17 +324,17 @@ class Entity(DataObject):
         """
         Return a dict where the first level of keys is the event time,
         the second level is the data dict type slug, and the third
-        contains the data type, value, and label of the data record.
+        contains the value.
         """
         result = defaultdict(dict)
         for row in self._get_rows():
             event_time = row['value'][u'event_time']
-            data_keys = row['value']['data'].keys()
-            assert len(data_keys) == 1
-            label = data_keys[0]
-            value = row['value']['data'][label][u'value']
-            data_type = row['value']['data'][label]['type']
-            result[event_time][data_type['slug']] = value
+            for key, d in row['value']['data'].items():
+                value = d[u'value']
+                type_slug = d['type']['slug']
+                if type_slug in result[event_time]:
+                    raise Exception("Slug already used for this time")
+                result[event_time][type_slug] = value
         return result
 
     def data_types(self, tags=None):
