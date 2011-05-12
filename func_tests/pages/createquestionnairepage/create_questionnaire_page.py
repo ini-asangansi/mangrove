@@ -43,7 +43,6 @@ class CreateQuestionnairePage(Page):
             self.driver.find(PUBLIC_INFORMATION_RB).toggle()
         # Selecting check box according to given options
         devices = fetch_(DEVICES, from_(project_data)).split(",")
-        print devices
         if "sms" in devices:
             self.driver.find(SMS_CB).toggle()
         if "smartphone" in devices:
