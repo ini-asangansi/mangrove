@@ -44,14 +44,11 @@ class CreateProjectPage(Page):
         elif project_type == "public information":
             self.driver.find(PUBLIC_INFORMATION_RB).click()
         subject = fetch_(SUBJECT, from_(project_data))
-        self.driver.find_drop_down(SUBJECTS_DD).click()
+        #self.driver.find_drop_down(SUBJECTS_DD).click()
         time.sleep(3)
         if len(subject) != 0:
 #            self.driver.find(by_css("option[value*='" + subject + "']"))\.click()
-            self.driver.find(by_xpath("//option[text()='Clinic']")).select()
-            time.sleep(3)
-            self.driver.find(by_xpath("//option[text()='Clinic']")).send_keys("\\13")
-
+            self.driver.execute_script("document.getElementById('id_entity_type').value = '"+ subject +"';")
             print "I m here"
         # Selecting check box according to given options
         time.sleep(6)
