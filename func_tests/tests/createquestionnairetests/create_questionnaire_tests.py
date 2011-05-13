@@ -20,6 +20,7 @@ class TestCreateQuestionnaire(BaseTest):
 
         # going on setup project page
         return dashboard_page.navigate_to_create_questionnaire_page()
+
     @SkipTest
     @attr('functional_test')
     def test_successful_questionnaire_creation(self):
@@ -31,6 +32,7 @@ class TestCreateQuestionnaire(BaseTest):
         create_questionnaire_page.create_questionnaire_with(VALID_DATA)
         self.assertRegexpMatches(register_reporter_page.get_success_message(),
                                  fetch_(PAGE_TITLE, from_(VALID_DATA)))
+
     @SkipTest
     @attr('functional_test')
     def test_registration_of_reporter_without_entering_data(self):
