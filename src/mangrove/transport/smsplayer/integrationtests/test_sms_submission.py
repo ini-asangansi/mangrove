@@ -21,27 +21,37 @@ class TestShouldSaveSMSSubmission(TestCase):
         self.entity_type = ["HealthFacility", "Clinic"]
         define_type(self.dbm, self.entity_type)
         self.reporter_type = define_type(self.dbm, ["Reporter"])
+
         self.name_type = DataDictType(self.dbm, name='Name', slug='Name', primitive_type='string')
-        self.first_name_type = DataDictType(self.dbm, name='telephone_number', slug='telephone_number',
+        self.telephone_number_type = DataDictType(self.dbm, name='telephone_number', slug='telephone_number',
                                             primitive_type='string')
-        self.telephone_number_type = DataDictType(self.dbm, name='first_name', slug='first_name',
-                                                  primitive_type='string')
+        self.entity_id_type =  DataDictType(self.dbm, name='Entity Id Type', slug='entity_id', primitive_type='string')
+        self.stock_type =  DataDictType(self.dbm, name='Stock Type', slug='stock', primitive_type='integer')
+        self.color_type =  DataDictType(self.dbm, name='Color Type', slug='color', primitive_type='string')
+
+        self.name_type.save()
+        self.telephone_number_type.save()
+        self.entity_id_type.save()
+        self.stock_type.save()
+        self.color_type.save()
+
         self.entity = datarecord.register(self.dbm, entity_type="HealthFacility.Clinic",
                                           data=[("Name", "Ruby", self.name_type)], location=["India", "Pune"],
                                           source="sms")
 
         datarecord.register(self.dbm, entity_type=["Reporter"],
                             data=[("telephone_number", '1234', self.telephone_number_type),
-                                  ("first_name", "Test_reporter", self.first_name_type)], location=[],
+                                  ("first_name", "Test_reporter", self.name_type)], location=[],
                             source="sms")
+
         question1 = TextField(name="entity_question", question_code="ID", label="What is associated entity",
-                              language="eng", entity_question_flag=True)
+                              language="eng", entity_question_flag=True, ddtype=self.entity_id_type)
         question2 = TextField(name="Name", question_code="NAME", label="Clinic Name",
-                              defaultValue="some default value", language="eng", length=TextConstraint(4, 15))
+                              defaultValue="some default value", language="eng", length=TextConstraint(4, 15), ddtype=self.name_type)
         question3 = IntegerField(name="Arv stock", question_code="ARV", label="ARV Stock",
-                                 range=IntegerConstraint(min=15, max=120))
+                                 range=IntegerConstraint(min=15, max=120), ddtype=self.stock_type)
         question4 = SelectField(name="Color", question_code="COL", label="Color",
-                                options=[("RED", 1), ("YELLOW", 2)])
+                                options=[("RED", 1), ("YELLOW", 2)], ddtype=self.color_type)
 
         self.form_model = FormModel(self.dbm, entity_type=self.entity_type, name="aids", label="Aids form_model",
                                     form_code="CLINIC", type='survey', fields=[question1, question2, question3])
@@ -102,18 +112,26 @@ class TestShouldSaveSMSSubmission(TestCase):
         self.assertEquals("Answer 150 for question ARV is greater than allowed.\n", submission_list[0]['error_message'])
 
     def test_should_create_new_entity_on_registration(self):
+        location_type =  DataDictType(self.dbm, name='Location Type', slug='location', primitive_type='string')
+        description_type =  DataDictType(self.dbm, name='description Type', slug='description', primitive_type='string')
+        mobile_number_type =  DataDictType(self.dbm, name='Mobile Number Type', slug='mobile_number', primitive_type='string')
+
+        location_type.save()
+        description_type.save()
+        mobile_number_type.save()
+
         question1 = TextField(name="entity_type", question_code="ET", label="What is associated entity type?",
-                          language="eng", entity_question_flag=False)
+                          language="eng", entity_question_flag=False,ddtype=self.entity_id_type)
         question2 = TextField(name="name", question_code="N", label="What is the entity's name?",
-                              defaultValue="some default value", language="eng")
+                              defaultValue="some default value", language="eng",ddtype=self.name_type)
         question3 = TextField(name="short_name", question_code="S", label="What is the entity's short name?",
-                              defaultValue="some default value", language="eng")
+                              defaultValue="some default value", language="eng",ddtype=self.name_type)
         question4 = TextField(name="location", question_code="L", label="What is the entity's location?",
-                              defaultValue="some default value", language="eng")
+                              defaultValue="some default value", language="eng",ddtype=location_type)
         question5 = TextField(name="description", question_code="D", label="Describe the entity",
-                              defaultValue="some default value", language="eng")
-        question6 = TextField(name="short_name", question_code="M", label="What is the associated mobile number?",
-                              defaultValue="some default value", language="eng")
+                              defaultValue="some default value", language="eng",ddtype=description_type)
+        question6 = TextField(name="mobile_number", question_code="M", label="What is the associated mobile number?",
+                              defaultValue="some default value", language="eng",ddtype=mobile_number_type)
 
         form_model = RegistrationFormModel(self.dbm, name="REG", form_code="REG", fields=[
                         question1, question2, question3, question4, question5, question6])

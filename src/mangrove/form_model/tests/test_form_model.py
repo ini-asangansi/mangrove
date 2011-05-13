@@ -19,17 +19,23 @@ class TestFormModel(unittest.TestCase):
         define_type(self.dbm, ["HealthFacility", "Clinic"])
         self.name_type = DataDictType(self.dbm, name='Name', slug='name', primitive_type='string')
         self.name_type.save()
+        self.string_ddtype =  DataDictType(self.dbm, name='Default String Datadict Type', slug='string_default', primitive_type='string')
+        self.int_ddtype =  DataDictType(self.dbm, name='Default Int Datadict Type', slug='int_default', primitive_type='integer')
+
+        self.string_ddtype.save()
+        self.int_ddtype.save()
+
         self.entity_instance = datarecord.register(self.dbm, entity_type="HealthFacility.Clinic",
                                                    data=[("Name", "Ruby", self.name_type)], location=["India", "Pune"],
                                                    source="sms")
         question1 = TextField(name="entity_question", question_code="ID", label="What is associated entity",
-                              language="eng", entity_question_flag=True)
+                              language="eng", entity_question_flag=True,ddtype=self.string_ddtype)
         question2 = TextField(name="question1_Name", question_code="Q1", label="What is your name",
-                              defaultValue="some default value", language="eng", length=TextConstraint(5, 10))
+                              defaultValue="some default value", language="eng", length=TextConstraint(5, 10),ddtype=self.string_ddtype)
         question3 = IntegerField(name="Father's age", question_code="Q2", label="What is your Father's Age",
-                                 range=IntegerConstraint(min=15, max=120))
+                                 range=IntegerConstraint(min=15, max=120),ddtype=self.int_ddtype)
         question4 = SelectField(name="Color", question_code="Q3", label="What is your favourite color",
-                                options=[("RED", 1), ("YELLOW", 2)])
+                                options=[("RED", 1), ("YELLOW", 2)],ddtype=self.string_ddtype)
 
         self.form_model = FormModel(self.dbm, entity_type=self.entity_type, name="aids", label="Aids form_model",
                                     form_code="1", type='survey', fields=[
@@ -81,12 +87,11 @@ class TestFormModel(unittest.TestCase):
         option_constraint = select_question.options
 
         self.assertEquals(len(option_constraint), 2)
-        print option_constraint
         self.assertEquals(option_constraint[0].get("val"), 1)
 
     def test_should_add_new_field(self):
         form_model = self.dbm.get(self.form_model__id, FormModel)
-        question = TextField(name="added_question", question_code="Q4", label="How are you")
+        question = TextField(name="added_question", question_code="Q4", label="How are you", ddtype=self.string_ddtype)
         form_model.add_field(question)
         form_model.save()
 
@@ -125,14 +130,14 @@ class TestFormModel(unittest.TestCase):
         with self.assertRaises(EntityQuestionAlreadyExistsException):
             form_model = self.dbm.get(self.form_model__id, FormModel)
             question = TextField(name="added_question", question_code="Q5", label="How are you",
-                                 entity_question_flag=True)
+                                 entity_question_flag=True, ddtype=self.string_ddtype)
             form_model.add_field(question)
             form_model.save()
 
     def test_should_raise_exception_if_question_code_is_not_unique(self):
         with self.assertRaises(QuestionCodeAlreadyExistsException):
             form_model = self.dbm.get(self.form_model__id, FormModel)
-            question = TextField(name="added_question", question_code="Q1", label="How are you")
+            question = TextField(name="added_question", question_code="Q1", label="How are you", ddtype=self.string_ddtype)
             form_model.add_field(question)
             form_model.save()
 
@@ -140,6 +145,27 @@ class TestFormModel(unittest.TestCase):
         form_model = self.dbm.get(self.form_model__id, FormModel)
         form_model.form_code = "xyz"
         self.assertEquals(form_model.form_code, "xyz")
+
+    def test_should_persist_ddtype(self):
+        form_model = self.dbm.get(self.form_model__id, FormModel)
+
+        self.assertEqual(form_model.fields[0].ddtype.slug,self.string_ddtype.slug)
+        self.assertEqual(form_model.fields[0].ddtype.id,self.string_ddtype.id)
+        self.assertEqual(form_model.fields[0].ddtype.name,self.string_ddtype.name)
+
+        self.assertEqual(form_model.fields[1].ddtype.slug,self.string_ddtype.slug)
+        self.assertEqual(form_model.fields[1].ddtype.id,self.string_ddtype.id)
+        self.assertEqual(form_model.fields[1].ddtype.name,self.string_ddtype.name)
+
+        self.assertEqual(form_model.fields[2].ddtype.slug,self.int_ddtype.slug)
+        self.assertEqual(form_model.fields[2].ddtype.id,self.int_ddtype.id)
+        self.assertEqual(form_model.fields[2].ddtype.name,self.int_ddtype.name)
+
+        self.assertEqual(form_model.fields[3].ddtype.slug,self.string_ddtype.slug)
+        self.assertEqual(form_model.fields[3].ddtype.id,self.string_ddtype.id)
+        self.assertEqual(form_model.fields[3].ddtype.name,self.string_ddtype.name)
+
+
 
     def test_should_set_entity_type(self):
         form_model = self.dbm.get(self.form_model__id, FormModel)
@@ -156,6 +182,7 @@ class TestFormModel(unittest.TestCase):
                     },
                     "entity_question_flag": True,
                     "type": "text",
+                    "ddtype": self.string_ddtype.to_json(),
                     "question_code": "eid",
                     "length": {"min": 1, "max": 10},
                     },
@@ -166,6 +193,7 @@ class TestFormModel(unittest.TestCase):
                         },
                         "label": {"eng": ""},
                         "type": "integer",
+                        "ddtype": self.int_ddtype.to_json(),
                         "name": "What is your age?",
                         "question_code": "AGE"
                     },
@@ -180,6 +208,7 @@ class TestFormModel(unittest.TestCase):
                         ],
                         "label": {"eng": ""},
                         "type": "select",
+                        "ddtype": self.string_ddtype.to_json(),
                         "name": "Where do you live?",
                         "question_code": "PLC"
                     }]
@@ -193,12 +222,12 @@ class TestFormModel(unittest.TestCase):
         document.type = "survey"
         entityQ = TextField(name="What are you reporting on?", question_code="eid",
                             label={"eng": "Entity being reported on"}, entity_question_flag=True,
-                            length=TextConstraint(min=1, max=10))
+                            length=TextConstraint(min=1, max=10), ddtype=self.string_ddtype)
         ageQ = IntegerField(name="What is your age?", question_code="AGE", label={"eng": ""},
-                            range=IntegerConstraint(min=0, max=10))
+                            range=IntegerConstraint(min=0, max=10), ddtype=self.int_ddtype)
         placeQ = SelectField(name="Where do you live?", question_code="PLC", label={"eng": ""},
                              options=[{"text": {"eng": "Pune"}}, {"text": {"eng": "Bangalore"}}],
-                             single_select_flag=False)
+                             single_select_flag=False, ddtype=self.string_ddtype)
         questions = [entityQ, ageQ, placeQ]
         questionnaire = FormModel.new_from_db(self.dbm, document)
         self.maxDiff = None

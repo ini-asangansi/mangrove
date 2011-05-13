@@ -123,8 +123,11 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(CURRENT_DIR, 'templates')
+    os.path.join(CURRENT_DIR, 'templates'),
+    os.path.join(CURRENT_DIR, 'indicator_management', 'templates'),
 )
+
+DATA_DIRECTORY = os.path.join(CURRENT_DIR, 'data')
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -134,6 +137,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'nmis.main',
+    'nmis.nmis_files',
     'registration',
     'django.contrib.admin',
     'compressor',
