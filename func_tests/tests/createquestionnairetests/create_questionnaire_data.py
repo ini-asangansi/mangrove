@@ -2,25 +2,39 @@
 
 
 ##Variables
-PROJECT_NAME = "project_name"
-PROJECT_BACKGROUND = "project_background"
-PROJECT_TYPE = "project_type"
-SUBJECT = "subject"
-DEVICES = "devices"
+QUESTIONNAIRE_CODE = "questionnaire_code"
+DEFAULT_QUESTION = "default_question"
+QUESTION = "question"
+QUESTIONS = "questions"
+CODE = "code"
+TYPE = "type"
+MIN = "min"
+MAX = "max"
+DATE_FORMAT = "date_format"
+CHOICE = "choice"
+ALLOWED_CHOICE = "allowed_choice"
+NUMBER = "number"
+WORD = "word"
+DATE = "date"
+LIST_OF_CHOICES = "list_of_choices"
+DD_MM_YYYY = "dd.mm.yyyy"
+MM_DD_YYYY = "mm.dd.yyyy"
+MM_YYYY = "mm.yyyy"
+ONLY_ONE_ANSWER = "only_one_answer"
+MULTIPLE_ANSWERS = "multiple_answers"
 ERROR_MSG = "message"
-PAGE_TITLE = "page_title"
+SUCCESS_MSG = "message"
 
+QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE : "WPS01",
+                      DEFAULT_QUESTION : {QUESTION : "What are you reporting?", CODE:"WID", MIN : "1", MAX : "10"},
+                      QUESTIONS : [{QUESTION : "Water Level", CODE:"WL", TYPE: NUMBER, MIN : "1", MAX : "10"},
+                                  {QUESTION : "Date of report", CODE:"DR", TYPE: DATE, CODE:"WID", DATE_FORMAT : DD_MM_YYYY},
+                                  {QUESTION : "Color of Water", CODE:"WC", TYPE: LIST_OF_CHOICES,
+                                   CHOICE : ["LIGHT RED", "LIGHT YELLOW", "DARK YELLOW"],
+                                   ALLOWED_CHOICE : ONLY_ONE_ANSWER},
+                                  {QUESTION : "Water point admin name", CODE:"WAN", TYPE: WORD, MIN : "3", MAX: "10"},
+                                  {QUESTION : "Bacterias in water", CODE:"WC", TYPE: LIST_OF_CHOICES,
+                                   CHOICE : ["Aquificae", "Bacteroids", "Chlorobia"],
+                                   ALLOWED_CHOICE : MULTIPLE_ANSWERS}],
+                      SUCCESS_MSG: ""}
 
-VALID_DATA = {PROJECT_NAME: "Water Point Morondava",
-              PROJECT_BACKGROUND: "This project is created by functional automation suite.",
-              PROJECT_TYPE: "survey",
-              SUBJECT: "Water Point",
-              DEVICES: "sms,smartphone",
-              PAGE_TITLE: "Create a Questionnaire"}
-
-BLANK_FIELDS = {PROJECT_NAME: "",
-              PROJECT_BACKGROUND: "",
-              PROJECT_TYPE: "",
-              SUBJECT: "",
-              DEVICES: "",
-              ERROR_MSG: "Name  This field is required.Project Type  This field is required."}

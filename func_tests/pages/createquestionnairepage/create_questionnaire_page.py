@@ -21,7 +21,7 @@ class CreateQuestionnairePage(Page):
         page_title = self.driver.title
         return page_title
 
-    def successfully_create_questionnaire_with(self, project_data):
+    def successfully_create_questionnaire_with(self, questionnaire_data):
         """
         Function to enter and save the data on set up project page
 
@@ -31,12 +31,16 @@ class CreateQuestionnairePage(Page):
 
         Return self
         """
-        self.driver.find_text_box(PROJECT_NAME_TB).enter_text(
-            fetch_(PROJECT_NAME, from_(project_data)))
-        self.driver.find_text_box(PROJECT_BACKGROUND_TB).enter_text(
-            fetch_(PROJECT_BACKGROUND, from_(project_data)))
+        self.driver.find_text_box(QUESTIONNAIRE_CODE_TB).enter_text(
+            fetch_(QUESTIONNAIRE_CODE, from_(questionnaire_data)))
+        self.driver.find(DEFAULT_QUESTION_LINK).click()
+        self.driver.find(ADD_QUESTION_LINK).click()
+
+
+        '''self.driver.find_text_box(PROJECT_BACKGROUND_TB).enter_text(
+            fetch_(PROJECT_BACKGROUND, from_(questionnaire_data)))
         # Selecting radio button according to given option
-        project_type = fetch_(PROJECT_TYPE, from_(project_data))
+        project_type = fetch_(PROJECT_TYPE, from_(questionnaire_data))
         if project_type == "survey":
             self.driver.find(SURVEY_PROJECT_RB).toggle()
         elif project_type == "public information":
@@ -62,7 +66,7 @@ class CreateQuestionnairePage(Page):
 
         Return self
         """
-        self.driver.find_text_box(PROJECT_NAME_TB).enter_text(
+        self.driver.find_text_box(QUESTIONNAIRE_CODE_TB).enter_text(
             fetch_(PROJECT_NAME, from_(project_data)))
         self.driver.find_text_box(PROJECT_BACKGROUND_TB).enter_text(
             fetch_(PROJECT_BACKGROUND, from_(project_data)))
@@ -80,8 +84,39 @@ class CreateQuestionnairePage(Page):
             self.driver.find(SMART_PHONE_CB).toggle()
         elif devices == "web":
             self.driver.find(WEB_CB).toggle()
-        self.driver.find(SAVE_CHANGES_BTN).click()
+        self.driver.find(SAVE_CHANGES_BTN).click()'''
         return self
+
+    def create_default_question(self, question_data, question_link):
+        """
+        Function to define a default question on the questionnaire page
+
+        Args:
+        question_data is data to create a default entity question
+        question_link is the locator for default question
+
+        return self
+        """
+        self.driver.find(question_link).click()
+        self.fill_question_and_code(question_data)
+
+        return self
+
+    def fill_question_and_code(self, question_data):
+        """
+        Function to define a question on the questionnaire page
+
+        Args:
+        question_data is data to fill in the question and code text boxes
+
+        return self
+        """
+        self.driver.find_text_box(QUESTION_TB).enter_text(fetch_(QUESTION), from_(question_data))
+        self.driver.find_text_box(CODE_TB).enter_text(fetch_(CODE), from_(question_data))
+        return self
+
+    def select_and_fill_word_question(self):
+        pass
 
     def get_error_message(self):
         """

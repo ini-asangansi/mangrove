@@ -22,19 +22,33 @@ QUESTIONNAIRE_CODE_TB = by_css("input#questionnaire-code")
 QUESTION_TB = by_css("input#question")
 CODE_TB = by_css("input#code")
 WORD_OR_PHRASE_RB = by_css("input[value='text']")
+WORD_OR_PHRASE_MIN_LENGTH_TB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddTextLength')]/div/p/input[@id='min_length']")
+WORD_OR_PHRASE_MAX_LENGTH_TB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddTextLength')]/div/p/input[@id='max_length']")
 NUMBER_RB = by_css("input[value='integer']")
+NUMBER_MAX_LENGTH = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddRange')]/div/p/input[@id='range_max']")
+NUMBER_MIN_LENGTH = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddRange')]/div/p/input[@id='range_min']")
+
 DATE_RB = by_css("input[value='date']")
-LIST_OF_CHOICE_RB = by_css("input[value='choice']")
 MONTH_YEAR_RB = by_css("input[value='%m.%Y']")
 DATE_MONTH_YEAR_RB = by_css("input[value='%d.%m.%Y']")
 MONTH_DATE_YEAR_RB = by_css("input[value='%m.%d.%Y']")
+
+LIST_OF_CHOICE_RB = by_css("input[value='choice']")
+CHOICE_XPATH_LOCATOR = "//li[not(contains(@style,'none')) and contains(@data-bind,'showAddChoice')]/div/div/p"
+CHOICE_TB_XPATH_LOCATOR = "/input"
+CHOICE_DELETE_LINK_XPATH_LOCATOR = "/a[text()='delete']"
 ADD_CHOICE_LINK = by_css("a:contains('Add Choice')")
 ONLY_ONE_ANSWER_RB = by_css("input[value='select1']")
 MULTIPLE_ANSWER_RB = by_css("input[value='select']")
 
-SMS_CB = by_css("input[value='sms']")
-SMART_PHONE_CB = by_css("input[value='smartphone']")
-WEB_CB = by_css("input[value='web']")
+# Locators for Question List section of the page
+DEFAULT_QUESTION_LINK = by_css("div.question_list>ol>li>a:contains('What are you reporting on? eid')")
+QUESTION_LINK_CSS_LOCATOR = "div.question_list>ol>li>a"  # Add text or index number to identify question
+QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>li>a:contains('"  # Add text or index number to identify question
+QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "')~div>span.delete>a"
+ADD_A_QUESTION_LINK = by_css("div.add_question>a")
+
 SAVE_CHANGES_BTN = by_css("input#submit-button")
 PROJECT_NAME_ERROR_MSG_LABEL = by_css("li>input#id_name~ul.errorlist>li")
 PROJECT_TYPE_ERROR_MSG_LABEL = by_css("li>label[for='id_project_type_0']~ul.errorlist>li")
+ADD_QUESTION_LINK = by_css("a:contains('Add a Question')")
