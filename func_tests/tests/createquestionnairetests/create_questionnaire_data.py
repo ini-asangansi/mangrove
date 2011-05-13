@@ -2,7 +2,7 @@
 
 
 ##Variables
-PROJECT_NAME = "project_name"
+QUESTIONNAIRE_CODE = "questionnaire_code"
 PROJECT_BACKGROUND = "project_background"
 PROJECT_TYPE = "project_type"
 SUBJECT = "subject"
@@ -11,14 +11,11 @@ ERROR_MSG = "message"
 PAGE_TITLE = "page_title"
 
 
-VALID_DATA = {PROJECT_NAME: "Water Point Morondava",
-              PROJECT_BACKGROUND: "This project is created by functional automation suite.",
-              PROJECT_TYPE: "survey",
-              SUBJECT: "Water Point",
-              DEVICES: "sms,smartphone",
-              PAGE_TITLE: "Create a Questionnaire"}
+QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS01",
+                      PROJECT_BACKGROUND: "This project is created by functional automation suite.",
+                      PAGE_TITLE: "Create a Questionnaire"}
 
-BLANK_FIELDS = {PROJECT_NAME: "",
+BLANK_FIELDS = {QUESTIONNAIRE_CODE: "",
               PROJECT_BACKGROUND: "",
               PROJECT_TYPE: "",
               SUBJECT: "",
