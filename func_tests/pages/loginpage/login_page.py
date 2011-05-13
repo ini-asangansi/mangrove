@@ -38,7 +38,7 @@ class LoginPage(Page):
         Args:
         'login_credential' is login credentials of the user e.g. email and password
 
-        Return LoginPage 
+        Return LoginPage
         """
         self.driver.find_text_box(EMAIL_TB).enter_text(fetch_(USERNAME, from_(login_credential)))
         self.driver.find_text_box(PASSWORD_TB).enter_text(fetch_(PASSWORD, from_(login_credential)))
