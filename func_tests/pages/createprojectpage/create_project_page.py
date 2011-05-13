@@ -45,7 +45,7 @@ class CreateProjectPage(Page):
             self.driver.find(PUBLIC_INFORMATION_RB).click()
         subject = fetch_(SUBJECT, from_(project_data))
         if len(subject) != 0:
-            self.driver.execute_script("document.getElementById('id_entity_type').value = '"+ subject +"';")
+            self.driver.execute_script("document.getElementById('id_entity_type').value = '" + subject + "';")
         # Selecting check box according to given options
         devices = fetch_(DEVICES, from_(project_data)).split(",")
         comm_utils = CommonUtilities(self.driver)

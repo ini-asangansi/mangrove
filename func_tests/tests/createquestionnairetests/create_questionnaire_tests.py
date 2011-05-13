@@ -3,6 +3,7 @@ from nose.plugins.attrib import attr
 from nose.plugins.skip import SkipTest
 from framework.base_test import BaseTest
 from framework.utils.data_fetcher import fetch_, from_
+from pages.createprojectpage.create_project_page import CreateProjectPage
 from pages.loginpage.login_page import LoginPage
 from pages.createquestionnairepage.create_questionnaire_page import CreateQuestionnairePage
 from testdata.test_data import DATA_WINNER_LOGIN_PAGE
@@ -20,16 +21,9 @@ class TestCreateQuestionnaire(BaseTest):
         login_page = LoginPage(self.driver)
         dashboard_page = login_page.do_successful_login_with(VALID_CREDENTIALS)
 
-        # Navigating to setup project page
-        CreateProjectPage = dashboard_page.navigate_to_create_project_page()
-
         #Navigating to Create Questionnaire Page by successfully creating a Project
         CreateQuestionnairePage = CreateProjectPage.successfully_create_project_with(VALID_DATA)
-
-
         return CreateQuestionnairePage
-
-
 
     @SkipTest
     @attr('functional_test')
@@ -43,7 +37,7 @@ class TestCreateQuestionnaire(BaseTest):
         self.assertRegexpMatches(create_questionnaire_page.get_title(),
                                  fetch_(PAGE_TITLE, from_(QUESTIONNAIRE_DATA)))
         time.sleep(5)
-        
+
     @SkipTest
     @attr('functional_test')
     def test_registration_of_reporter_without_entering_data(self):
