@@ -4,6 +4,7 @@ from framework.utils.drop_down_web_element import DropDown
 from framework.utils.text_box_web_element import TextBox
 from framework.utils.radio_button_web_element import RadioButton
 from pages.loginpage.login_locator import *
+from selenium.webdriver.common.exceptions import NoSuchElementException
 
 
 class DriverWrapper():
@@ -61,8 +62,12 @@ class DriverWrapper():
 
         Return webelement
         """
-        return self.driver.find_element(by=locator_dict[BY],
+        try:
+            return self.driver.find_element(by=locator_dict[BY],
                                         value=locator_dict[LOCATOR])
+        except NoSuchElementException as e:
+            raise e
+
 
     def find_elements_(self, locator_dict):
         """
