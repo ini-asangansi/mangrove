@@ -18,5 +18,8 @@ class RadioButton (WebElement):
     def set_selected(self):
         return self.webElement.select()
 
+    def click(self):
+        return self.webElement.click()
+
     def radio_button_status(self):
         return self.webElement.is_enabled()
