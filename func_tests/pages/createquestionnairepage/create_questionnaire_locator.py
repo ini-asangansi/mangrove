@@ -29,9 +29,9 @@ NUMBER_MAX_LENGTH_TB = by_xpath("//li[not(contains(@style,'none')) and contains(
 NUMBER_MIN_LENGTH_TB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddRange')]/div/p/input[@id='range_min']")
 
 DATE_RB = by_css("input[value='date']")
-MONTH_YEAR_RB = by_css("input[value='%m.%Y']")
-DATE_MONTH_YEAR_RB = by_css("input[value='%d.%m.%Y']")
-MONTH_DATE_YEAR_RB = by_css("input[value='%m.%d.%Y']")
+MONTH_YEAR_RB = by_xpath("//input[@value='mm.yyyy']")
+DATE_MONTH_YEAR_RB = by_xpath("//input[@value='dd.mm.yyyy']")
+MONTH_DATE_YEAR_RB = by_xpath("//input[@value='mm.dd.yyyy']")
 
 LIST_OF_CHOICE_RB = by_css("input[value='choice']")
 CHOICE_XPATH_LOCATOR = "//li[not(contains(@style,'none')) and contains(@data-bind,'showAddChoice')]/div/div/p"
