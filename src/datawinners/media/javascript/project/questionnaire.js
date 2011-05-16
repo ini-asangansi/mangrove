@@ -16,7 +16,7 @@ DW.question = function(question){
           min : 0,
           max : ""
         },
-        date_format: "%m.%Y"
+        date_format: "mm.yyyy"
     };
 
     // Extend will override the default values with the passed values(question), And take the values from defaults when its not present in question
@@ -100,7 +100,8 @@ $(document).ready(function(){
                 naturalnumberrule:true
             },
             max_length:{
-                digits:true
+                digits:true,
+                naturalnumberrule:true
             },
             range_min:{
                 number: true
