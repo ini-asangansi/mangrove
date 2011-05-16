@@ -53,7 +53,7 @@ def get_by_short_code(dbm, short_code):
 def generate_entity_id(database_manager, entity_type):
     list = map(chr, range(97, 121)) + range(0, 9)
     random.shuffle(list)
-    return (entity_type + reduce(lambda acc, i: str(acc) + str(i), list[0:3], '')).upper()
+    return (entity_type[:3] + reduce(lambda acc, i: str(acc) + str(i), list[0:3], '')).upper()
 
 
 def get_entities_by_type(dbm, entity_type):
@@ -67,15 +67,15 @@ def get_entities_by_type(dbm, entity_type):
     return entities
 
 
-def get_entities_by_value(dbm, dd_type, value, label=None, as_of=None):
+def get_entities_by_value(dbm, label, value, as_of=None):
     assert isinstance(dbm, DatabaseManager)
-    assert isinstance(dd_type, DataDictType)
-    assert label is None or is_string(label)
+    assert isinstance(label, DataDictType) or is_string(label)
     assert as_of is None or isinstance(as_of, datetime)
-    # do we need to assert value? i think not since it could be None/null/etc.
-    if label is None: label = dd_type.slug
-    rows = dbm.load_all_rows_in_view('mangrove_views/by_label_type_value', key=[label, dd_type.slug, value])
+    if isinstance(label, DataDictType): label = label.slug
+
+    rows = dbm.load_all_rows_in_view('mangrove_views/by_label_value', key=[label, value])
     entities = [dbm.get(row['value'], Entity) for row in rows]
+
     return [e for e in entities if e.values({label: 'latest'}, asof=as_of) == {label: value}]
 
 
@@ -272,7 +272,6 @@ class Entity(DataObject):
         # records for an Entity that may never be saved? Should docs just be saved on init?
         if event_time is None:
             event_time = utcnow()
-
         data_list = []
         for (label, value, dd_type) in data:
             if not isinstance(dd_type, DataDictType) or is_empty(label):
@@ -358,7 +357,15 @@ class Entity(DataObject):
 
         Contains the latest value of each type of data stored on the entity.
         '''
-        pass
+        return dict([(dd_type.slug, self.value(dd_type.slug)) for dd_type in self.data_types()])
+
+
+    def value(self, label):
+        '''Returns the latest value for the given label.'''
+        assert isinstance(label, DataDictType) or is_string(label)
+        if isinstance(label, DataDictType): label = label.slug
+
+        return self.values({label: 'latest'})[label]
 
     def values(self, aggregation_rules, asof=None):
         """
