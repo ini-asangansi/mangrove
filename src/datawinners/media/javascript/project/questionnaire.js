@@ -10,7 +10,7 @@ DW.question = function(question){
         entity_question_flag : false,
         length : {
           min : 1,
-          max : ""
+          max : 12
         },
         range : {
           min : 0,
@@ -164,7 +164,7 @@ $(document).ready(function(){
                 viewModel.selectedQuestion().range_min(0);
                 viewModel.selectedQuestion().range_max("");
                 viewModel.selectedQuestion().min_length(1);
-                viewModel.selectedQuestion().max_length("");
+                viewModel.selectedQuestion().max_length(12);
                 viewModel.selectedQuestion().choices([]);
             }
     )
