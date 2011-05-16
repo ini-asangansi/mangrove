@@ -3,14 +3,14 @@ from mangrove.datastore.database import get_db_manager
 from mangrove.datastore.datadict import get_default_datadict_type, DataDictType, create_ddtype, create_ddtype
 from mangrove.form_model.field import TextField, IntegerField, SelectField, field_attributes, DateField
 from mangrove.form_model.form_model import FormModel
-from mangrove.form_model.validation import IntegerConstraint, TextConstraint
+from mangrove.form_model.validation import NumericConstraint, TextConstraint
 from mangrove.utils.helpers import slugify
 from mangrove.utils.types import is_empty, is_sequence
 
-
-def create_question(post_dict):
-
-    ddtype = create_ddtype(dbm=get_db_manager(), name = post_dict.get('code'), slug=slugify(unicode(post_dict.get('title'))),
+def create_question(post_dict,dbm=None):
+    if dbm is None:
+        dbm = get_db_manager()
+    ddtype = create_ddtype(dbm=dbm, name = post_dict.get('code'), slug=str(slugify(unicode(post_dict.get('title')))),
                                primitive_type=post_dict.get('type'), description=post_dict.get('title'))
 
     if post_dict["type"] == "text":
@@ -26,7 +26,7 @@ def create_question(post_dict):
 
 
 def create_questionnaire(post, dbm=get_db_manager()):
-    entity_id_question = TextField(name="What are you reporting on?", question_code="eid", label="Entity being reported on", entity_question_flag=True,ddtype= get_default_datadict_type(),length=TextConstraint(min=1, max=None))
+    entity_id_question = TextField(name="What are you reporting on?", question_code="eid", label="Entity being reported on", entity_question_flag=True,ddtype= get_default_datadict_type(),length=TextConstraint(min=1, max=12))
     return FormModel(dbm, entity_type=post["entity_type"], name=post["name"], fields=[entity_id_question], form_code='default', type='survey')
 
 
@@ -58,7 +58,7 @@ def _create_text_question(post_dict,ddtype = get_default_datadict_type()):
 def _create_integer_question(post_dict):
     max_range_from_post = post_dict["range_max"]
     max_range = max_range_from_post if not is_empty(max_range_from_post) else None
-    range = IntegerConstraint(min=post_dict["range_min"], max=max_range)
+    range = NumericConstraint(min=post_dict["range_min"], max=max_range)
     return IntegerField(name=post_dict["title"], question_code=post_dict["code"].strip(), label="default", range=range, ddtype=get_default_datadict_type())
 
 
@@ -67,7 +67,7 @@ def _create_date_question(post_dict):
 
 
 def _create_select_question(post_dict, single_select_flag):
-    options = [choice["value"] for choice in post_dict["choices"]]
+    options = [choice.get("text") for choice in post_dict["choices"]]
     return SelectField(name=post_dict["title"], question_code=post_dict["code"].strip(), label="default",
                        options=options, single_select_flag=single_select_flag, ddtype=get_default_datadict_type())
 

@@ -6,17 +6,17 @@ DW.question = function(question){
         name : "Question",
         question_code : "code",
         type : "text",
-        choices :[{value:'Choice'}],
+        choices :[{text:"", val:""}],
         entity_question_flag : false,
         length : {
           min : 1,
-          max : ""
+          max : 12
         },
         range : {
           min : 0,
           max : ""
         },
-        date_format: "%m.%Y"
+        date_format: "mm.yyyy"
     };
 
     // Extend will override the default values with the passed values(question), And take the values from defaults when its not present in question
@@ -83,7 +83,16 @@ $(document).ready(function(){
 //    //$('#code').rules("add", {spacerule:null});
 
     $("#question_form").validate({
-        rules: {
+     messages: {
+         min_length:{
+             digits: "Please enter positive numbers only"
+         },
+         max_length:{
+             digits: "Please enter positive numbers only"
+         }
+
+     },
+     rules: {
             question:{
                 required: true
             },
@@ -100,7 +109,8 @@ $(document).ready(function(){
                 naturalnumberrule:true
             },
             max_length:{
-                digits:true
+                digits:true,
+                naturalnumberrule:true
             },
             range_min:{
                 number: true
@@ -163,8 +173,8 @@ $(document).ready(function(){
                 viewModel.selectedQuestion().range_min(0);
                 viewModel.selectedQuestion().range_max("");
                 viewModel.selectedQuestion().min_length(1);
-                viewModel.selectedQuestion().max_length("");
-                viewModel.selectedQuestion().choices([]);
+                viewModel.selectedQuestion().max_length(12);
+                viewModel.selectedQuestion().choices([{text:"", val:'a'}]);
             }
     )
 });

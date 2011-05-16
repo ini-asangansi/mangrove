@@ -34,7 +34,7 @@ class TestCreateProject(BaseTest):
                                  fetch_(PAGE_TITLE, from_(VALID_DATA)))
 
     @attr('functional_test')
-    def test_registration_of_reporter_without_entering_data(self):
+    def test_create_project_without_entering_data(self):
         """
         Function to test the error message on the set up project page while
         creation of project

@@ -13,7 +13,7 @@ from mangrove.errors.MangroveException import AnswerTooBigException, AnswerTooSm
 from mangrove.form_model.field import TextField, IntegerField, SelectField
 
 from mangrove.form_model import field
-from mangrove.form_model.validation import IntegerConstraint, TextConstraint
+from mangrove.form_model.validation import NumericConstraint, TextConstraint
 
 
 class TestQuestion(unittest.TestCase):
@@ -69,7 +69,7 @@ class TestQuestion(unittest.TestCase):
             "type": "integer",
             }
         question = IntegerField(name="Age", question_code="Q2", label="What is your age",
-                                language="eng", range=IntegerConstraint(min=15, max=120), ddtype=self.ddtype)
+                                language="eng", range=NumericConstraint(min=15, max=120), ddtype=self.ddtype)
         actual_json = question._to_json()
         self.assertEqual(actual_json, expected_json)
 
@@ -77,8 +77,8 @@ class TestQuestion(unittest.TestCase):
         expected_json = {
             "label": {"eng": "What is your favorite color"},
             "name": "color",
-            "options": [{"text": {"eng": "RED"}, "val": 1}, {"text": {"eng": "YELLOW"}, "val": 2},
-                        {"text": {"eng": "green"}}],
+            "choices": [{"text": {"eng" : "RED"}, "val": 1}, {"text": {"eng" : "YELLOW"}, "val": 2},
+                        {"text": {'eng' : 'green'}}],
             "question_code": "Q3",
             "ddtype": self.DDTYPE_JSON,
             "type": "select1",
@@ -92,8 +92,8 @@ class TestQuestion(unittest.TestCase):
         expected_json = {
             "label": {"eng": "What is your favorite color"},
             "name": "color",
-            "options": [{"text": {"eng": "RED"}, "val": 1}, {"text": {"eng": "YELLOW"}, "val": 2},
-                        {"text": {"eng": "green"}}],
+            "choices": [{"text": {"eng" : "RED"}, "val": 1}, {"text": {"eng" : "YELLOW"}, "val": 2},
+                        {"text": {'eng' : 'green'}}],
             "question_code": "Q3",
             "ddtype": self.DDTYPE_JSON,
             "type": "select",
@@ -186,7 +186,7 @@ class TestQuestion(unittest.TestCase):
         created_question = field.create_question_from(question_json, self.dbm)
         self.assertIsInstance(created_question, IntegerField)
         self.assertEqual(created_question._dict["range"], {"min": 0, "max": 100})
-        self.assertIsInstance(created_question.constraint, IntegerConstraint)
+        self.assertIsInstance(created_question.constraint, NumericConstraint)
         self.assertEqual(created_question.constraint.max, 100)
         self.assertEqual(created_question.constraint.min, 0)
         self.assertEqual(created_question.ddtype, self.ddtype)
@@ -198,7 +198,7 @@ class TestQuestion(unittest.TestCase):
             "question_code": "qc3",
             "type": "select",
             "ddtype":  self.DDTYPE_JSON,
-            "options": [{"text":{"eng":"option 1"}, "value": "c1"},
+            "choices": [{"text":{"eng":"option 1"}, "value": "c1"},
                         {"text":{"eng":"option 1"}, "value": "c2"}],
             "entity_question_flag": False}
         created_question = field.create_question_from(question_json, self.dbm)
@@ -214,7 +214,7 @@ class TestQuestion(unittest.TestCase):
             "question_code": "qc3",
             "type": "select1",
             "ddtype":  self.DDTYPE_JSON,
-            "options": [{"text": {"eng": "hello", "fr": "bonjour"}, "value": "c1"},
+            "choices": [{"text": {"eng": "hello", "fr": "bonjour"}, "value": "c1"},
                         {"text": {"eng": "world"}, "value": "c2"}],
             "entity_question_flag": False}
 
@@ -228,21 +228,23 @@ class TestQuestion(unittest.TestCase):
 
     def test_should_return_error_for_integer_range_validation(self):
         question = IntegerField(name="Age", question_code="Q2", label="What is your age",
-                                language="eng", range=IntegerConstraint(min=15, max=120), ddtype=self.ddtype)
+                                language="eng", range=NumericConstraint(min=15, max=120), ddtype=self.ddtype)
         valid_value = question.validate("120")
         self.assertEqual(valid_value, 120)
+        valid_value = question.validate("25.5")
+        self.assertEqual(valid_value, 25.5)
 
     def test_should_return_error_for_wrong_type_for_integer(self):
         with self.assertRaises(AnswerWrongType) as e:
             question = IntegerField(name="Age", question_code="Q2", label="What is your age",
-                                    language="eng", range=IntegerConstraint(min=15, max=120), ddtype=self.ddtype)
+                                    language="eng", range=NumericConstraint(min=15, max=120), ddtype=self.ddtype)
             question.validate("asas")
         self.assertEqual(e.exception.message, "Answer to question Q2 is of wrong type.")
 
     def test_should_return_error_for_integer_range_validation_for_max_value(self):
         with self.assertRaises(AnswerTooBigException) as e:
             question = IntegerField(name="Age", question_code="Q2", label="What is your age",
-                                    language="eng", range=IntegerConstraint(min=15, max=120), ddtype=self.ddtype)
+                                    language="eng", range=NumericConstraint(min=15, max=120), ddtype=self.ddtype)
             valid_value = question.validate(150)
             self.assertFalse(valid_value)
         self.assertEqual(e.exception.message, "Answer 150 for question Q2 is greater than allowed.")
@@ -250,7 +252,7 @@ class TestQuestion(unittest.TestCase):
     def test_should_return_error_for_integer_range_validation_for_min_value(self):
         with self.assertRaises(AnswerTooSmallException) as e:
             question = IntegerField(name="Age", question_code="Q2", label="What is your age",
-                                    language="eng", range=IntegerConstraint(min=15, max=120), ddtype=self.ddtype)
+                                    language="eng", range=NumericConstraint(min=15, max=120), ddtype=self.ddtype)
             valid_value = question.validate(11)
             self.assertFalse(valid_value)
         self.assertEqual(e.exception.message, "Answer 11 for question Q2 is smaller than allowed.")
@@ -300,24 +302,24 @@ class TestQuestion(unittest.TestCase):
     def test_should_return_error_for_incorrect_date_format_error_for_wrong_format(self):
         with self.assertRaises(IncorrectDate) as e:
             question = DateField(name="Age", question_code="Q2", label="What is your birth date",
-                                 language="eng", date_format="%m.%Y", ddtype=self.ddtype)
+                                 language="eng", date_format="mm.yyyy", ddtype=self.ddtype)
             valid_value = question.validate("13.2010")
             self.assertFalse(valid_value)
-        self.assertEqual(e.exception.message, "Answer to question Q2 is invalid: 13.2010, expected date in %m.%Y format")
+        self.assertEqual(e.exception.message, "Answer to question Q2 is invalid: 13.2010, expected date in mm.yyyy format")
 
         with self.assertRaises(IncorrectDate) as e:
             question = DateField(name="Age", question_code="Q2", label="What is your birth date",
-                                 language="eng", date_format="%d.%m.%Y", ddtype=self.ddtype)
+                                 language="eng", date_format="dd.mm.yyyy", ddtype=self.ddtype)
             valid_value = question.validate("33.12.2010")
             self.assertFalse(valid_value)
-        self.assertEqual(e.exception.message, "Answer to question Q2 is invalid: 33.12.2010, expected date in %d.%m.%Y format")
+        self.assertEqual(e.exception.message, "Answer to question Q2 is invalid: 33.12.2010, expected date in dd.mm.yyyy format")
 
         with self.assertRaises(IncorrectDate) as e:
             question = DateField(name="Age", question_code="Q2", label="What is your birth date",
-                                 language="eng", date_format="%m.%d.%Y", ddtype=self.ddtype)
+                                 language="eng", date_format="mm.dd.yyyy", ddtype=self.ddtype)
             valid_value = question.validate("13.01.2010")
             self.assertFalse(valid_value)
-        self.assertEqual(e.exception.message, "Answer to question Q2 is invalid: 13.01.2010, expected date in %m.%d.%Y format")
+        self.assertEqual(e.exception.message, "Answer to question Q2 is invalid: 13.01.2010, expected date in mm.dd.yyyy format")
 
     def test_should_validate_single_answer(self):
         with self.assertRaises(AnswerHasTooManyValuesException) as e:
@@ -335,7 +337,7 @@ class TestQuestion(unittest.TestCase):
 
         ageType = Mock(spec = DataDictType)
         question2 = IntegerField(name="Age", question_code="Q2", label="What is your age",
-                                 language="eng", range=IntegerConstraint(min=4, max=15), ddtype = ageType)
+                                 language="eng", range=NumericConstraint(min=4, max=15), ddtype = ageType)
         self.assertEqual(ageType,question2.ddtype)
 
         selectType = Mock(spec = DataDictType)
@@ -356,7 +358,6 @@ class TestQuestion(unittest.TestCase):
             question1 = TextField(name="Name", question_code="Q1", label="What is your Name",
                                  language="eng", length=TextConstraint(min=4, max=15), ddtype = None)
 
-
     def test_should_convert_ddtype_to_json(self):
         expected_json = {
             "defaultValue": "",
@@ -374,6 +375,19 @@ class TestQuestion(unittest.TestCase):
         self.assertEqual(actual_json, expected_json)
         self.assertEqual(self.ddtype,question.ddtype)
 
-
-
+    def test_should_return_default_language_text(self):
+        expected_json = {
+            "choices": [{"text": "Lake", "val" : None}, {"text": "Dam", "val" : None}],
+            "name": "type",
+            "ddtype": self.DDTYPE_JSON,
+            "type": "select1",
+            "question_code": "T",
+            "label": {"eng": "What type?"}}
+        question = SelectField(name = "type", question_code = "T", label = "What type?",
+                               options = [{"text": {"fr":"lake", "eng": "Lake"}}, {"text": {"fr":"dam",  "eng": "Dam"}}],
+                               ddtype = self.ddtype,
+                               language="eng",
+                               single_select_flag=True)
+        actual_json = question._to_json_view()
+        self.assertEqual(actual_json, expected_json)
 
