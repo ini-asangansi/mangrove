@@ -23,4 +23,4 @@ BLANK_FIELDS = {PROJECT_NAME: "",
               PROJECT_TYPE: "",
               SUBJECT: "",
               DEVICES: "",
-              ERROR_MSG: "Name  This field is required.Project Type  This field is required."}
+              ERROR_MSG: "Name  This field is required."}
