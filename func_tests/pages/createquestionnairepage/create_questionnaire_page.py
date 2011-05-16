@@ -1,16 +1,22 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+from time import time
 from framework.utils.common_utils import CommonUtilities
 
 from pages.page import Page
 from framework.utils.data_fetcher import *
 from pages.createquestionnairepage.create_questionnaire_locator import *
 from tests.createquestionnairetests.create_questionnaire_data import *
-
+from framework.utils.common_utils import *
+import time
 
 class CreateQuestionnairePage(Page):
 
     def __init__(self, driver):
         Page.__init__(self, driver)
+        self.SELECT_FUNC = {WORD: self.configure_word_type_question,
+                   NUMBER: self.configure_number_type_question,
+                   DATE: self.configure_date_type_question,
+                   LIST_OF_CHOICES: self.configure_list_of_choices_type_question}
 
     def get_title(self):
         """
@@ -21,70 +27,23 @@ class CreateQuestionnairePage(Page):
         page_title = self.driver.title
         return page_title
 
-    def successfully_create_questionnaire_with(self, questionnaire_data):
+    def create_questionnaire_with(self, questionnaire_data):
         """
-        Function to enter and save the data on set up project page
+        Function to create a questionnaire on the 'create questionnaire' page
 
         Args:
-        registration_data is data to fill in the different fields like first
-        name, last name, telephone number and commune
+        questionnaire_data is data to fill in the different fields of the questionnaire page
 
         Return self
         """
         self.driver.find_text_box(QUESTIONNAIRE_CODE_TB).enter_text(
             fetch_(QUESTIONNAIRE_CODE, from_(questionnaire_data)))
-        self.driver.find(DEFAULT_QUESTION_LINK).click()
-        self.driver.find(ADD_QUESTION_LINK).click()
-
-
-        '''self.driver.find_text_box(PROJECT_BACKGROUND_TB).enter_text(
-            fetch_(PROJECT_BACKGROUND, from_(questionnaire_data)))
-        # Selecting radio button according to given option
-        project_type = fetch_(PROJECT_TYPE, from_(questionnaire_data))
-        if project_type == "survey":
-            self.driver.find(SURVEY_PROJECT_RB).toggle()
-        elif project_type == "public information":
-            self.driver.find(PUBLIC_INFORMATION_RB).toggle()
-        # Selecting check box according to given options
-        devices = fetch_(DEVICES, from_(project_data)).split(",")
-        if "sms" in devices:
-            self.driver.find(SMS_CB).toggle()
-        if "smartphone" in devices:
-            self.driver.find(SMART_PHONE_CB).toggle()
-        if "web" in devices:
-            self.driver.find(WEB_CB).toggle()
+        self.create_default_question(questionnaire_data[DEFAULT_QUESTION], DEFAULT_QUESTION_LINK)
+        for question in fetch_(QUESTIONS, from_(questionnaire_data)):
+            self.driver.find(ADD_A_QUESTION_LINK).click()
+            self.fill_question_and_code_tb(question)
+            self.SELECT_FUNC[fetch_(TYPE, from_(question))](question)
         self.driver.find(SAVE_CHANGES_BTN).click()
-        return self
-
-    def create_questionnaire_with(self, project_data):
-        """
-        Function to enter and save the data on set up project page
-
-        Args:
-        registration_data is data to fill in the different fields like first
-        name, last name, telephone number and commune
-
-        Return self
-        """
-        self.driver.find_text_box(QUESTIONNAIRE_CODE_TB).enter_text(
-            fetch_(PROJECT_NAME, from_(project_data)))
-        self.driver.find_text_box(PROJECT_BACKGROUND_TB).enter_text(
-            fetch_(PROJECT_BACKGROUND, from_(project_data)))
-        # Selecting radio button according to given option
-        project_type = fetch_(PROJECT_TYPE, from_(project_data))
-        if project_type == "survey":
-            self.driver.find(SURVEY_PROJECT_RB).toggle()
-        elif project_type == "public information":
-            self.driver.find(PUBLIC_INFORMATION_RB).toggle()
-        # Selecting check box according to given options
-        devices = fetch_(DEVICES, from_(project_data))
-        if devices == "sms":
-            self.driver.find(SMS_CB).toggle()
-        elif devices == "smartphone":
-            self.driver.find(SMART_PHONE_CB).toggle()
-        elif devices == "web":
-            self.driver.find(WEB_CB).toggle()
-        self.driver.find(SAVE_CHANGES_BTN).click()'''
         return self
 
     def create_default_question(self, question_data, question_link):
@@ -98,25 +57,93 @@ class CreateQuestionnairePage(Page):
         return self
         """
         self.driver.find(question_link).click()
-        self.fill_question_and_code(question_data)
-
+        self.fill_question_and_code_tb(question_data)
+        self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
+        self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
         return self
 
-    def fill_question_and_code(self, question_data):
+    def fill_question_and_code_tb(self, question_data):
         """
-        Function to define a question on the questionnaire page
+        Function to fill the question and code text box on the questionnaire page
 
         Args:
         question_data is data to fill in the question and code text boxes
 
         return self
         """
-        self.driver.find_text_box(QUESTION_TB).enter_text(fetch_(QUESTION), from_(question_data))
-        self.driver.find_text_box(CODE_TB).enter_text(fetch_(CODE), from_(question_data))
+        self.driver.find_text_box(QUESTION_TB).enter_text(fetch_(QUESTION, from_(question_data)))
+        self.driver.find_text_box(CODE_TB).enter_text(fetch_(CODE, from_(question_data)))
         return self
 
-    def select_and_fill_word_question(self):
-        pass
+    def configure_word_type_question(self, question_data):
+        """
+        Function to select word or phrase option and fill the details (min or max) on the questionnaire page
+
+        Args:
+        question_data is data to fill in the min and max fields
+
+        return self
+        """
+        self.driver.find_radio_button(WORD_OR_PHRASE_RB).click()
+        self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
+        self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
+        return self
+
+    def configure_number_type_question(self, question_data):
+        """
+        Function to select number option and fill the details (min or max) on the questionnaire page
+
+        Args:
+        question_data is data to fill in the min and max fields
+
+        return self
+        """
+        self.driver.find_radio_button(NUMBER_RB).click()
+        self.driver.find_text_box(NUMBER_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
+        self.driver.find_text_box(NUMBER_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
+        return self
+
+    def configure_date_type_question(self, question_data):
+        """
+        Function to select date option and date format on the questionnaire page
+
+        Args:
+        question_data is data to select date type
+
+        return self
+        """
+        self.driver.find_radio_button(DATE_RB).click()
+        date_format = fetch_(DATE_FORMAT, from_(question_data))
+        if (date_format == MM_YYYY):
+            self.driver.find_radio_button(MONTH_YEAR_RB).click()
+        elif (date_format == DD_MM_YYYY):
+            self.driver.find_radio_button(DATE_MONTH_YEAR_RB).click()
+        elif (date_format == MM_DD_YYYY):
+            self.driver.find_radio_button(MONTH_DATE_YEAR_RB).click()
+        return self
+
+    def configure_list_of_choices_type_question(self, question_data):
+        """
+        Function to select list of choices option and add the choices on the questionnaire page
+
+        Args:
+        question_data is to add the choices on the page
+
+        return self
+        """
+        self.driver.find_radio_button(LIST_OF_CHOICE_RB).click()
+        index = 1
+        for choice in fetch_(CHOICE, from_(question_data)):
+            if index > 1:
+                self.driver.find(ADD_CHOICE_LINK).click()
+            self.driver.find_text_box(by_xpath(CHOICE_XPATH_LOCATOR + "[" + str(index) + "]" + CHOICE_TB_XPATH_LOCATOR)).enter_text(choice)
+            index = index + 1
+        choice_type = fetch_(ALLOWED_CHOICE, from_(question_data))
+        if(ONLY_ONE_ANSWER == choice_type):
+            self.driver.find_radio_button(ONLY_ONE_ANSWER_RB).click()
+        elif(MULTIPLE_ANSWERS == choice_type):
+            self.driver.find_radio_button(MULTIPLE_ANSWER_RB).click()
+        return self
 
     def get_error_message(self):
         """
@@ -134,3 +161,11 @@ class CreateQuestionnairePage(Page):
         if locator:
             error_message = error_message + "Project Type  " + locator.text
         return error_message == "" and "No error message on the page" or error_message
+
+    def get_success_message(self):
+        """
+        Function to fetch the success message from label of the questionnaire page
+
+        Return success message
+        """
+        return self.driver.find(SUCCESS_MESSAGE_LABEL).text

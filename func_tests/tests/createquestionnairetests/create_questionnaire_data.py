@@ -28,13 +28,13 @@ SUCCESS_MSG = "message"
 QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE : "WPS01",
                       DEFAULT_QUESTION : {QUESTION : "What are you reporting?", CODE:"WID", MIN : "1", MAX : "10"},
                       QUESTIONS : [{QUESTION : "Water Level", CODE:"WL", TYPE: NUMBER, MIN : "1", MAX : "10"},
-                                  {QUESTION : "Date of report", CODE:"DR", TYPE: DATE, CODE:"WID", DATE_FORMAT : DD_MM_YYYY},
+                                  {QUESTION : "Date of report", CODE:"DR", TYPE: DATE, DATE_FORMAT : DD_MM_YYYY},
                                   {QUESTION : "Color of Water", CODE:"WC", TYPE: LIST_OF_CHOICES,
                                    CHOICE : ["LIGHT RED", "LIGHT YELLOW", "DARK YELLOW"],
                                    ALLOWED_CHOICE : ONLY_ONE_ANSWER},
                                   {QUESTION : "Water point admin name", CODE:"WAN", TYPE: WORD, MIN : "3", MAX: "10"},
-                                  {QUESTION : "Bacterias in water", CODE:"WC", TYPE: LIST_OF_CHOICES,
+                                  {QUESTION : "Bacterias in water", CODE:"WB", TYPE: LIST_OF_CHOICES,
                                    CHOICE : ["Aquificae", "Bacteroids", "Chlorobia"],
                                    ALLOWED_CHOICE : MULTIPLE_ANSWERS}],
-                      SUCCESS_MSG: ""}
+                      SUCCESS_MSG: "Your questionnaire has been saved"}
 

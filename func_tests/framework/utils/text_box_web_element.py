@@ -10,8 +10,9 @@ class TextBox (WebElement):
         self.webElement = textBoxWebElement
 
     def enter_text(self, textToBeEntered):
+        self.webElement.clear()
         self.webElement.send_keys(textToBeEntered)
         return self
 
     def is_enabled(self):
-        return self.is_enabled()
+        return self.webElement.is_enabled()
