@@ -1,2 +1,0 @@
-CouchDB==0.8
-ipython==0.10.1
