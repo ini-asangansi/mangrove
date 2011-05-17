@@ -12,6 +12,7 @@ from tests.createquestionnairetests.create_questionnaire_data import *
 from tests.createprojecttests.create_project_data import *
 import time
 
+
 class TestCreateQuestionnaire(BaseTest):
 
     def prerequisites_of_create_questionnaire(self):
@@ -33,18 +34,6 @@ class TestCreateQuestionnaire(BaseTest):
         """
         create_questionnaire_page = self.prerequisites_of_create_questionnaire()
         create_questionnaire_page.create_questionnaire_with(QUESTIONNAIRE_DATA)
-        time.sleep(1)
+        time.sleep(2)
         self.assertEqual(create_questionnaire_page.get_success_message(),
                                  fetch_(SUCCESS_MSG, from_(QUESTIONNAIRE_DATA)))
-
-    @SkipTest
-    @attr('functional_test')
-    def test_registration_of_reporter_without_entering_data(self):
-        """
-        Function to test the successful registration of reporter with given
-        details e.g. first name, last name, telephone number and commune
-        """
-        register_reporter_page = self.prerequisites_of_register_reporter()
-        register_reporter_page.register_with(BLANK_FIELDS)
-        self.assertEqual(register_reporter_page.get_error_message(),
-                                 fetch_(ERROR_MSG, from_(BLANK_FIELDS)))

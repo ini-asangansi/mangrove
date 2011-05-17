@@ -9,6 +9,7 @@ from tests.createquestionnairetests.create_questionnaire_data import *
 from framework.utils.common_utils import *
 import time
 
+
 class CreateQuestionnairePage(Page):
 
     def __init__(self, driver):
@@ -58,8 +59,8 @@ class CreateQuestionnairePage(Page):
         """
         self.driver.find(question_link).click()
         self.fill_question_and_code_tb(question_data)
-        self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
-        self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
+        #self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
+        #self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
         return self
 
     def fill_question_and_code_tb(self, question_data):
@@ -85,8 +86,8 @@ class CreateQuestionnairePage(Page):
         return self
         """
         self.driver.find_radio_button(WORD_OR_PHRASE_RB).click()
-        self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
-        self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
+        #self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
+        #self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
         return self
 
     def configure_number_type_question(self, question_data):
@@ -168,4 +169,8 @@ class CreateQuestionnairePage(Page):
 
         Return success message
         """
-        return self.driver.find(SUCCESS_MESSAGE_LABEL).text
+        comm_utils = CommonUtilities(self.driver)
+        if comm_utils.wait_for_element(10, SUCCESS_MESSAGE_LABEL):
+            return self.driver.find(SUCCESS_MESSAGE_LABEL).text
+        else:
+            return "Success message not appeared on the page."

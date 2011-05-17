@@ -9,6 +9,9 @@ from mangrove.errors.MangroveException import MangroveException
 from mangrove.transport.submissions import SubmissionHandler, Request
 
 
+@csrf_view_exempt
+@csrf_response_exempt
+@require_http_methods(['POST'])
 def sms(request):
     _message = request.POST["message"]
     _from = request.POST["from_msisdn"]
@@ -26,6 +29,7 @@ def _get_data(post, key):
     if post.get(key):
         return post.get(key)
     return None
+
 
 def _get_submission(post):
     format = post.get('format')
@@ -54,4 +58,4 @@ def submit(request):
     except MangroveException as exception:
         message = exception.message
         success = False
-    return HttpResponse(json.dumps({'success': success, 'message' : message, 'entity_id':response.datarecord_id}))
+    return HttpResponse(json.dumps({'success': success, 'message' : message, 'entity_id': response.datarecord_id}))

@@ -35,7 +35,7 @@ if [ "${RECREATEDB}" != "N" -a "${RECREATEDB}" != "n" ]; then
     python manage.py recreatedb
 fi
 
-python manage.py syncdb
+python manage.py flush --noinput
 
 case "${TESTCHOICE}" in
 "ft")

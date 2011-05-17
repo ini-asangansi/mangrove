@@ -68,7 +68,6 @@ class DriverWrapper():
         except NoSuchElementException as e:
             raise e
 
-
     def find_elements_(self, locator_dict):
         """
         Finds elements on the web page using locator dictionary
