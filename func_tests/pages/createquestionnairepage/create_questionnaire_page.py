@@ -59,8 +59,8 @@ class CreateQuestionnairePage(Page):
         """
         self.driver.find(question_link).click()
         self.fill_question_and_code_tb(question_data)
-        self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
-        self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
+        #self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
+        #self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
         return self
 
     def fill_question_and_code_tb(self, question_data):
@@ -86,8 +86,8 @@ class CreateQuestionnairePage(Page):
         return self
         """
         self.driver.find_radio_button(WORD_OR_PHRASE_RB).click()
-        self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
-        self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
+        #self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
+        #self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
         return self
 
     def configure_number_type_question(self, question_data):
