@@ -7,7 +7,12 @@ from mangrove.utils.types import is_string
 
 # TODO: Temporary stuff, till datadict is fully implemented in datawinners : Aroj
 def get_default_datadict_type():
-    return DataDictType(DatabaseManager(), name='Default Datadict Type', slug='default', primitive_type='string')
+    try:
+        return get_datadict_type_by_slug(DatabaseManager(),"default")
+    except DataObjectNotFound:
+        d = DataDictType(DatabaseManager(), name='Default Datadict Type', slug='default', primitive_type='string')
+        d.save()
+        return d
 
 def get_datadict_type(dbm, id):
     assert isinstance(dbm, DatabaseManager)
@@ -32,14 +37,6 @@ def get_datadict_types(dbm, ids):
     return dbm.get_many(ids, DataDictType)
 
 def create_ddtype(dbm, name, slug, primitive_type, description=None, constraints = None):
-
-    #    Check if slug already exists
-    try:
-        get_datadict_type_by_slug(dbm,slug)
-        raise DataObjectAlreadyExists("DataDictType","slug",slug)
-    except DataObjectNotFound:
-        pass
-    
     ddtype = DataDictType(dbm=dbm, name=name, slug=slug, primitive_type=primitive_type, description=description,
                           constraints=constraints, tags=[])
     ddtype.save()
@@ -75,6 +72,17 @@ class DataDictType(DataObject):
         doc = DataDictDocument(id, primitive_type, constraints, slug, name, description, tags, **kwargs)
         self._set_document(doc)
 
+    def save(self):
+        #  if we are creating new DataDict
+        if self._doc.rev is None:
+            try:
+                #  Check if slug already exists,
+                get_datadict_type_by_slug(self._dbm,self.slug)
+                raise DataObjectAlreadyExists("DataDictType","slug",self.slug)
+            except DataObjectNotFound:
+                pass
+        super(DataDictType,self).save()
+
     @property
     def name(self):
         return self._doc.name
@@ -86,6 +94,10 @@ class DataDictType(DataObject):
     @property
     def description(self):
         return self._doc.description
+
+    @description.setter
+    def description(self,value):
+        self._doc.description = value
 
     @property
     def constraints(self):
