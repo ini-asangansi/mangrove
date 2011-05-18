@@ -84,8 +84,12 @@ class CreateQuestionnairePage(Page):
         return self
         """
         self.driver.find_radio_button(WORD_OR_PHRASE_RB).click()
-        #self.driver.find_text_box(WORD_OR_PHRASE_MIN_LENGTH_TB).enter_text(fetch_(MIN, from_(question_data)))
-        #self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
+        limit = fetch_(LIMIT, from_(question_data))
+        if limit == LIMITED:
+            self.driver.find_radio_button(CHARACTER_LIMIT_RB).click()
+            self.driver.find_text_box(WORD_OR_PHRASE_MAX_LENGTH_TB).enter_text(fetch_(MAX, from_(question_data)))
+        elif limit == NO_LIMIT:
+            self.driver.find_radio_button(NO_CHARACTER_LIMIT_RB).click()
         return self
 
     def configure_number_type_question(self, question_data):
@@ -172,3 +176,15 @@ class CreateQuestionnairePage(Page):
             return self.driver.find(SUCCESS_MESSAGE_LABEL).text
         else:
             return "Success message not appeared on the page."
+
+    def get_question_link_text(self, question_number):
+        """
+        Function to get the text of the question link
+
+        Args:
+        question_number is index number of the question
+
+        Return link text
+        """
+        question_locator = QUESTION_LINK_CSS_LOCATOR_PART1 + ":nth-child(" + str(question_number) + ")" + QUESTION_LINK_CSS_LOCATOR_PART2
+        return self.driver.find(by_css(question_locator)).text

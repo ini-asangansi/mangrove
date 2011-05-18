@@ -1,4 +1,5 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+from framework.utils.common_utils import generateId
 
 from pages.page import Page
 from pages.registerconfirmationpage.registration_confirmation_page import RegistrationConfirmationPage
@@ -47,8 +48,8 @@ class RegistrationPage(Page):
             fetch_(FIRST_NAME, from_(registration_data)))
         self.driver.find_text_box(ORGANIZATION_LAST_NAME_TB).enter_text(
             fetch_(LAST_NAME, from_(registration_data)))
-        self.driver.find_text_box(ORGANIZATION_EMAIL_TB).enter_text(
-            fetch_(EMAIL, from_(registration_data)))
+        email = fetch_(EMAIL, from_(registration_data)) + generateId()
+        self.driver.find_text_box(ORGANIZATION_EMAIL_TB).enter_text(email + "@ngo.com")
         self.driver.find_text_box(ORGANIZATION_PASSWORD_TB).enter_text(
             fetch_(REGISTRATION_PASSWORD, from_(registration_data)))
         self.driver.find_text_box(ORGANIZATION_CONFIRM_PASSWORD_TB).enter_text(

@@ -37,7 +37,7 @@ REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION = {ORGANIZATION_NAME: "NGO 001",
                        TITLE: "Mr",
                        FIRST_NAME: "No",
                        LAST_NAME: "Go",
-                       EMAIL: "ngo001@ngo.com",
+                       EMAIL: "ngo",
                        REGISTRATION_PASSWORD: "ngo001",
                        REGISTRATION_CONFIRM_PASSWORD: "ngo001",
                        SUCCESS_MESSAGE: "You have successfully registered!! An activation email has been sent to your email address. Please activate before login."}
