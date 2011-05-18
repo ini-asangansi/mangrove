@@ -17,7 +17,7 @@ class TestSubmissionLog(BaseTest):
 
     test_var = None
 
-    def prerequisites_of_sms_tester(self, sms_data):
+    def prerequisites_of_submission_log(self, sms_data):
         self.driver.go_to(DATA_WINNER_LOGIN_PAGE)
         login_page = LoginPage(self.driver)
         dashboard_page = login_page.do_successful_login_with(VALID_CREDENTIALS)
