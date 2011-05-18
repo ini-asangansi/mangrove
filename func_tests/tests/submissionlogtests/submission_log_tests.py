@@ -15,8 +15,6 @@ from tests.submissionlogtests.submission_log_data import *
 
 class TestSubmissionLog(BaseTest):
 
-    test_var = None
-
     def prerequisites_of_submission_log(self, sms_data):
         self.driver.go_to(DATA_WINNER_LOGIN_PAGE)
         login_page = LoginPage(self.driver)
@@ -35,7 +33,7 @@ class TestSubmissionLog(BaseTest):
         """
         Function to test the successful SMS submission
         """
-        self.prerequisites_of_sms_tester(VALID_DATA2)
+        self.prerequisites_of_submission_log(VALID_DATA2)
         self.driver.go_to(DATA_WINNER_SUBMISSION_LOG_PAGE)
         time.sleep(3)
         submission_log_page = SubmissionLogPage(self.driver)
@@ -46,9 +44,8 @@ class TestSubmissionLog(BaseTest):
         """
         Function to test the successful SMS submission
         """
-        self.prerequisites_of_sms_tester(EXCEED_NAME_LENGTH2)
+        self.prerequisites_of_submission_log(EXCEED_NAME_LENGTH2)
         self.driver.go_to(DATA_WINNER_SUBMISSION_LOG_PAGE)
         time.sleep(3)
-        print self.test_var
         submission_log_page = SubmissionLogPage(self.driver)
         self.assertRegexpMatches(submission_log_page.get_submission_message(EXCEED_WORD_LIMIT), fetch_(SMS_SUBMISSION, from_(EXCEED_WORD_LIMIT)))
