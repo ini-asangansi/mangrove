@@ -3,7 +3,7 @@
 from mangrove.datastore.database import DatabaseManager, DataObject
 from mangrove.datastore import datadict
 from mangrove.datastore.documents import FormModelDocument
-from mangrove.errors.MangroveException import FormModelDoesNotExistsException, QuestionCodeAlreadyExistsException, EntityQuestionAlreadyExistsException, MangroveException
+from mangrove.errors.MangroveException import FormModelDoesNotExistsException, QuestionCodeAlreadyExistsException, EntityQuestionAlreadyExistsException, MangroveException, DataObjectAlreadyExists, EntityQuestionCodeNotSubmitted
 from mangrove.form_model.field import TextField, field_attributes
 from mangrove.utils.types import is_sequence, is_string, is_empty, is_not_empty
 from mangrove.form_model import field
@@ -13,12 +13,11 @@ def get_form_model_by_code(dbm, code):
     assert isinstance(dbm, DatabaseManager)
     assert is_string(code)
     rows = dbm.load_all_rows_in_view('mangrove_views/questionnaire', key=code)
-    if len(rows) == 0:
+    if not len(rows):
         raise FormModelDoesNotExistsException(code)
 
     # todo: this is screwy! This two types of forms, reg and otherwise, look like a bad idea...
     doc = dbm._load_document(rows[0]['value']['_id'], FormModelDocument)
-    form = None
     if doc.type == 'registration':
         form = RegistrationFormModel.new_from_db(dbm, doc)
     else:
@@ -29,7 +28,8 @@ def get_form_model_by_code(dbm, code):
 class FormModel(DataObject):
     __document_class__ = FormModelDocument
 
-    def __init__(self, dbm, name=None, label=None, form_code=None, fields=None, entity_type=None, type=None, language="eng"):
+    def __init__(self, dbm, name=None, label=None, form_code=None, fields=None, entity_type=None, type=None,
+                 language="eng"):
         assert isinstance(dbm, DatabaseManager)
         assert name is None or is_not_empty(name)
         assert fields is None or is_sequence(fields)
@@ -64,11 +64,21 @@ class FormModel(DataObject):
 
         # make form_model level fields for any json fields in to
         for json_field in document.json_fields:
-            f = field.create_question_from(json_field,self._dbm)
+            f = field.create_question_from(json_field, self._dbm)
             self.form_fields.append(f)
+
+
+    def _check_if_form_code_is_unique(self, value):
+        try:
+            get_form_model_by_code(self._dbm, value)
+            raise DataObjectAlreadyExists('Form Model', 'Form Code', value)
+        except FormModelDoesNotExistsException:
+            pass
 
     def save(self):
         # convert fields to json fields before save
+        if self._doc.rev is None:
+            self._check_if_form_code_is_unique(self.form_code)
         self._doc.json_fields = [f._to_json() for f in self.form_fields]
         return DataObject.save(self)
 
@@ -80,6 +90,12 @@ class FormModel(DataObject):
         self.validate_existence_of_only_one_entity_field()
         self.validate_uniqueness_of_field_codes()
         return True
+
+    def get_field_by_name(self, name):
+        for field in self.form_fields:
+            if field.name == name:
+                return field
+        return None
 
     def validate_uniqueness_of_field_codes(self):
         """ Validate all question codes are unique
@@ -160,6 +176,8 @@ class FormModel(DataObject):
 
     @form_code.setter
     def form_code(self, value):
+        if value != self._doc.form_code:
+            self._check_if_form_code_is_unique(value)
         self._doc.form_code = value
 
     @property
@@ -192,8 +210,9 @@ class RegistrationFormModel(FormModel):
 
     def __init__(self, dbm, name=None, form_code=None, fields=None, entity_type=None,
                  language="eng"):
-        FormModel.__init__(self, dbm, name=name, label=None, form_code=form_code, fields=fields, entity_type=entity_type, type='registration',
-                 language=language)
+        FormModel.__init__(self, dbm, name=name, label=None, form_code=form_code, fields=fields, entity_type=entity_type
+                           , type='registration',
+                           language=language)
 
     def validate_existence_of_only_one_entity_type_field(self):
         """Validate only 1 entity type question is there
@@ -215,23 +234,23 @@ class RegistrationFormModel(FormModel):
         location_list = location_string.split(",")
         return [x for x in location_list if x != "" and x != " "]
 
-#    TODO: Implement these
+    #    TODO: Implement these
     @property
     def aggregation_paths(self):
         return None
 
 
 class FormSubmission(object):
-
     def _to_three_tuple(self):
-        return [(field, value, datadict.get_default_datadict_type())  for (field, value) in self.cleaned_data.items()]
+        return [(field, value, self.form_model.get_field_by_name(field).ddtype)  for (field, value) in
+                self.cleaned_data.items()]
 
     def __init__(self, form_model, form_answers):
         self.form_model = form_model
         self.form_answers = form_answers
         entity_question = self.form_model.entity_question
-        self.entity_id = self.form_answers.get(entity_question.question_code)
-        if(self.entity_id is not None):
+        self.short_code = self.form_answers.get(entity_question.question_code)
+        if self.short_code is not None:
             del form_answers[entity_question.question_code]
         self.form_code = self.form_model.form_code
         self.answers = form_model
@@ -245,6 +264,8 @@ class FormSubmission(object):
         return self.form_model.cleaned_data
 
     def is_valid(self):
+        if self.short_code is None or self.short_code == "":
+            raise EntityQuestionCodeNotSubmitted()
         return self.form_model.is_valid(self.form_answers)
 
     def _parse_field(self, form_field, answer):
@@ -260,7 +281,6 @@ class FormSubmission(object):
 
 
 class RegistrationFormSubmission(object):
-
     def _to_three_tuple(self):
         return [(field, value, datadict.get_default_datadict_type())  for (field, value) in self.cleaned_data.items()]
 

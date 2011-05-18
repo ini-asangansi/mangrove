@@ -2,7 +2,6 @@
 
 from _collections import defaultdict
 from datetime import datetime
-from mangrove.datastore.database import get_db_manager
 from mangrove.datastore.datadict import DataDictType
 from mangrove.errors.MangroveException import AnswerTooBigException, AnswerTooSmallException, AnswerTooLongException, AnswerTooShortException, AnswerWrongType, IncorrectDate
 from mangrove.form_model.validation import NumericConstraint, ConstraintAttributes, TextConstraint, ChoiceConstraint
@@ -11,7 +10,7 @@ from validate import VdtValueTooBigError, VdtValueTooSmallError, VdtValueTooLong
 
 def field_to_json(object):
     #    assert isinstance(object, Field)
-    if isinstance(object,datetime):
+    if isinstance(object, datetime):
         return object.isoformat()
     else:
         return object._to_json_view()
@@ -44,7 +43,7 @@ class Field(object):
         TYPE: "",
         QUESTION_CODE: "",
         DDTYPE: None
-        }
+    }
 
     _DEFAULT_LANGUAGE_SPECIFIC_VALUES = {
         LABEL: {},
@@ -52,7 +51,7 @@ class Field(object):
 
     def __init__(self, **kwargs):
         self._dict = defaultdict(dict)
-        assert kwargs.get(self.DDTYPE) is not None  
+        assert kwargs.get(self.DDTYPE) is not None
         for k, default_value in self._DEFAULT_VALUES.items():
             self._dict[k] = kwargs.get(k, default_value)
 
@@ -107,7 +106,7 @@ class IntegerField(Field):
 
     def __init__(self, name, question_code, label, ddtype, range=None, language=field_attributes.DEFAULT_LANGUAGE):
         Field.__init__(self, type=field_attributes.INTEGER_FIELD, name=name, question_code=question_code,
-                       label=label, language=language, ddtype = ddtype)
+                       label=label, language=language, ddtype=ddtype)
 
         self.constraint = range if range is not None else NumericConstraint()
         self._dict[self.RANGE] = self.constraint._to_json()
@@ -135,8 +134,9 @@ class DateField(Field):
                        label=label, language=language, ddtype=ddtype)
 
         self._dict[self.DATE_FORMAT] = date_format
+
     def validate(self, value):
-        DATE_DICTIONARY = {'mm.yyyy': '%m.%Y', 'dd.mm.yyyy': '%d.%m.%Y','mm.dd.yyyy': '%m.%d.%Y' }
+        DATE_DICTIONARY = {'mm.yyyy': '%m.%Y', 'dd.mm.yyyy': '%d.%m.%Y', 'mm.dd.yyyy': '%m.%d.%Y'}
         try:
             return datetime.strptime(value, DATE_DICTIONARY.get(self._dict[self.DATE_FORMAT]))
         except ValueError:
@@ -177,6 +177,7 @@ class TextField(Field):
 
 class SelectField(Field):
     OPTIONS = "choices"
+
     def __init__(self, name, question_code, label, options, ddtype, language=field_attributes.DEFAULT_LANGUAGE,
                  single_select_flag=True):
         assert len(options) > 0
@@ -195,7 +196,9 @@ class SelectField(Field):
                 else:
                     single_language_specific_option = {'text': {language: option}}
                 valid_choices.append(single_language_specific_option)
-        self.constraint = ChoiceConstraint(list_of_valid_choices=[each.get('text').get(language) for each in valid_choices], single_select_constraint=single_select_flag, question_code=question_code)
+        self.constraint = ChoiceConstraint(
+            list_of_valid_choices=[each.get('text').get(language) for each in valid_choices],
+            single_select_constraint=single_select_flag, question_code=question_code)
 
     SINGLE_SELECT_FLAG = 'single_select_flag'
 
@@ -211,7 +214,7 @@ class SelectField(Field):
         option_list = []
         for option in self.options:
             option_text = option["text"][field_attributes.DEFAULT_LANGUAGE]
-            option_list.append({"text":option_text, "val":option.get("val")})
+            option_list.append({"text": option_text, "val": option.get("val")})
         print option_list
         dict['choices'] = option_list
         dict['ddtype'] = dict['ddtype'].to_json()
@@ -234,18 +237,18 @@ def create_question_from(dictionary, dbm):
         length = TextConstraint(min=length_dict.get(ConstraintAttributes.MIN),
                                 max=length_dict.get(ConstraintAttributes.MAX))
         return TextField(name=name, question_code=code, label=label, entity_question_flag=is_entity_question,
-                         length=length,ddtype = ddtype)
+                         length=length, ddtype=ddtype)
     elif type == "integer":
         range_dict = dictionary.get("range")
         range = NumericConstraint(min=range_dict.get(ConstraintAttributes.MIN),
                                   max=range_dict.get(ConstraintAttributes.MAX))
-        return IntegerField(name=name, question_code=code, label=label, range=range,ddtype = ddtype)
+        return IntegerField(name=name, question_code=code, label=label, range=range, ddtype=ddtype)
     elif type == "date":
         date_format = dictionary.get("date_format")
-        return DateField(name=name, question_code=code, label=label, date_format=date_format,ddtype = ddtype)
+        return DateField(name=name, question_code=code, label=label, date_format=date_format, ddtype=ddtype)
     elif type == "select" or type == "select1":
         choices = dictionary.get("choices")
         single_select = True if type == "select1" else False
         return SelectField(name=name, question_code=code, label=label, options=choices,
-                           single_select_flag=single_select,ddtype = ddtype)
+                           single_select_flag=single_select, ddtype=ddtype)
     return None

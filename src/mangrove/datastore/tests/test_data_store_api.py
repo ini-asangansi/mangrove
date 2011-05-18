@@ -1,8 +1,9 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 
 from datetime import datetime
-from mangrove.datastore.entity import Entity, define_type, get_all_entity_types
-from mangrove.datastore.database import get_db_manager, _delete_db_and_remove_db_manager
+from mock import Mock
+from mangrove.datastore.entity import Entity, define_type, get_all_entity_types, _get_used_entity_ids, generate_entity_short_code
+from mangrove.datastore.database import get_db_manager, _delete_db_and_remove_db_manager, DatabaseManager
 from mangrove.datastore.documents import DataRecordDocument
 from mangrove.datastore.datadict import DataDictType
 from pytz import UTC
@@ -64,7 +65,8 @@ class TestDataStoreApi(unittest.TestCase):
         self.assertEqual(saved.type_path, ["health_facility"])
 
     def test_should_add_passed_in_hierarchy_path_on_create(self):
-        e = Entity(self.dbm, entity_type=["HealthFacility", "Clinic"], location=["India", "MH", "Pune"], aggregation_paths={"org": ["TW_Global", "TW_India", "TW_Pune"],
+        e = Entity(self.dbm, entity_type=["HealthFacility", "Clinic"], location=["India", "MH", "Pune"],
+                   aggregation_paths={"org": ["TW_Global", "TW_India", "TW_Pune"],
                                       "levels": ["Lead Consultant", "Sr. Consultant", "Consultant"]})
         uuid = e.save()
         saved = get(self.dbm, uuid)
@@ -126,10 +128,14 @@ class TestDataStoreApi(unittest.TestCase):
 
     def test_add_data_record_to_entity(self):
         clinic_entity, reporter = self._create_clinic_and_reporter()
-        med_type = DataDictType(self.dbm, name='Medicines', slug='meds', primitive_type='number', description='Number of medications')
-        doctor_type = DataDictType(self.dbm, name='Doctor', slug='doc', primitive_type='string', description='Name of doctor')
-        facility_type = DataDictType(self.dbm, name='Facility', slug='facility', primitive_type='string', description='Name of facility')
-        opened_type = DataDictType(self.dbm, name='Opened on', slug='opened_on', primitive_type='datetime', description='Date of opening')
+        med_type = DataDictType(self.dbm, name='Medicines', slug='meds', primitive_type='number',
+                                description='Number of medications')
+        doctor_type = DataDictType(self.dbm, name='Doctor', slug='doc', primitive_type='string',
+                                   description='Name of doctor')
+        facility_type = DataDictType(self.dbm, name='Facility', slug='facility', primitive_type='string',
+                                     description='Name of facility')
+        opened_type = DataDictType(self.dbm, name='Opened on', slug='opened_on', primitive_type='datetime',
+                                   description='Date of opening')
         med_type.save()
         doctor_type.save()
         facility_type.save()
@@ -206,15 +212,20 @@ class TestDataStoreApi(unittest.TestCase):
         self.assertIn(entity_type, types)
         self.assertIn([entity_type[0]], types)
 
-    def test_should_throw_back_proper_error_message(self):
+    def test_should_disallow_redefining_the_same_entity(self):
         define_type(self.dbm, ["HealthFacility", "Clinic"])
         with self.assertRaises(EntityTypeAlreadyDefined):
             define_type(self.dbm, ["HealthFacility", "Clinic"])
 
+    def test_should_disallow_redefining_the_same_entity_with_different_case(self):
+        define_type(self.dbm, ["HealthFacility", "Clinic"])
+        with self.assertRaises(EntityTypeAlreadyDefined):
+            define_type(self.dbm, ["healTHfaciLIty", "clinic"])
+
     def test_should_define_single_entity(self):
         define_type(self.dbm, ["Clinic"])
         entity_types = get_all_entity_types(self.dbm)
-        self.assertListEqual(entity_types,[["Clinic"]])
+        self.assertListEqual(entity_types, [["Clinic"]])
 
     def test_should_return_data_types(self):
         med_type = DataDictType(self.dbm,
@@ -263,3 +274,49 @@ class TestDataStoreApi(unittest.TestCase):
         self.assertTrue(med_type.slug in types)
         self.assertTrue(doctor_type.slug in types)
         self.assertTrue(facility_type.slug in types)
+
+    def test_should_create_entity_with_short_code(self):
+        reporter = Entity(self.dbm, entity_type="Reporter", location=["Pune","India"], short_code="REP999")
+        self.assertEqual(reporter.short_code, "REP999")
+
+        #TODO: need to fix the views
+#    def test_should_return_all_short_ids_for_all_entities(self):
+#        reporter = Entity(self.dbm, entity_type="Reporter", location=["Pune","India"], short_code="REP0")
+#        reporter.save()
+#        reporter = Entity(self.dbm, entity_type="Reporter", location=["Pune","India"], short_code="REP1")
+#        reporter.save()
+#        reporter = Entity(self.dbm, entity_type="Reporter", location=["Pune","India"], short_code="REP2")
+#        reporter.save()
+#        reporter = Entity(self.dbm, entity_type="Reporter", location=["Pune","India"])
+#        reporter.save()
+#        used_id_list = _get_used_entity_ids(self.dbm, entity_type = "Reporter")
+#        print used_id_list
+#        assert "REP2" in used_id_list[0]["value"]
+
+    def test_should_return_short_name_if_not_in_list(self):
+        manager = Mock(spec=DatabaseManager)
+        manager.load_all_rows_in_view = Mock(return_value=[{"key": "Reporter", "value":["REP0", "REP1", "REP2"]}])
+        id = generate_entity_short_code(manager, entity_type="Reporter", suggested_id="REP4")
+        assert manager.load_all_rows_in_view.called
+        self.assertEqual(id, "REP4")
+
+    def test_should_generate_short_id_and_return_if_suggested_id_used(self):
+        manager = Mock(spec=DatabaseManager)
+        manager.load_all_rows_in_view = Mock(return_value=[{"key": "Reporter", "value":["REP0", "REP1", "REP2"]}])
+        id = generate_entity_short_code(manager, entity_type="Reporter", suggested_id="REP2")
+        assert manager.load_all_rows_in_view.called
+        self.assertEqual(id, "REP3")
+
+    def test_should_generate_short_id_and_return_if_suggested_id_is_blank(self):
+        manager = Mock(spec=DatabaseManager)
+        manager.load_all_rows_in_view = Mock(return_value=[{"key": "Reporter", "value":["REP0", "REP1", "REP2"]}])
+        id = generate_entity_short_code(manager, entity_type="Reporter", suggested_id="")
+        assert manager.load_all_rows_in_view.called
+        self.assertEqual(id, "REP3")
+
+    def test_should_generate_short_id_and_return_if_suggested_id_is_not_supplied(self):
+        manager = Mock(spec=DatabaseManager)
+        manager.load_all_rows_in_view = Mock(return_value=[{"key": "Reporter", "value":["REP0", "REP1", "REP2"]}])
+        id = generate_entity_short_code(manager, entity_type="Reporter")
+        assert manager.load_all_rows_in_view.called
+        self.assertEqual(id, "REP3")

@@ -32,29 +32,38 @@ def define_type(dbm, entity_type):
 
     type_path = ([entity_type] if is_string(entity_type) else entity_type)
     type_path = [item.strip() for item in type_path]
-
-    if type_path in get_all_entity_types(dbm):
-        raise EntityTypeAlreadyDefined("Type: %s is already defined" % '.'.join(entity_type))
-
+    all_entities = get_all_entity_types(dbm)
+    if all_entities:
+        all_entities_lower_case = [[x.lower() for x in each] for each in all_entities]
+        type_path_lower_case = [each.lower() for each in type_path]
+        if type_path_lower_case in all_entities_lower_case:
+            raise EntityTypeAlreadyDefined("Type: %s is already defined" % '.'.join(entity_type))
     # now make the new one
     entity_tree = _get_entity_type_tree(dbm)
     entity_tree.add_path([atree.AggregationTree.root_id] + entity_type)
     entity_tree.save()
 
+def _get_used_entity_ids(dbm, entity_type):
+    rows = dbm.load_all_rows_in_view("mangrove_views/used_entity_short_id", startkey=[entity_type])
+    return rows
 
 def get_by_short_code(dbm, short_code):
-    """
-        Delegating to get by uuid for now.
+    assert is_string(short_code)
+    rows = dbm.load_all_rows_in_view('mangrove_views/entity_by_short_code', key=short_code, include_docs=True)
+    _doc = EntityDocument.wrap(rows[0].doc)
+    return Entity.new_from_db(dbm = dbm, doc = _doc)
 
-    """
-    return dbm.get(short_code, Entity)
-
-
-def generate_entity_id(database_manager, entity_type):
-    list = map(chr, range(97, 121)) + range(0, 9)
-    random.shuffle(list)
-    return (entity_type[:3] + reduce(lambda acc, i: str(acc) + str(i), list[0:3], '')).upper()
-
+def generate_entity_short_code(database_manager, entity_type, suggested_id=None):
+    used_ids = _get_used_entity_ids(database_manager, entity_type=entity_type)
+    used_id_list = used_ids[0].get("value")
+    if suggested_id is not None and suggested_id != "" and suggested_id not in used_id_list:
+        return suggested_id
+    else:
+        used_id_list.sort()
+        last_used_id = used_id_list[len(used_id_list) - 1:]
+        sr_id = int(last_used_id[0][3:])
+        sr_id += 1
+        return entity_type.upper()[:3]+str(sr_id)
 
 def get_entities_by_type(dbm, entity_type):
     # TODO: change this?  for now it assumes _type is non-heirarchical
@@ -71,7 +80,8 @@ def get_entities_by_value(dbm, label, value, as_of=None):
     assert isinstance(dbm, DatabaseManager)
     assert isinstance(label, DataDictType) or is_string(label)
     assert as_of is None or isinstance(as_of, datetime)
-    if isinstance(label, DataDictType): label = label.slug
+    if isinstance(label, DataDictType):
+        label = label.slug
 
     rows = dbm.load_all_rows_in_view('mangrove_views/by_label_value', key=[label, value])
     entities = [dbm.get(row['value'], Entity) for row in rows]
@@ -150,7 +160,7 @@ class Entity(DataObject):
     __document_class__ = EntityDocument
 
     def __init__(self, dbm, entity_type=None, location=None, aggregation_paths=None,
-                 geometry=None, centroid=None, gr_id=None, id=None):
+                 geometry=None, centroid=None, gr_id=None, id=None, short_code = None):
         '''Construct a new entity.
 
         Note: _couch_document is used for 'protected' factory methods and
@@ -196,6 +206,9 @@ class Entity(DataObject):
         if gr_id is not None:
             doc.gr_id = gr_id
 
+        if short_code is not None:
+            doc.short_code = short_code
+
         if aggregation_paths is not None:
             reserved_names = (attributes.TYPE_PATH, attributes.GEO_PATH)
             for name in aggregation_paths.keys():
@@ -235,6 +248,10 @@ class Entity(DataObject):
     @property
     def centroid(self):
         return self._doc.centroid
+
+    @property
+    def short_code(self):
+        return self._doc.short_code
 
     def set_aggregation_path(self, name, path):
         assert self._doc is not None
@@ -337,7 +354,6 @@ class Entity(DataObject):
     def data_types(self, tags=None):
         '''Returns a list of each type of data that is stored on this entity.'''
         assert tags is None or isinstance(tags, list) or is_string(tags)
-        result = []
         if tags is None or is_empty(tags):
             rows = self._dbm.load_all_rows_in_view('mangrove_views/entity_datatypes', key=self.id)
             result = get_datadict_types(self._dbm, [row['value'] for row in rows])
@@ -363,7 +379,8 @@ class Entity(DataObject):
     def value(self, label):
         '''Returns the latest value for the given label.'''
         assert isinstance(label, DataDictType) or is_string(label)
-        if isinstance(label, DataDictType): label = label.slug
+        if isinstance(label, DataDictType):
+            label = label.slug
 
         return self.values({label: 'latest'})[label]
 

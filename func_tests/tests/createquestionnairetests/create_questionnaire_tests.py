@@ -34,6 +34,5 @@ class TestCreateQuestionnaire(BaseTest):
         """
         create_questionnaire_page = self.prerequisites_of_create_questionnaire()
         create_questionnaire_page.create_questionnaire_with(QUESTIONNAIRE_DATA)
-        time.sleep(2)
         self.assertEqual(create_questionnaire_page.get_success_message(),
                                  fetch_(SUCCESS_MSG, from_(QUESTIONNAIRE_DATA)))

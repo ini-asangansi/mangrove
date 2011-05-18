@@ -1,13 +1,15 @@
-
 var LaunchOpenLayers = (function (wrapId, _opts) { 
   var wrap = $('#'+wrapId);
   wrap.height(475);
   
   var defaultOpts = {
-      centroid: {
-          lat: 851310.77702182,
-          lng: 1044435.5543009
+      centroid: {          
+          lat: 0.000068698255561324,
+          lng: 0.000083908685869343
       },
+      localTiles: false,
+      tileUrl: "http://tilestream.openmangrove.org:8888/",
+      tileCache: "http://localhost:8000/tiles/",
       zoom: 6
   }, opts = $.extend({}, _opts, defaultOpts);
 
@@ -31,13 +33,65 @@ var LaunchOpenLayers = (function (wrapId, _opts) {
   };
   
   map = new OpenLayers.Map(wrapId, options);
-  var mapserver = "http://tilestream.openmangrove.org:8888/";
-  
+  var mapserver = !!opts.localTiles ? 
+                    opts.tileCache : opts.tileUrl;
   var nigeria = new OpenLayers.Layer.TMS(
     "Nigeria",
     [ mapserver],
     { 'layername': 'nigeria_base', 'type': 'png' }
   );
+
+    
+
+  var nigeria_healthworkers_per_thousand  = new OpenLayers.Layer.TMS(
+    "Nigeria health workers per thousand people",
+    [mapserver],
+    {'layername': 'nigeria_healthworkers_per_thousand', 'type': 'png'}
+  );
+
+  var pct_healthfacilities_with_institutional_delivery  = new OpenLayers.Layer.TMS(
+    "Nigeria Health Facilities with Institutional Deliveries",
+    [mapserver],
+    {'layername': 'pct_healthfacilities_with_institutional_delivery', 'type': 'png'}
+  );
+
+  var nigeria_pct_no_bednet_malmeds_oneweek  = new OpenLayers.Layer.TMS(
+    "Nigeria No Stockouts of Bednets or Malaria Medicine",
+    [mapserver],
+    {'layername': 'nigeria_pct_no_bednet_malmeds_oneweek', 'type': 'png'}
+  );
+
+  var nigeria_pct_classroom_need_repair  = new OpenLayers.Layer.TMS(
+    "Nigeria Classrooms That Need Repair",
+    [mapserver],
+    {'layername': 'nigeria_pct_classroom_need_repair', 'type': 'png'}
+  );
+
+  var nigeria_prop_ratio_greater_than_40  = new OpenLayers.Layer.TMS(
+    "Nigeria classrooms with proportion student to teacher ratio > 40",
+    [mapserver],
+    {'layername': 'nigeria_prop_ratio_greater_than_40', 'type': 'png'}
+  );
+
+
+  var nigearia_immunization_rate = new OpenLayers.Layer.TMS(
+    "Nigeria Immunization Rate",
+    [mapserver],
+    {'layername': 'nigearia_immunization_rate', 'type': 'png'}
+  );
+
+  var nigeria_under5_mortality_rate = new OpenLayers.Layer.TMS(
+    "Nigeria Under 5 Mortality Rate",
+    [ mapserver],
+    { 'layername': 'nigeria_under5_mortality_rate', 'type': 'png' }
+  );
+
+  var nigeria_wasting = new OpenLayers.Layer.TMS(
+    "Nigeria Child Wasting",
+    [ mapserver],
+    { 'layername': 'nigeria_wasting', 'type': 'png' }
+  );
+
   var nigeria_child_health = new OpenLayers.Layer.TMS(
     "Nigeria Child Health",
     [mapserver],
@@ -61,6 +115,7 @@ var LaunchOpenLayers = (function (wrapId, _opts) {
     {'layername': 'nigeria_maternal_health', 'type': 'png'}
   );
 
+
   var nigeria_primary_education_enrollment = new OpenLayers.Layer.TMS(
     "Nigeria Primary Education Enrollment",
     [mapserver],
@@ -77,11 +132,12 @@ var LaunchOpenLayers = (function (wrapId, _opts) {
     {type: google.maps.MapTypeId.TERRAIN}
   );
 
-  map.addLayers([nigeria, nigeria_child_health, nigeria_child_nutrition, nigeria_malaria, nigeria_maternal_health, nigeria_primary_education_enrollment, gphy, gsat]);
+    map.addLayers([nigeria, nigeria_healthworkers_per_thousand, pct_healthfacilities_with_institutional_delivery, nigeria_pct_no_bednet_malmeds_oneweek, nigeria_pct_classroom_need_repair, nigeria_prop_ratio_greater_than_40, nigearia_immunization_rate, nigeria_child_health, nigeria_child_nutrition, nigeria_malaria, nigeria_maternal_health, nigeria_wasting, nigeria_under5_mortality_rate, nigeria_primary_education_enrollment, gphy, gsat]);
 
   map.addControl(new OpenLayers.Control.LayerSwitcher());
-  map.setCenter(new OpenLayers.LonLat(851310.77702182, 1044435.5543009), 6);
 
+  var center = new OpenLayers.LonLat(opts.centroid.lng, opts.centroid.lat);
+  map.setCenter(center, opts.zoom)
 
     $('#layer-select').change(function(param) {
 

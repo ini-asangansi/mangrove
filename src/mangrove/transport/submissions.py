@@ -10,7 +10,7 @@ from mangrove.datastore.documents import SubmissionLogDocument
 from mangrove.datastore import entity
 from mangrove.datastore import reporter
 from mangrove.datastore.entity import Entity
-from mangrove.errors.MangroveException import MangroveException, FormModelDoesNotExistsException, NumberNotRegisteredException
+from mangrove.errors.MangroveException import MangroveException, FormModelDoesNotExistsException, NumberNotRegisteredException, EntityQuestionCodeNotSubmitted
 from mangrove.form_model import form_model
 from mangrove.form_model.form_model import FormSubmission, RegistrationFormSubmission
 from mangrove.transport.player.player import SMSPlayer, WebPlayer
@@ -27,20 +27,26 @@ class Request(object):
 
 class Response(object):
     SUCCESS_RESPONSE_TEMPLATE = "Thank You %s for your submission."
+    RECORD_ID_TEMPLATE = "The record id is - %s"
     ERROR_RESPONSE_TEMPLATE = "%s"
 
-    def __init__(self, reporters, success, errors, submission_id=None, datarecord_id=None):
+    def __init__(self, reporters, success, errors, submission_id=None, datarecord_id=None,include_id_in_message=False):
         self.success = success
         self.submission_id = submission_id
         self.errors = errors
         self.datarecord_id = datarecord_id
         if success:
-            self.message = self._templatize_success_response_with_reporter_name(reporters)
+            self.message = self._templatize_success_response_with_reporter_name_and_ids(reporters,include_id_in_message)
         else:
             self.message = self._templatize_error_response()
 
-    def _templatize_success_response_with_reporter_name(self, reporters):
-        return Response.SUCCESS_RESPONSE_TEMPLATE % (reporters[0]["first_name"] if len(reporters) == 1 else "",)
+    def _templatize_success_response_with_reporter_name_and_ids(self, reporters,include_id_in_message):
+        success_message = Response.SUCCESS_RESPONSE_TEMPLATE % (
+        reporters[0]["first_name"] if len(reporters) == 1 else "")
+        if include_id_in_message is True:
+            record_id_message = Response.RECORD_ID_TEMPLATE % self.datarecord_id
+            success_message += " " + record_id_message
+        return success_message
 
     def _templatize_error_response(self):
         return Response.ERROR_RESPONSE_TEMPLATE % (", ".join(self.errors),)
@@ -74,18 +80,19 @@ class SubmissionHandler(object):
             errors = []
             player = self.get_player_for_transport(request)
             form_code, values = player.parse(request.message)
-            submission_id = self.dbm._save_document(SubmissionLogDocument(channel=request.transport, source=request.source,
-                                                                destination=request.destination, form_code=form_code, values=values,
-                                                                status=False, error_message="")).id
+            submission_id = self.dbm._save_document(
+                SubmissionLogDocument(channel=request.transport, source=request.source,
+                                      destination=request.destination, form_code=form_code, values=values,
+                                      status=False, error_message="")).id
             form = form_model.get_form_model_by_code(self.dbm, form_code)
             if form.type == 'survey':
                 reporters = reporter.find_reporter(self.dbm, request.source)
                 form_submission = FormSubmission(form, values)
                 if form_submission.is_valid():
-                    e = entity.get_by_short_code(self.dbm, form_submission.entity_id)
+                    e = entity.get_by_short_code(self.dbm, form_submission.short_code)
                     data_record_id = e.add_data(data=form_submission.values, submission_id=submission_id)
                     self.update_submission_log(submission_id, True, errors=[])
-                    return Response(reporters, True, errors, submission_id, data_record_id)
+                    return Response(reporters, True, errors, submission_id,data_record_id)
                 else:
                     errors.extend(form_submission.errors)
                     self.update_submission_log(submission_id, False, errors)
@@ -93,21 +100,25 @@ class SubmissionHandler(object):
                 form_submission = RegistrationFormSubmission(form, values)
                 if form_submission.is_valid():
                     entity_type = form.answers.get('entity_type')
-                    entity_id = entity.generate_entity_id(self.dbm, entity_type)
-                    e = Entity(self.dbm, entity_type=entity_type, location=form.location, aggregation_paths=form.aggregation_paths, id=entity_id)
+#                    short_code = entity.generate_entity_short_code(self.dbm, entity_type,
+#                                                                   suggested_id=form.answers.get("short_name"))
+                    short_code = form.answers.get("short_name")
+                    e = Entity(self.dbm, entity_type=entity_type, location=form.location,
+                               aggregation_paths=form.aggregation_paths, short_code=short_code)
                     e.save()
                     description_type = DataDictType(self.dbm, name='description Type', slug='description',
                                                     primitive_type='string')
-                    mobile_number_type = DataDictType(self.dbm, name='Mobile Number Type', slug='mobile_number', primitive_type='string')
+                    mobile_number_type = DataDictType(self.dbm, name='Mobile Number Type', slug='mobile_number',
+                                                      primitive_type='string')
                     description = form.answers.get("description")
                     mobile_number = form.answers.get("mobile_number")
                     data = [("description", description, description_type),
                             ("mobile_number", mobile_number, mobile_number_type),
                             ]
-                    e.add_data(data =data, submission_id=submission_id)
+                    e.add_data(data=data, submission_id=submission_id)
                     self.update_submission_log(submission_id, True, errors=[])
-#                   TODO: Get rid of the reporters from this
-                    return Response([{'first_name': 'User'}], True, errors, submission_id, entity_id)
+                    #                   TODO: Get rid of the reporters from this
+                    return Response([{'first_name': 'User'}], True, errors, submission_id, short_code,include_id_in_message=True)
                 else:
                     errors.extend(form_submission.errors)
                     self.update_submission_log(submission_id, False, errors)
@@ -115,6 +126,8 @@ class SubmissionHandler(object):
         except FormModelDoesNotExistsException as e:
             errors.append(e.message)
         except NumberNotRegisteredException as e:
+            errors.append(e.message)
+        except EntityQuestionCodeNotSubmitted as e:
             errors.append(e.message)
         return Response(reporters, False, errors, submission_id)
 
@@ -130,7 +143,9 @@ class SubmissionHandler(object):
 def get_submissions_made_for_questionnaire(dbm, form_code, page_number=0, page_size=20, count_only=False):
     assert is_string(form_code)
     if count_only:
-        rows = dbm.load_all_rows_in_view('mangrove_views/submissionlog', startkey=[form_code], endkey=[form_code, {}], group=True, group_level=1, reduce=True)
+        rows = dbm.load_all_rows_in_view('mangrove_views/submissionlog', startkey=[form_code], endkey=[form_code, {}],
+                                         group=True, group_level=1, reduce=True)
     else:
-        rows = dbm.load_all_rows_in_view('mangrove_views/submissionlog', reduce=False, startkey=[form_code], endkey=[form_code, {}], skip=page_number * page_size, limit=page_size)
+        rows = dbm.load_all_rows_in_view('mangrove_views/submissionlog', reduce=False, startkey=[form_code],
+                                         endkey=[form_code, {}], skip=page_number * page_size, limit=page_size)
     return [each.value for each in rows]
