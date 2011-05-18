@@ -8,6 +8,9 @@ QUESTION = "question"
 QUESTIONS = "questions"
 CODE = "code"
 TYPE = "type"
+LIMIT = "limit"
+NO_LIMIT = "no_limit"
+LIMITED = "limited"
 MIN = "min"
 MAX = "max"
 DATE_FORMAT = "date_format"
@@ -32,7 +35,7 @@ QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS01",
                                   {QUESTION: "Color of Water", CODE: "WC", TYPE: LIST_OF_CHOICES,
                                    CHOICE: ["LIGHT RED", "LIGHT YELLOW", "DARK YELLOW"],
                                    ALLOWED_CHOICE: ONLY_ONE_ANSWER},
-                                  {QUESTION: "Water point admin name", CODE: "WAN", TYPE: WORD, MIN: "3", MAX: "10"},
+                                  {QUESTION: "Water point admin name", CODE: "WAN", TYPE: WORD, LIMIT: LIMITED, MAX: "10"},
                                   {QUESTION: "Bacterias in water", CODE: "WB", TYPE: LIST_OF_CHOICES,
                                    CHOICE: ["Aquificae", "Bacteroids", "Chlorobia"],
                                    ALLOWED_CHOICE: MULTIPLE_ANSWERS}],

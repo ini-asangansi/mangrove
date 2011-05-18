@@ -24,7 +24,7 @@ CODE_TB = by_css("input#code")
 WORD_OR_PHRASE_RB = by_css("input[value='text']")
 NO_CHARACTER_LIMIT_RB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddTextLength')]/div/input[@value='length_unlimited']")
 CHARACTER_LIMIT_RB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddTextLength')]/div/div/input[@value='length_limited']")
-WORD_OR_PHRASE_MAX_LENGTH_TB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddTextLength')]/div/div/span/input[@id='max_length']")
+WORD_OR_PHRASE_MAX_LENGTH_TB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddTextLength')]/div/div/span/input[@id='max_length' and not(contains(@style,'none'))]")
 NUMBER_RB = by_css("input[value='integer']")
 NUMBER_MAX_LENGTH_TB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddRange')]/div/p/input[@id='range_max']")
 NUMBER_MIN_LENGTH_TB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddRange')]/div/p/input[@id='range_min']")
@@ -44,9 +44,10 @@ MULTIPLE_ANSWER_RB = by_css("input[value='select']")
 
 # Locators for Question List section of the page
 DEFAULT_QUESTION_LINK = by_xpath("//div[@class='question_list']/ol/li/a[contains(text(),'What are you reporting on')]")
-QUESTION_LINK_CSS_LOCATOR = "div.question_list>ol>li>a"  # Add text or index number to identify question
-QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>li>a:contains('"  # Add text or index number to identify question
-QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "')~div>span.delete>a"
+QUESTION_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>li"  # index number to identify question
+QUESTION_LINK_CSS_LOCATOR_PART2 = ">a"  # Add text to locate specific question
+QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>li>a"  # Add text or index number to identify question
+QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "~div>span.delete>a"
 ADD_A_QUESTION_LINK = by_css("div.add_question>a")
 SAVE_CHANGES_BTN = by_css("input#submit-button")
 

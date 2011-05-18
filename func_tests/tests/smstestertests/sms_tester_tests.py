@@ -10,7 +10,7 @@ from tests.smstestertests.sms_tester_data import *
 
 class TestSMSTester(BaseTest):
 
-    @attr('functional_test')
+    @attr('functional_test', 'smoke')
     def test_successful_sms_submission(self):
         """
         Function to test the successful SMS submission
@@ -30,3 +30,14 @@ class TestSMSTester(BaseTest):
         sms_tester_page = SMSTesterPage(self.driver)
         sms_tester_page.send_sms_with(BLANK_FIELDS)
         self.assertEqual(sms_tester_page.get_error_message(), fetch_(ERROR_MSG, from_(BLANK_FIELDS)))
+
+    @attr('functional_test')
+    def test_sms_player_for_exceeding_word_length(self):
+        """
+        Function to test the error message on the set up project page while
+        creation of project
+        """
+        self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
+        sms_tester_page = SMSTesterPage(self.driver)
+        sms_tester_page.send_sms_with(EXCEED_NAME_LENGTH)
+        self.assertEqual(sms_tester_page.get_response_message(), fetch_(ERROR_MSG, from_(EXCEED_NAME_LENGTH)))

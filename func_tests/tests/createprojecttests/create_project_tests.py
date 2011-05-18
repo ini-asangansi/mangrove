@@ -21,7 +21,7 @@ class TestCreateProject(BaseTest):
         # going on setup project page
         return dashboard_page.navigate_to_create_project_page()
 
-    @attr('functional_test')
+    @attr('functional_test', 'smoke')
     def test_successful_project_creation(self):
         """
         Function to test the successful creation of project with given
