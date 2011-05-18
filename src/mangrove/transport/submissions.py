@@ -10,7 +10,7 @@ from mangrove.datastore.documents import SubmissionLogDocument
 from mangrove.datastore import entity
 from mangrove.datastore import reporter
 from mangrove.datastore.entity import Entity
-from mangrove.errors.MangroveException import MangroveException, FormModelDoesNotExistsException, NumberNotRegisteredException
+from mangrove.errors.MangroveException import MangroveException, FormModelDoesNotExistsException, NumberNotRegisteredException, EntityQuestionCodeNotSubmitted
 from mangrove.form_model import form_model
 from mangrove.form_model.form_model import FormSubmission, RegistrationFormSubmission
 from mangrove.transport.player.player import SMSPlayer, WebPlayer
@@ -27,6 +27,7 @@ class Request(object):
 
 class Response(object):
     SUCCESS_RESPONSE_TEMPLATE = "Thank You %s for your submission."
+    RECORD_ID_TEMPLATE = "The record id is - %s"
     ERROR_RESPONSE_TEMPLATE = "%s"
 
     def __init__(self, reporters, success, errors, submission_id=None, datarecord_id=None):
@@ -35,12 +36,17 @@ class Response(object):
         self.errors = errors
         self.datarecord_id = datarecord_id
         if success:
-            self.message = self._templatize_success_response_with_reporter_name(reporters)
+            self.message = self._templatize_success_response_with_reporter_name_and_ids(reporters)
         else:
             self.message = self._templatize_error_response()
 
-    def _templatize_success_response_with_reporter_name(self, reporters):
-        return Response.SUCCESS_RESPONSE_TEMPLATE % (reporters[0]["first_name"] if len(reporters) == 1 else "",)
+    def _templatize_success_response_with_reporter_name_and_ids(self, reporters):
+        success_message = Response.SUCCESS_RESPONSE_TEMPLATE % (
+        reporters[0]["first_name"] if len(reporters) == 1 else "")
+        if self.datarecord_id is not None:
+            record_id_message = Response.RECORD_ID_TEMPLATE % self.datarecord_id
+            success_message += " " + record_id_message
+        return success_message
 
     def _templatize_error_response(self):
         return Response.ERROR_RESPONSE_TEMPLATE % (", ".join(self.errors),)
@@ -83,10 +89,10 @@ class SubmissionHandler(object):
                 reporters = reporter.find_reporter(self.dbm, request.source)
                 form_submission = FormSubmission(form, values)
                 if form_submission.is_valid():
-                    e = entity.get_by_short_code(self.dbm, form_submission.entity_id)
+                    e = entity.get_by_short_code(self.dbm, form_submission.short_code)
                     data_record_id = e.add_data(data=form_submission.values, submission_id=submission_id)
                     self.update_submission_log(submission_id, True, errors=[])
-                    return Response(reporters, True, errors, submission_id, data_record_id)
+                    return Response(reporters, True, errors, submission_id)
                 else:
                     errors.extend(form_submission.errors)
                     self.update_submission_log(submission_id, False, errors)
@@ -94,9 +100,10 @@ class SubmissionHandler(object):
                 form_submission = RegistrationFormSubmission(form, values)
                 if form_submission.is_valid():
                     entity_type = form.answers.get('entity_type')
-                    entity_id = entity.generate_entity_id(entity_type)
+                    short_code = entity.generate_entity_short_code(self.dbm, entity_type,
+                                                                   suggested_id=form.answers.get("short_name"))
                     e = Entity(self.dbm, entity_type=entity_type, location=form.location,
-                               aggregation_paths=form.aggregation_paths, id=entity_id)
+                               aggregation_paths=form.aggregation_paths, short_code=short_code)
                     e.save()
                     description_type = DataDictType(self.dbm, name='description Type', slug='description',
                                                     primitive_type='string')
@@ -110,7 +117,7 @@ class SubmissionHandler(object):
                     e.add_data(data=data, submission_id=submission_id)
                     self.update_submission_log(submission_id, True, errors=[])
                     #                   TODO: Get rid of the reporters from this
-                    return Response([{'first_name': 'User'}], True, errors, submission_id, entity_id)
+                    return Response([{'first_name': 'User'}], True, errors, submission_id, short_code)
                 else:
                     errors.extend(form_submission.errors)
                     self.update_submission_log(submission_id, False, errors)
@@ -118,6 +125,8 @@ class SubmissionHandler(object):
         except FormModelDoesNotExistsException as e:
             errors.append(e.message)
         except NumberNotRegisteredException as e:
+            errors.append(e.message)
+        except EntityQuestionCodeNotSubmitted as e:
             errors.append(e.message)
         return Response(reporters, False, errors, submission_id)
 
