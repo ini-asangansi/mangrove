@@ -8,7 +8,7 @@ from testdata.test_data import DATA_WINNER_SMS_TESTER_PAGE
 from tests.smstestertests.sms_tester_data import *
 
 
-class TestCreateProject(BaseTest):
+class TestSMSTester(BaseTest):
 
     @attr('functional_test')
     def test_successful_sms_submission(self):

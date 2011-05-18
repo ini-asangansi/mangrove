@@ -1,7 +1,7 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 import datetime
 from datawinners.project.models import Project
-from mangrove.datastore.datadict import DataDictType, create_ddtype, get_datadict_type_by_slug
+from mangrove.datastore.datadict import DataDictType, create_datadict_type, get_datadict_type_by_slug
 from mangrove.datastore.datarecord import register
 from mangrove.datastore.entity import Entity, define_type
 from mangrove.datastore.database import get_db_manager
@@ -37,7 +37,7 @@ def create_data_dict(dbm, name, slug, primitive_type, description=None):
         existing.delete()
     except DataObjectNotFound:
         pass
-    return create_ddtype(dbm, name, slug, primitive_type, description)
+    return create_datadict_type(dbm,name,slug,primitive_type,description)
 
 
 def load_data():
@@ -182,6 +182,16 @@ def load_data():
     project.qid = qid
     try:
         project.save()
+    except Exception:
+        pass
+
+    form_model2 = FormModel(manager, name="AIDS", label="Aids form_model",
+                           form_code="CLI002", type='survey', fields=[question1, question2, question3, question4, question5, question6])
+    qid2 = form_model2.save()
+    project2 = Project(name="Clinic2 Test Project", goals="This project is for automation", project_type="survey", entity_type=CLINIC_ENTITY_TYPE, devices=["sms","web"])
+    project2.qid = qid2
+    try:
+        project2.save()
     except Exception:
         pass
 
