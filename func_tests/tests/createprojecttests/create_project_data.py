@@ -16,7 +16,7 @@ VALID_DATA = {PROJECT_NAME: "Water Point Morondava",
               PROJECT_TYPE: "survey",
               SUBJECT: "[u\\'Clinic\\']",
               DEVICES: "sms,smartphone",
-              PAGE_TITLE: "Create a Questionnaire"}
+              PAGE_TITLE: "Questionnaire"}
 
 BLANK_FIELDS = {PROJECT_NAME: "",
               PROJECT_BACKGROUND: "",
