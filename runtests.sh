@@ -10,6 +10,9 @@ else
 	"ut")
 	    export TESTCHOICE="ut"
 	    ;;
+	"sm")
+	    export TESTCHOICE="sm"
+	    ;;
 	"all")
 	    export TESTCHOICE="all"
 	    ;;
@@ -43,6 +46,12 @@ case "${TESTCHOICE}" in
      xterm -e "python manage.py runserver" &
      cd ../../func_tests
      nosetests -a 'functional_test'
+     ;;
+"sm")
+     echo "-------- Funtional test execution Started --------"
+     xterm -e "python manage.py runserver" &
+     cd ../../func_tests
+     nosetests -a 'smoke'
      ;;
 "ut") echo "-------- Unit test execution Started --------"
      cd ../..
