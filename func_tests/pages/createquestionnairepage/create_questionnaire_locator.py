@@ -35,9 +35,9 @@ DATE_MONTH_YEAR_RB = by_xpath("//input[@value='dd.mm.yyyy']")
 MONTH_DATE_YEAR_RB = by_xpath("//input[@value='mm.dd.yyyy']")
 
 LIST_OF_CHOICE_RB = by_css("input[value='choice']")
-CHOICE_XPATH_LOCATOR = "//li[not(contains(@style,'none')) and contains(@data-bind,'showAddChoice')]/div/div/p"
-CHOICE_TB_XPATH_LOCATOR = "/input"
-CHOICE_DELETE_LINK_XPATH_LOCATOR = "/a[text()='delete']"
+CHOICE_XPATH_LOCATOR = "//li[not(contains(@style,'none')) and contains(@data-bind,'showAddChoice')]/div/ol/li"
+CHOICE_TB_XPATH_LOCATOR = "/p/input"
+CHOICE_DELETE_LINK_XPATH_LOCATOR = "/p/a[text()='delete']"
 ADD_CHOICE_LINK = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddChoice')]/div/a")
 ONLY_ONE_ANSWER_RB = by_css("input[value='select1']")
 MULTIPLE_ANSWER_RB = by_css("input[value='select']")
