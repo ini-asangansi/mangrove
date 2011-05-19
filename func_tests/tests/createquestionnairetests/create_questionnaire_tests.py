@@ -23,7 +23,7 @@ class TestCreateQuestionnaire(BaseTest):
         # going on setup project page
         CreateProjectPage = dashboard_page.navigate_to_create_project_page()
         #Navigating to Create Questionnaire Page by successfully creating a Project
-        CreateQuestionnairePage = CreateProjectPage.successfully_create_project_with(VALID_DATA)
+        CreateQuestionnairePage = CreateProjectPage.successfully_create_project_with(VALID_DATA2)
         return CreateQuestionnairePage
 
     @attr('functional_test', 'smoke')
