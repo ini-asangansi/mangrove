@@ -23,10 +23,10 @@ class TestCreateQuestionnaire(BaseTest):
         # going on setup project page
         CreateProjectPage = dashboard_page.navigate_to_create_project_page()
         #Navigating to Create Questionnaire Page by successfully creating a Project
-        CreateQuestionnairePage = CreateProjectPage.successfully_create_project_with(VALID_DATA)
+        CreateQuestionnairePage = CreateProjectPage.successfully_create_project_with(VALID_DATA2)
         return CreateQuestionnairePage
 
-    @attr('functional_test')
+    @attr('functional_test', 'smoke')
     def test_successful_questionnaire_creation(self):
         """
         Function to test the successful Creation of a Questionnaire with given
@@ -36,3 +36,8 @@ class TestCreateQuestionnaire(BaseTest):
         create_questionnaire_page.create_questionnaire_with(QUESTIONNAIRE_DATA)
         self.assertEqual(create_questionnaire_page.get_success_message(),
                                  fetch_(SUCCESS_MSG, from_(QUESTIONNAIRE_DATA)))
+        index = 2
+        for question in fetch_(QUESTIONS, from_(QUESTIONNAIRE_DATA)):
+            question_link_text = fetch_(QUESTION, from_(question)) + " " + fetch_(CODE, from_(question))
+            self.assertEquals(create_questionnaire_page.get_question_link_text(index), question_link_text)
+            index = index + 1

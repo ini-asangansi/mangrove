@@ -1,8 +1,7 @@
-# vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+# vim: ai ts=4 sts=4 et sw= encoding=utf-8
 
 import copy
 from datetime import datetime
-import random
 from time import mktime
 from collections import defaultdict
 
@@ -38,32 +37,37 @@ def define_type(dbm, entity_type):
         type_path_lower_case = [each.lower() for each in type_path]
         if type_path_lower_case in all_entities_lower_case:
             raise EntityTypeAlreadyDefined("Type: %s is already defined" % '.'.join(entity_type))
-    # now make the new one
+        # now make the new one
     entity_tree = _get_entity_type_tree(dbm)
     entity_tree.add_path([atree.AggregationTree.root_id] + entity_type)
     entity_tree.save()
 
-def _get_used_entity_ids(dbm, entity_type):
-    rows = dbm.load_all_rows_in_view("mangrove_views/used_entity_short_id", startkey=[entity_type])
-    return rows
+
+def generate_short_code(dbm, entity_type):
+    count = _get_entity_count_for_type(dbm, entity_type=entity_type)
+    assert count >=0
+    return _generate_new_code(entity_type, count )
+
+
+def _get_entity_count_for_type(dbm, entity_type):
+    rows = dbm.load_all_rows_in_view("mangrove_views/by_short_codes",descending = True,
+                                     startkey=[[entity_type], {}], endkey=[[entity_type]], group_level = 1)
+    
+    return rows[0]["value"] if len(rows) else 0
+
 
 def get_by_short_code(dbm, short_code):
     assert is_string(short_code)
     rows = dbm.load_all_rows_in_view('mangrove_views/entity_by_short_code', key=short_code, include_docs=True)
     _doc = EntityDocument.wrap(rows[0].doc)
-    return Entity.new_from_db(dbm = dbm, doc = _doc)
+    return Entity.new_from_db(dbm=dbm, doc=_doc)
 
-def generate_entity_short_code(database_manager, entity_type, suggested_id=None):
-    used_ids = _get_used_entity_ids(database_manager, entity_type=entity_type)
-    used_id_list = used_ids[0].get("value")
-    if suggested_id is not None and suggested_id != "" and suggested_id not in used_id_list:
-        return suggested_id
-    else:
-        used_id_list.sort()
-        last_used_id = used_id_list[len(used_id_list) - 1:]
-        sr_id = int(last_used_id[0][3:])
-        sr_id += 1
-        return entity_type.upper()[:3]+str(sr_id)
+
+def _generate_new_code(entity_type, count):
+    SHORT_CODE_FORMAT = "%s%s"
+    ENTITY_PREFIX = entity_type.upper()[:3]
+    return   SHORT_CODE_FORMAT % (ENTITY_PREFIX,count + 1)
+
 
 def get_entities_by_type(dbm, entity_type):
     # TODO: change this?  for now it assumes _type is non-heirarchical
@@ -160,7 +164,7 @@ class Entity(DataObject):
     __document_class__ = EntityDocument
 
     def __init__(self, dbm, entity_type=None, location=None, aggregation_paths=None,
-                 geometry=None, centroid=None, gr_id=None, id=None, short_code = None):
+                 geometry=None, centroid=None, gr_id=None, id=None, short_code=None):
         '''Construct a new entity.
 
         Note: _couch_document is used for 'protected' factory methods and
@@ -344,7 +348,7 @@ class Entity(DataObject):
         """
         rows = self._dbm.load_all_rows_in_view(
             'mangrove_views/id_time_slug_value', key=self.id
-            )
+        )
         result = defaultdict(dict)
         for row in rows:
             row = row['value']
@@ -400,8 +404,8 @@ class Entity(DataObject):
         entity_id = self._doc.id
         time_since_epoch_of_date = int(mktime(date.timetuple())) * 1000
         rows = self._dbm.load_all_rows_in_view('mangrove_views/' + aggregate_fn, group_level=3, descending=False,
-                                                     startkey=[self.type_path, entity_id, field],
-                                                     endkey=[self.type_path, entity_id, field, time_since_epoch_of_date])
+                                               startkey=[self.type_path, entity_id, field],
+                                               endkey=[self.type_path, entity_id, field, time_since_epoch_of_date])
         # The above will return rows in the format described:
         # Row key=['clinic', 'e4540e0ae93042f4b583b54b6fa7d77a'],
         #   value={'beds': {'timestamp_for_view': 1420070400000, 'value': '15'},

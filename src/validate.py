@@ -19,7 +19,6 @@
 """
     The Validator object is used to check that supplied values
     conform to a specification.
-    
     The value can be supplied as a string - e.g. from a config file.
     In this case the check will also *convert* the value to
     the required type. This allows you to add validation

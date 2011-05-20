@@ -10,7 +10,6 @@ from mangrove.errors.MangroveException import QuestionCodeAlreadyExistsException
 from mangrove.form_model.form_model import FormModel, RegistrationFormModel
 from mangrove.datastore.datadict import DataDictType
 from mangrove.form_model.validation import NumericConstraint, TextConstraint
-from mangrove.form_model.form_model import get_form_model_by_code
 
 
 class TestFormModel(unittest.TestCase):
@@ -141,7 +140,7 @@ class TestFormModel(unittest.TestCase):
     def test_should_raise_exception_if_question_code_is_not_unique(self):
         with self.assertRaises(QuestionCodeAlreadyExistsException):
             form_model = self.dbm.get(self.form_model__id, FormModel)
-            question = TextField(name="added_question", question_code="Q1", label="How are you",
+            question = TextField(name="added_question", question_code="q1", label="How are you",
                                  ddtype=self.string_ddtype)
             form_model.add_field(question)
             form_model.save()
@@ -246,12 +245,12 @@ class TestFormModel(unittest.TestCase):
         self.assertTrue(self.form_model.is_valid(answers))
 
     def test_should_return_error_for_invalid_integer_value(self):
-        answers = {"ID": "1", "Q2": "200"}
+        answers = {"id": "1", "q2": "200"}
         self.assertFalse(self.form_model.is_valid(answers))
         self.assertEqual(len(self.form_model.errors), 1)
 
     def test_should_ignore_field_validation_if_the_answer_is_not_present(self):
-        answers = {"ID": "1", "Q1": "Asif Momin", "Q2": "20"}
+        answers = {"id": "1", "q1": "Asif Momin", "q2": "20"}
         expected_result = {"entity_question": "1", "question1_Name": "Asif Momin", "Father's age": 20}
         valid = self.form_model.is_valid(answers)
         self.assertTrue(valid)
@@ -262,12 +261,12 @@ class TestFormModel(unittest.TestCase):
         self.assertTrue(self.form_model.is_valid(answers))
 
     def test_should_return_errors_for_invalid_text_and_integer(self):
-        answers = {"ID": "1", "Q1": "Asif", "Q2": "200", "Q3": "a"}
+        answers = {"id": "1", "q1": "Asif", "q2": "200", "q3": "a"}
         self.assertFalse(self.form_model.is_valid(answers))
         self.assertEqual(len(self.form_model.errors), 2)
 
     def test_should_strip_whitespaces(self):
-        answers = {"Q1": "   My Name", "Q2": "  40 ", "Q3": "a     "}
+        answers = {"q1": "   My Name", "q2": "  40 ", "q3": "a     "}
         expected_cleaned_data = {"question1_Name": "My Name", "Father's age": 40, "Color": ["RED"]}
         valid = self.form_model.is_valid(answers)
         self.assertTrue(valid)
@@ -275,7 +274,7 @@ class TestFormModel(unittest.TestCase):
         self.assertEqual(self.form_model.cleaned_data, expected_cleaned_data)
 
     def test_should_ignore_fields_without_values(self):
-        answers = {"Q1": "My Name", "Q2": "", "Q3": "   "}
+        answers = {"q1": "My Name", "q2": "", "q3": "   "}
         expected_cleaned_data = {"question1_Name": "My Name"}
         valid = self.form_model.is_valid(answers)
         self.assertTrue(valid)
@@ -330,3 +329,12 @@ class TestFormModel(unittest.TestCase):
         form_model2.save()
         with self.assertRaises(DataObjectAlreadyExists):
             form_model2.form_code = "1"
+
+    def test_should_not_raise_exception_if_form_code_is_updated(self):
+        question1 = TextField(name="entity_question", question_code="ID", label="What is associated entity",
+                              language="eng", entity_question_flag=True, ddtype=self.string_ddtype)
+        form_model2 = FormModel(self.dbm, entity_type=self.entity_type, name="aids", label="Aids form_model",
+                                    form_code="2", type='survey', fields=[question1])
+        form_model2.save()
+        form_model2.form_code = "2"
+        form_model2.save()

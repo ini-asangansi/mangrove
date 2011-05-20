@@ -43,7 +43,7 @@ class TestSubmissions(TestCase):
         self.assertEquals(request.destination, submission_log.destination)
         self.assertEquals(False, submission_log. status)
         self.assertEquals("QR1", submission_log.form_code)
-        self.assertEquals({'Q1': '20', 'EID': '100'}, submission_log.values)
+        self.assertEquals({'q1': '20', 'eid': '100'}, submission_log.values)
         self.assertEquals(request.destination, submission_log.destination)
 
     def test_should_check_if_submission_by_registered_reporter(self):
@@ -84,7 +84,7 @@ class TestSubmissions(TestCase):
         self.assertIsInstance(sub_handler.get_player_for_transport(request), WebPlayer)
     
     def test_should_return_UnknownTransportException_for_unknown_transport(self):
-        with self.assertRaises(UnknownTransportException) :
+        with self.assertRaises(UnknownTransportException):
             request = Request(transport='garbage', message='blah', source='rep1', destination='HNI')
             mock_dbm = Mock(spec=DatabaseManager)
             sub_handler = SubmissionHandler(dbm=mock_dbm)

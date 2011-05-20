@@ -10,7 +10,7 @@ from testdata.test_data import DATA_WINNER_REGISTER_PAGE
 
 class TestRegistrationPage(BaseTest):
 
-    @attr('functional_test')
+    @attr('functional_test', 'smoke')
     def test_successful_registration(self):
 
         self.driver.go_to(DATA_WINNER_REGISTER_PAGE)

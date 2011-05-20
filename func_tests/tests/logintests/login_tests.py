@@ -10,7 +10,7 @@ from tests.logintests.login_data import *
 
 class TestLoginPage(BaseTest):
 
-    @attr('functional_test')
+    @attr('functional_test', 'smoke')
     def test_login_with_valid_credentials(self):
         self.driver.go_to(DATA_WINNER_LOGIN_PAGE)
         login_page = LoginPage(self.driver)

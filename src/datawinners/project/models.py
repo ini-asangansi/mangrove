@@ -1,6 +1,8 @@
 from couchdb.mapping import  TextField, ListField
-from mangrove.datastore.database import get_db_manager, DatabaseManager
+from mangrove.datastore.database import  DatabaseManager
 from mangrove.datastore.documents import DocumentBase
+from mangrove.errors.MangroveException import DataObjectAlreadyExists
+from mangrove.utils.types import  is_string
 
 
 class Project(DocumentBase):
@@ -12,6 +14,7 @@ class Project(DocumentBase):
     qid = TextField()
 
     def __init__(self, id=None, name=None, goals=None, project_type=None, entity_type=None, devices=None):
+        assert entity_type is None or is_string(entity_type), "Entity type %s should be a string." % (entity_type,)
         DocumentBase.__init__(self, id=id, document_type='Project')
         self.devices = []
         self.name = name
@@ -20,22 +23,26 @@ class Project(DocumentBase):
         self.entity_type = entity_type
         self.devices = devices
 
-    def save(self, dbm=None):
-        if dbm is None:
-            dbm = get_db_manager()
+    def _check_if_project_name_unique(self, dbm):
+        rows = dbm.load_all_rows_in_view('datawinners_views/all_projects', key=self.name)
+        if len(rows) and rows[0]['value']['_id'] != self.id:
+            raise DataObjectAlreadyExists('Project', "Name", "'%s'"%self.name )
+
+    def save(self, dbm):
         assert isinstance(dbm, DatabaseManager)
+        self._check_if_project_name_unique(dbm)
         return dbm._save_document(self).id
 
-    def update(self, value_dict):
+    def update(self, dbm, value_dict):
         attribute_list = [item[0] for item in (self.items())]
         for key in value_dict:
             if key in attribute_list:
                 setattr(self, key, value_dict.get(key))
 
 
-def get_project(pid, dbm=get_db_manager()):
+def get_project(pid, dbm):
     return dbm._load_document(pid, Project)
 
 
-def get_all_projects(dbm=get_db_manager()):
+def get_all_projects(dbm):
     return dbm.load_all_rows_in_view('datawinners_views/' + 'all_projects')

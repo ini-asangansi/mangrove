@@ -100,7 +100,7 @@ class FormModel(DataObject):
     def validate_uniqueness_of_field_codes(self):
         """ Validate all question codes are unique
         """
-        code_list = [f.question_code for f in self.form_fields]
+        code_list = [f.question_code.lower() for f in self.form_fields]
         code_list_without_duplicates = list(set(code_list))
         if len(code_list) != len(code_list_without_duplicates):
             raise QuestionCodeAlreadyExistsException("All question codes must be unique")
@@ -142,7 +142,7 @@ class FormModel(DataObject):
     def is_valid(self, answers):
         success = True
         for field in self.form_fields:
-            answer = answers.get(field.question_code)
+            answer = answers.get(field.question_code.lower())
             if not is_empty(answer):  # ignore empty answers
                 is_valid = self._validate_answer_for_field(answer, field)
                 if success is True:
@@ -176,7 +176,8 @@ class FormModel(DataObject):
 
     @form_code.setter
     def form_code(self, value):
-        self._check_if_form_code_is_unique(value)
+        if value != self._doc.form_code:
+            self._check_if_form_code_is_unique(value)
         self._doc.form_code = value
 
     @property
@@ -209,8 +210,9 @@ class RegistrationFormModel(FormModel):
 
     def __init__(self, dbm, name=None, form_code=None, fields=None, entity_type=None,
                  language="eng"):
-        FormModel.__init__(self, dbm, name=name, label=None, form_code=form_code, fields=fields, entity_type=entity_type
-                           , type='registration',
+        FormModel.__init__(self, dbm, name=name, label=None, form_code=form_code, fields=fields,
+                           entity_type=entity_type,
+                           type='registration',
                            language=language)
 
     def validate_existence_of_only_one_entity_type_field(self):
@@ -248,9 +250,9 @@ class FormSubmission(object):
         self.form_model = form_model
         self.form_answers = form_answers
         entity_question = self.form_model.entity_question
-        self.short_code = self.form_answers.get(entity_question.question_code)
+        self.short_code = self.form_answers.get(entity_question.question_code.lower())
         if self.short_code is not None:
-            del form_answers[entity_question.question_code]
+            del form_answers[entity_question.question_code.lower()]
         self.form_code = self.form_model.form_code
         self.answers = form_model
 

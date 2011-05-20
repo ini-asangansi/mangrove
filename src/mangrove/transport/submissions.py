@@ -10,11 +10,11 @@ from mangrove.datastore.documents import SubmissionLogDocument
 from mangrove.datastore import entity
 from mangrove.datastore import reporter
 from mangrove.datastore.entity import Entity
-from mangrove.errors.MangroveException import MangroveException, FormModelDoesNotExistsException, NumberNotRegisteredException, EntityQuestionCodeNotSubmitted
+from mangrove.errors.MangroveException import MangroveException, FormModelDoesNotExistsException, NumberNotRegisteredException, EntityQuestionCodeNotSubmitted, ShortCodeAlreadyInUseException
 from mangrove.form_model import form_model
 from mangrove.form_model.form_model import FormSubmission, RegistrationFormSubmission
 from mangrove.transport.player.player import SMSPlayer, WebPlayer
-from mangrove.utils.types import is_string
+from mangrove.utils.types import is_string, is_empty
 
 
 class Request(object):
@@ -27,25 +27,28 @@ class Request(object):
 
 class Response(object):
     SUCCESS_RESPONSE_TEMPLATE = "Thank You %s for your submission."
-    RECORD_ID_TEMPLATE = "The record id is - %s"
+
     ERROR_RESPONSE_TEMPLATE = "%s"
 
-    def __init__(self, reporters, success, errors, submission_id=None, datarecord_id=None,include_id_in_message=False):
+    def __init__(self, reporters, success, errors, submission_id=None, datarecord_id=None,short_code = None,additional_text = None):
+        self.reporters = reporters if reporters is not None else []
         self.success = success
         self.submission_id = submission_id
         self.errors = errors
         self.datarecord_id = datarecord_id
         if success:
-            self.message = self._templatize_success_response_with_reporter_name_and_ids(reporters,include_id_in_message)
+            self.message = self._templatize_success_response(additional_text)
         else:
             self.message = self._templatize_error_response()
+        self.short_code = short_code
 
-    def _templatize_success_response_with_reporter_name_and_ids(self, reporters,include_id_in_message):
-        success_message = Response.SUCCESS_RESPONSE_TEMPLATE % (
-        reporters[0]["first_name"] if len(reporters) == 1 else "")
-        if include_id_in_message is True:
-            record_id_message = Response.RECORD_ID_TEMPLATE % self.datarecord_id
-            success_message += " " + record_id_message
+    def _get_reporter_name(self):
+        return self.reporters[0]["first_name"] if len(self.reporters) == 1 else ""
+
+    def _templatize_success_response(self, additional_text):
+        success_message = Response.SUCCESS_RESPONSE_TEMPLATE % (self._get_reporter_name())
+        if additional_text:
+            success_message += " " + additional_text
         return success_message
 
     def _templatize_error_response(self):
@@ -92,7 +95,7 @@ class SubmissionHandler(object):
                     e = entity.get_by_short_code(self.dbm, form_submission.short_code)
                     data_record_id = e.add_data(data=form_submission.values, submission_id=submission_id)
                     self.update_submission_log(submission_id, True, errors=[])
-                    return Response(reporters, True, errors, submission_id,data_record_id)
+                    return Response(reporters, True, errors, submission_id, data_record_id)
                 else:
                     errors.extend(form_submission.errors)
                     self.update_submission_log(submission_id, False, errors)
@@ -100,8 +103,11 @@ class SubmissionHandler(object):
                 form_submission = RegistrationFormSubmission(form, values)
                 if form_submission.is_valid():
                     entity_type = form.answers.get('entity_type')
-                    short_code = entity.generate_entity_short_code(self.dbm, entity_type,
-                                                                   suggested_id=form.answers.get("short_name"))
+                    suggested_id=form.answers.get("short_name")
+                    if is_empty(suggested_id):
+                        short_code = entity.generate_short_code(self.dbm, entity_type)
+                    else:
+                        short_code = suggested_id.strip()
                     e = Entity(self.dbm, entity_type=entity_type, location=form.location,
                                aggregation_paths=form.aggregation_paths, short_code=short_code)
                     e.save()
@@ -114,10 +120,11 @@ class SubmissionHandler(object):
                     data = [("description", description, description_type),
                             ("mobile_number", mobile_number, mobile_number_type),
                             ]
-                    e.add_data(data=data, submission_id=submission_id)
+                    data_record_id = e.add_data(data=data, submission_id=submission_id)
                     self.update_submission_log(submission_id, True, errors=[])
                     #                   TODO: Get rid of the reporters from this
-                    return Response([{'first_name': 'User'}], True, errors, submission_id, short_code,include_id_in_message=True)
+                    return Response(None, True, errors, submission_id,
+                                    datarecord_id = data_record_id,short_code = short_code,additional_text=self._get_registration_text(short_code))
                 else:
                     errors.extend(form_submission.errors)
                     self.update_submission_log(submission_id, False, errors)
@@ -128,6 +135,8 @@ class SubmissionHandler(object):
             errors.append(e.message)
         except EntityQuestionCodeNotSubmitted as e:
             errors.append(e.message)
+        except ShortCodeAlreadyInUseException as e:
+            errors.append(e.message)
         return Response(reporters, False, errors, submission_id)
 
     def get_player_for_transport(self, request):
@@ -137,6 +146,10 @@ class SubmissionHandler(object):
             return WebPlayer()
         else:
             raise UnknownTransportException(("No handler defined for transport %s") % request.transport)
+
+    def _get_registration_text(self,short_code):
+        RECORD_ID_TEMPLATE = "The short code is - %s"
+        return RECORD_ID_TEMPLATE % (short_code,)
 
 
 def get_submissions_made_for_questionnaire(dbm, form_code, page_number=0, page_size=20, count_only=False):

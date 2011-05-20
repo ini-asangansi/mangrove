@@ -22,7 +22,7 @@ class TestRegisterReporter(BaseTest):
         # doing reporter registration
         return dashboard_page.navigate_to_register_reporter_page()
 
-    @attr('functional_test')
+    @attr('functional_test', 'smoke')
     def test_successful_registration_of_reporter(self):
         """
         Function to test the successful registration of reporter with given
