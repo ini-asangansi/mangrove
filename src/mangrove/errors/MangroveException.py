@@ -41,6 +41,10 @@ class EntityQuestionCodeNotSubmitted(MangroveException):
     def __init__(self):
         MangroveException.__init__(self, "The submission does not contain entity question code.")
 
+class EntityTypeCodeNotSubmitted(MangroveException):
+    def __init__(self):
+        MangroveException.__init__(self, "The submission does not contain entity type code.")
+
 
 class EntityQuestionAlreadyExistsException(MangroveException):
     pass
@@ -65,59 +69,59 @@ class EntityInstanceDoesNotExistsException(MangroveException):
 
 
 class AnswerTooBigException(MangroveException):
-    def __init__(self, question_code, answer):
+    def __init__(self, code, answer):
         MangroveException.__init__(self,
-                                   ("Answer %s for question %s is greater than allowed.") % (answer, question_code,))
+                                   ("Answer %s for question %s is greater than allowed.") % (answer, code,))
 
 
 class AnswerTooSmallException(MangroveException):
-    def __init__(self, question_code, answer):
+    def __init__(self, code, answer):
         MangroveException.__init__(self,
-                                   ("Answer %s for question %s is smaller than allowed.") % (answer, question_code,))
+                                   ("Answer %s for question %s is smaller than allowed.") % (answer, code,))
 
 
 class AnswerTooLongException(MangroveException):
-    def __init__(self, question_code, answer):
+    def __init__(self, code, answer):
         MangroveException.__init__(self,
-                                   ("Answer %s for question %s is longer than allowed.") % (answer, question_code,))
+                                   ("Answer %s for question %s is longer than allowed.") % (answer, code,))
 
 
 class AnswerTooShortException(MangroveException):
-    def __init__(self, question_code, answer):
+    def __init__(self, code, answer):
         MangroveException.__init__(self,
-                                   ("Answer %s for question %s is shorter than allowed.") % (answer, question_code,))
+                                   ("Answer %s for question %s is shorter than allowed.") % (answer, code,))
 
 
 class AnswerHasTooManyValuesException(MangroveException):
-    def __init__(self, question_code, answer):
+    def __init__(self, code, answer):
         MangroveException.__init__(self,
                                    ("Answer %s for question %s contains more than one value.") % (
-                                   answer, question_code,))
+                                   answer, code,))
 
 
 class AnswerHasNoValuesException(MangroveException):
-    def __init__(self, question_code, answer):
+    def __init__(self, code, answer):
         MangroveException.__init__(self,
-                                   ("Answer %s for question %s contains more than one value.") % (
-                                   answer, question_code,))
+                                   ("Answer %s for question %s has no value.") % (
+                                   answer, code,))
 
 
 class AnswerNotInListException(MangroveException):
-    def __init__(self, question_code, answer):
+    def __init__(self, code, answer):
         MangroveException.__init__(self,
                                    ("Answer %s for question %s is not present in the allowed options.") % (
-                                   answer, question_code,))
+                                   answer, code,))
 
 
 class AnswerWrongType(MangroveException):
-    def __init__(self, question_code):
-        MangroveException.__init__(self, ("Answer to question %s is of wrong type.") % (question_code,))
+    def __init__(self, code):
+        MangroveException.__init__(self, ("Answer to question %s is of wrong type.") % (code,))
 
 
 class IncorrectDate(MangroveException):
-    def __init__(self, question_code, answer, date_format):
+    def __init__(self, code, answer, date_format):
         MangroveException.__init__(self, ('Answer to question %s is invalid: %s, expected date in %s format') %
-                                         (question_code, answer, date_format))
+                                         (code, answer, date_format))
 
 
 class NoDocumentError(MangroveException):
@@ -134,3 +138,25 @@ class ShortCodeAlreadyInUseException(MangroveException):
     def __init__(self, short_code):
             MangroveException.__init__(self, ('The ID %s is already in use. Please specify another') %
                                              (short_code,))
+
+class LatitudeNotFloat(MangroveException):
+    def __init__(self,lat):
+        MangroveException.__init__(self, ('The value for Latitude %s should be float') %
+                                         (lat,))
+
+class LongitudeNotFloat(MangroveException):
+    def __init__(self,long):
+        MangroveException.__init__(self, ('The value for Longitude %s should be float') %
+                                         (long,))
+class LongitudeNotInRange(MangroveException):
+    def __init__(self,long):
+        MangroveException.__init__(self, ('%s is an invalid longitude, must be between -180 and 180') %
+                                         (long,))
+class LatitudeNotInRange(MangroveException):
+    def __init__(self,lat):
+        MangroveException.__init__(self, ('%s is an invalid latitude, must be between -90 and 90') %
+                                         (lat,))
+
+class GeoCodeFormatException(MangroveException):
+    def __init__(self):
+        MangroveException.__init__(self, "GPS coordinates must be in the format 'lat long'.")
