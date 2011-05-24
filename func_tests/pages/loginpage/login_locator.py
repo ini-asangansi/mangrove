@@ -24,4 +24,4 @@ PASSWORD_TB = by_css("input[name=password]")
 LOGIN_BTN = by_css("input[value=Login]")
 
 
-ERROR_MESSAGE_LABEL = by_css("div[class~='error']")
+ERROR_MESSAGE_LABEL = by_xpath("//li[contains(@class,'error')] | //div[contains(@class,'error')]")

@@ -18,6 +18,6 @@ from framework.utils.common_utils import *
 LOCATOR = "locator"
 BY = "by"
 
-WELCOME_MESSAGE_LABEL = by_css("div.span-9>h4")
+WELCOME_MESSAGE_LABEL = by_css("span.welcome")
 REGISTER_REPORTER_LINK = by_css("a[href='reporter/register']")
 CREATE_PROJECT_LINK = by_css("a[href='/project/profile/create']")

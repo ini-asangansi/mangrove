@@ -112,7 +112,7 @@ WITHOUT_ENTERING_REQUIRED_FIELDS = {ORGANIZATION_NAME: "",
                        EMAIL: "",
                        REGISTRATION_PASSWORD: "",
                        REGISTRATION_CONFIRM_PASSWORD: "",
-                       ERROR_MESSAGE: "* Organization name   This field is required.* Address Line 1  This field is required.* City  This field is required.* Country  This field is required.* Postal / Zip Code  This field is required.* First name  This field is required.* Last name  This field is required.Email address  This field is required.Password  This field is required.Password (again)  This field is required."}
+                       ERROR_MESSAGE: "* Organization name  This field is required.* Address Line 1  This field is required.* City  This field is required.* Country  This field is required.* Postal / Zip Code  This field is required.* First name  This field is required.* Last name  This field is required.Email address  This field is required.Password  This field is required.Password (again)  This field is required."}
 
 INVALID_WEBSITE_URL = {ORGANIZATION_NAME: "NGO 001",
                        ORGANIZATION_SECTOR: "PublicHealth",

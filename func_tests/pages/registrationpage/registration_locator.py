@@ -34,4 +34,4 @@ ORGANIZATION_PASSWORD_TB = by_css("input[name=password1]")
 ORGANIZATION_CONFIRM_PASSWORD_TB = by_css("input[name=password2]")
 ORGANIZATION_REGISTER_BTN = by_css("input[value=Register]")
 
-ERROR_MESSAGE_LABEL = by_css("ul[class~='errorlist']")
+ERROR_MESSAGE_LABEL = by_css("li[class~='error']")
