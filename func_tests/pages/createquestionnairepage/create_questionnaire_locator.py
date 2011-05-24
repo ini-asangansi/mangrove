@@ -19,7 +19,7 @@ LOCATOR = "locator"
 BY = "by"
 
 QUESTIONNAIRE_CODE_TB = by_css("input#questionnaire-code")
-QUESTION_TB = by_xpath("//input[@id='question']")
+QUESTION_TB = by_xpath("//input[@id='question_title']")
 CODE_TB = by_css("input#code")
 WORD_OR_PHRASE_RB = by_css("input[value='text']")
 NO_CHARACTER_LIMIT_RB = by_xpath("//li[not(contains(@style,'none')) and contains(@data-bind,'showAddTextLength')]/div/input[@value='length_unlimited']")
