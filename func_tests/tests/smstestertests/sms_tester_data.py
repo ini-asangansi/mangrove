@@ -29,7 +29,7 @@ EXCEED_NAME_LENGTH2 = {SENDER: "1234567890",
               SMS: "CLI002 +EID CID005 +NA Mr. O'brain +FA 58 +RD 17.05.2011 +BG b +SY ade",
               ERROR_MSG: "Answer Mr. O'brain for question NA is longer than allowed."}
 
-BLANK_FIELDS = {SENDER: "ddddd",
+BLANK_FIELDS = {SENDER: "",
               RECEIVER: "",
               SMS: "",
               ERROR_MSG: "From *   This field is required.To *   This field is required.SMS *   This field is required."}
