@@ -9,7 +9,10 @@ class BaseTest(unittest.TestCase):
         self.driver = DriverInitializer.initialize("firefox")
 
     def tearDown(self):
-        self.driver.quit()
+        try:
+            self.driver.quit()
+        except TypeError as e:
+            pass
 
 if __name__ == "__main__":
     unittest.main()
