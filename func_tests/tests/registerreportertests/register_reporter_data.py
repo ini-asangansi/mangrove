@@ -14,7 +14,7 @@ VALID_DATA = {FIRST_NAME: "Mickey",
               LAST_NAME: "Duck",
               TELEPHONE_NUMBER: "9876543210",
               COMMUNE: "urbaine",
-              SUCCESS_MSG: "The reporter was successfully registered with id"}
+              SUCCESS_MSG: "Thank You for your submission. The short code is -"}
 
 BLANK_FIELDS = {FIRST_NAME: "",
               LAST_NAME: "",
