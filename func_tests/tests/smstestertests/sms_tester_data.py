@@ -22,12 +22,12 @@ VALID_DATA2 = {SENDER: "1234567890",
 EXCEED_NAME_LENGTH = {SENDER: "1234567890",
               RECEIVER: "0987654321",
               SMS: "CLI001 +EID CID003 +NA Mr. O'brain +FA 58 +RD 17.05.2011 +BG b +SY ade",
-              ERROR_MSG: "Answer Mr. O'brain for question NA is longer than allowed."}
+              ERROR_MSG: "Error. Invalid Submission. Refer to printed Questionnaire. Resend the question ID and answer for NA"}
 
 EXCEED_NAME_LENGTH2 = {SENDER: "1234567890",
               RECEIVER: "0987654321",
               SMS: "CLI002 +EID CID005 +NA Mr. O'brain +FA 58 +RD 17.05.2011 +BG b +SY ade",
-              ERROR_MSG: "Answer Mr. O'brain for question NA is longer than allowed."}
+              ERROR_MSG: "Error. Invalid Submission. Refer to printed Questionnaire. Resend the question ID and answer for NA"}
 
 BLANK_FIELDS = {SENDER: "",
               RECEIVER: "",
