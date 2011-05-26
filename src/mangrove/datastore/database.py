@@ -5,6 +5,7 @@ from threading import Lock
 from couchdb.design import ViewDefinition
 from couchdb.http import ResourceNotFound
 import couchdb.client
+from mangrove.datastore.documents import DataRecordDocument
 
 from settings import *
 import config
@@ -120,6 +121,7 @@ class DatabaseManager(object):
         self.url = (server if server is not None else SERVER)
         self.database_name = database or DATABASE
         self.server = couchdb.client.Server(self.url)
+        self.bulk = []
         try:
             self.database = self.server[self.database_name]
         except ResourceNotFound:
@@ -234,6 +236,10 @@ class DatabaseManager(object):
                 if id in self.doc_cache:
                     obj = self.doc_cache[id]
         return obj
+
+    def _save_document_bulk(self,doc):
+        if isinstance(doc,DataRecordDocument):
+            self.bulk.append(doc)
 
     def save(self, d_obj):
         assert isinstance(d_obj, DataObject)

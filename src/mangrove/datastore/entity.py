@@ -413,6 +413,40 @@ class Entity(DataObject):
         '''
         return dict([(dd_type.slug, self.value(dd_type.slug)) for dd_type in self.data_types()])
 
+    def add_data_bulk(self, data=(), event_time=None, submission_id=None):
+        '''Add a new datarecord to this Entity and return a UUID for the datarecord.
+
+        Arguments:
+        data -- a sequence of ordered tuples, (label, value, type) where type is a DataDictType
+        submission_id -- an id to a 'submission' document in the submission log from which
+                        this data came
+        event_time -- the time at which the event occured rather than when it was reported
+
+        This is stored in couch as:
+            submission_id = "..."
+            event_time = "..."
+            data: [
+                            { 'type': <DataDictDocument>,'value': x},
+                            ...
+                        ]
+        '''
+        assert is_sequence(data)
+        assert event_time is None or isinstance(event_time, datetime)
+        assert self.id is not None  # should never be none, even if haven't been saved, should have a UUID
+        # TODO: should we have a flag that says that this has been saved at least once to avoid adding data
+        # records for an Entity that may never be saved? Should docs just be saved on init?
+        if event_time is None:
+            event_time = utcnow()
+        data_list = []
+        for (label, value, dd_type) in data:
+            if not isinstance(dd_type, DataDictType) or is_empty(label):
+                raise ValueError('Data must be of the form (label, value, DataDictType).')
+            data_list.append((label, dd_type, value))
+
+        data_record_doc = DataRecordDocument(entity_doc=self._doc, event_time=event_time,
+                                             data=data_list, submission_id=submission_id)
+        self._dbm._save_document_bulk(data_record_doc)
+
 
     def value(self, label):
         '''Returns the latest value for the given label.'''
