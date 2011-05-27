@@ -4,17 +4,18 @@
    contain the root `toctree` directive.
 
 ==============
-About Mangrove  
+About Mangrove
 ==============
 
-[Awesome project description coming soon!]
+Mangrove is an open source platform for exploring data with location
+and time information.
 
-============    ====================================================================
+============    ==========================================
 Project Home    http://mangroveorg.github.com
 Email           http://groups.google.com/group/mangroveorg
 IRC chat        `#mangrove`_  on freenode.net
 Source          https://github.com/mangroveorg/mangrove
-============    ====================================================================
+============    ==========================================
 
 .. _\#mangrove: irc://chat.freenode.net:6667/mangrove
  
@@ -28,14 +29,15 @@ Project Organization
     faces
     developerpractices
     setup_dev_env    
-Design & Tech Docs
-==================
+
+Design and Technical Documents
+==============================
 
 ..  toctree::
     :maxdepth: 2
     
-    concepts
     datastore_api
+    concepts
     api_toplevel_spec
     datadict_api
     querying_by_loc_and_time
