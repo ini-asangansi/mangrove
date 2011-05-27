@@ -1,6 +1,6 @@
-*********************
+**********************************
 Data Dictionary Concept and usages
-*********************
+**********************************
 
 The data dictionary is an stand alone service that hosts data type definitions in order to allow user to share them.
 
