@@ -11,6 +11,7 @@ $(document).ready(function(){
         else{
             $('#short_name').attr('disabled', 'disabled');
             $('#short_name').attr('class', '');
+            DW.viewModel.message.s=ko.observable("")
         }
     })
 
@@ -23,7 +24,7 @@ $(document).ready(function(){
                     $('#message').remove();
                     if(d.success)
                     {
-                        $('<span id="message" class="success_message">' + d.message + ', registered entity ' + d.entity_id + '</span>').insertBefore($('#question_form'));
+                        $('<span id="message" class="success_message">' + d.message  + '</span>').insertBefore($('#question_form'));
                         $('#message').delay(10000).fadeOut();
                     }
                     else
