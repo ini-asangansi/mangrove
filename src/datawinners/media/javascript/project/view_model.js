@@ -4,19 +4,20 @@ var viewModel =
         addQuestion : function(){
         var question = new DW.question();
             question.display = ko.dependentObservable(function(){
-                return this.title() + ' ' + this.question_code();
+                return this.title() + ' ' + this.code();
             }, question);
             var test_code = DW.generateQuestionCode();
-//            question.options.question_code =
-            question.question_code(viewModel.check_unique_code(test_code))
+//            question.options.code =
+            question.code(viewModel.check_unique_code(test_code))
             viewModel.questions.push(question);
             viewModel.selectedQuestion(question);
             viewModel.selectedQuestion.valueHasMutated();
             viewModel.questions.valueHasMutated();
+            DW.charCount();
         },
         loadQuestion: function(question){
             question.display = ko.dependentObservable(function(){
-                return this.title() + ' ' + this.question_code();
+                return this.title() + ' ' + this.code();
             }, question);
             viewModel.questions.push(question);
             viewModel.questions.valueHasMutated();
@@ -72,10 +73,10 @@ var viewModel =
         },
         check_unique_code: function(test_code) {
             for (var q in viewModel.questions()) {
-                console.log(viewModel.questions()[q].question_code());
-                if (test_code == viewModel.questions()[q].question_code()) {
+                if (test_code == viewModel.questions()[q].code()) {
                     test_code = DW.generateQuestionCode();
                     test_code = viewModel.check_unique_code(test_code);
+                    return test_code;
                 }
             }
             return test_code;

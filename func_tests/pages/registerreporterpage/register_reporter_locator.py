@@ -24,5 +24,5 @@ TELEPHONE_NUMBER_TB = by_css("input#id_telephone_number")
 COMMUNE_TB = by_css("input#id_commune")
 
 REGISTER_BTN = by_css("input[value='Register']")
-ERROR_MESSAGE_LABEL = by_css("div[class~='error']")
+ERROR_MESSAGE_LABEL = by_css("li[class~='error']")
 FLASH_MESSAGE_LABEL = by_xpath("//div[@id='flash-message' and not(contains(@id, 'none'))]")

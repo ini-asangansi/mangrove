@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    export TESTCHOICE="all"
+else
+    case $1 in
+	"ft")
+	    export TESTCHOICE="ft"
+	    ;;
+	"sm")
+	    export TESTCHOICE="sm"
+	    ;;
+	"ut")
+	    export TESTCHOICE="ut"
+	    ;;
+	"all")
+	    export TESTCHOICE="all"
+	    ;;
+	*)
+	    export TESTCHOICE="all"
+	    ;;
+    esac
+fi
+
+if [ ${TESTCHOICE} != "ut" ]; then
+    if [ `which vncserver | wc -w` -eq 0 ]
+    then
+        echo "Please install vncserver for successful execution of this job. Using sudo apt-get install vnc4server"
+        exit 0
+    fi
+    vncserver :1
+    DISPLAY=:1 ./runtests.sh ${TESTCHOICE}
+    sleep 5
+    vncserver -kill :1
+else
+    ./runtests.sh ${TESTCHOICE}
+fi
+
+exit 0

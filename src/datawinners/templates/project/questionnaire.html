@@ -1,6 +1,6 @@
 {% extends 'step_wizard.html' %}
 
-{% block page_title %} Create a Questionnaire {% endblock %}
+{% block page_title %} Questionnaire {% endblock %}
 {% block page_scss %}
     {{ block.super }}
     <link href="/media/css/scss/section_questionnaire.scss" rel="stylesheet" />
@@ -18,10 +18,12 @@
         })
     </script>
     <script type="text/html" id="choice-template">
+        <li>
         <p>
-            <input data-bind="value: text"/>
+            <input id="choice_text" name="choice_text" type="text" data-bind="value: text"/>
             <a href="questionnaire.html#" data-bind="click:function(){viewModel.removeOptionFromQuestion($data)}">Delete</a>
         </p>
+        </li>
     </script>
     <script type="text/html" id="question-list-template">
         <div class="question_list">
@@ -29,11 +31,11 @@
             {% templatetag openvariable %}each(i,question) questions{% templatetag closevariable %}
              <li>
                 <a href="questionnaire.html#"
-                   data-bind="text: question.display, click: function() {$('#question_form').validate(); if($('#question_form').valid()) viewModel.changeSelectedQuestion(question); } ">
+                   data-bind="text: question.display, click: function() { if($('#question_form').valid()) viewModel.changeSelectedQuestion(question); } ">
                 </a>
              <div>
                  <span data-bind="visible: question.canBeDeleted()" class="delete">
-                     <a href="questionnaire.html#" data-bind="click: function() {$('#question_form').validate(); if($('#question_form').valid()) viewModel.removeQuestion(question); }">Delete</a>
+                     <a href="questionnaire.html#" data-bind="click: function() {if($('#question_form').valid()) viewModel.removeQuestion(question); }">Delete</a>
                 </span>
               </div>
              </li>
@@ -71,7 +73,7 @@
                 </div>
                 <div class="add_question">
                     <a href="questionnaire.html#"
-                       data-bind="click: function() {$('#question_form').validate(); if($('#question_form').valid()) viewModel.addQuestion();}">Add
+                       data-bind="click: function() { if($('#question_form').valid()) viewModel.addQuestion();}">Add
                         a Question</a>
                 </div>
             </div>
@@ -83,13 +85,13 @@
                         <ul>
                             <li>
                                 <label>Question</label>
-                                <input id="question" name="question" type="text" class="required"
-                                       data-bind="value: selectedQuestion().title"/>
+                                <input id="question_title" name="question_title" type="text" class="required"
+                                       data-bind="value: selectedQuestion().title, uniqueName: true "/>
                             </li>
                             <li>
                                 <label>Code</label>
                                 <input id="code" name="code" type="text" class="required"
-                                       data-bind="value: selectedQuestion().question_code"/>
+                                       data-bind="value: selectedQuestion().code"/>
                             </li>
                             <li class="margin_null" data-bind="visible: !selectedQuestion().is_entity_question()">
                                 <label>Type</label>
@@ -106,6 +108,10 @@
                                 <div><input type="radio" name="type" value="choice"
                                             data-bind="checked: selectedQuestion().isAChoiceTypeQuestion"
                                             class="choice-question-checkbox required"/> List of Choices
+                                </div>
+                                <div><input type="radio" name="type" value="geocode"
+                                            data-bind="checked: selectedQuestion().type"
+                                            class="required"/> Geo Code
                                 </div>
                             </li>
                             <li data-bind="visible: viewModel.showDateFormats()">
@@ -128,8 +134,9 @@
                             </li>
                             <li data-bind="visible: viewModel.showAddChoice()">
                                 <div class="margin_top_20">
-                                    <div data-bind="template: { name : 'choice-template',foreach : selectedQuestion().choices }">
-                                    </div>
+                                    <ol class="alpha_list" data-bind="template: { name : 'choice-template',foreach : selectedQuestion().choices }">
+
+                                    </ol>
                                     <a href="questionnaire.html#" data-bind="click: function() { viewModel.addOptionToQuestion(); }">Add
                                         Choice</a>
                                 </div>
@@ -146,12 +153,12 @@
                                 <div class="margin_top_20">
                                     <p>
                                         Min:
-                                        <input name="range_min" id="range_min" data-bind="value:selectedQuestion().range_min"/>
+                                        <input name="range_min" type="text" id="range_min" data-bind="value:selectedQuestion().range_min"/>
                                     </p>
 
                                     <p>
                                         Max:
-                                        <input name="range_max" id="range_max" data-bind="value:selectedQuestion().range_max"/>
+                                        <input name="range_max" type="text" id="range_max" data-bind="value:selectedQuestion().range_max"/>
                                     </p>
                                 </div>
                             </li>
@@ -160,10 +167,10 @@
                                     <input type="radio" name="text_length" value="length_unlimited" checked = "true" data-bind="checked:selectedQuestion().length_limiter" />
                                     No, answer has no character limit<br/>
                                     <div class="max_char">
-                                        <input type="radio" name="text_length" value="length_limited" data-bind="checked:selectedQuestion().length_limiter" />
+                                        <input type="radio"  name="text_length" value="length_limited" data-bind="checked:selectedQuestion().length_limiter" />
                                         <span class="inline">
                                             Yes, maximum number of characters should be
-                                            <input name="max_length" id="max_length" data-bind="value:selectedQuestion().max_length, visible: viewModel.showLengthLimiter()"/>
+                                            <input name="max_length"  type="text"  id="max_length" data-bind="value:selectedQuestion().max_length, visible: viewModel.showLengthLimiter()"/>
                                         </span>
                                     </div>
                                 </div>
@@ -171,6 +178,8 @@
                         </ul>
                     </fieldset>
                 </form>
+                <div id='char-count'>
+                </div>
             </div>
             <div>
             </div>

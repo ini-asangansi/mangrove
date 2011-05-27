@@ -3,6 +3,18 @@ DW.viewModel = {};
 $(document).ready(function(){
     var validator = $('#question_form').validate();
 
+    $('#autogen').unbind('change').change(function(){
+        if($('#autogen').attr('checked') != true){
+            $('#short_name').attr('disabled', '');
+            $('#short_name').attr('class', 'required');
+        }
+        else{
+            $('#short_name').attr('disabled', 'disabled');
+            $('#short_name').attr('class', '');
+            DW.viewModel.message.s=ko.observable("")
+        }
+    })
+
     $('#register_entity').unbind('click').click(function() {
         if($('#question_form').valid())
         {
@@ -12,7 +24,7 @@ $(document).ready(function(){
                     $('#message').remove();
                     if(d.success)
                     {
-                        $('<span id="message" class="success_message">' + d.message + ', registered entity ' + d.entity_id + '</span>').insertBefore($('#question_form'));
+                        $('<span id="message" class="success_message">' + d.message  + '</span>').insertBefore($('#question_form'));
                         $('#message').delay(10000).fadeOut();
                     }
                     else
@@ -22,16 +34,18 @@ $(document).ready(function(){
                }
             );
         }
-    });
+    }
+    );
 
     DW.viewModel = {
                     'message': {
-                                'N': ko.observable(),
-                                'S': ko.observable(),
-                                'T': ko.observable(),
-                                'L': ko.observable(),
-                                'D': ko.observable(),
-                                'M': ko.observable(),
+                                'n': ko.observable(),
+                                's': ko.observable(),
+                                't': ko.observable(),
+                                'l': ko.observable(),
+                                'd': ko.observable(),
+                                'm': ko.observable(),
+                                'g': ko.observable(),
                                 'form_code': 'REG'
                                 },
                     'transport': 'web',

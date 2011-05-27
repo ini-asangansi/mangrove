@@ -9,7 +9,7 @@ ERROR_MESSAGE = 'message'
 # valid credentials
 VALID_CREDENTIALS = {USERNAME: "tester150411@gmail.com",
                      PASSWORD: "tester150411",
-                     WELCOME_MESSAGE: "Welcome Mr. Tester Pune"}
+                     WELCOME_MESSAGE: "Welcome Tester!"}
 # invalid format email id
 INVALID_EMAIL_ID_FORMAT = {USERNAME: "com.invalid@mail",
                            PASSWORD: "nogo123",
