@@ -4,6 +4,7 @@ from mangrove.datastore.database import _delete_db_and_remove_db_manager, get_db
 from mangrove.datastore.entity import Entity, get_by_short_code, create_entity, generate_short_code, define_type
 from mangrove.errors.MangroveException import  DataObjectAlreadyExists, EntityTypeDoesNotExistsException
 
+
 class TestShortCode(unittest.TestCase):
 
 
@@ -23,7 +24,7 @@ class TestShortCode(unittest.TestCase):
         reporter.save()
 
         entity = create_entity(self.dbm, entity_type="Reporter")
-        self.assertEqual("Reporter/REP4", entity.id)
+        self.assertEqual("Reporter/rep4", entity.id)
         saved_entity = Entity.get(self.dbm, entity.id)
         self.assertEqual(entity.id, saved_entity.id)
 
@@ -54,14 +55,13 @@ class TestShortCode(unittest.TestCase):
         reporter = Entity(self.dbm, entity_type="Reporter", location=["Pune", "India"], short_code="REP2")
         reporter.save()
 
-        self.assertEqual("REP4", generate_short_code(self.dbm, ["Reporter"]))
-        self.assertEqual("CLI1", generate_short_code(self.dbm, ["Clinic"]))
+        self.assertEqual("rep4", generate_short_code(self.dbm, ["Reporter"]))
+        self.assertEqual("cli1", generate_short_code(self.dbm, ["Clinic"]))
 
     def test_should_get_entity_by_short_code(self):
-        reporter = Entity(self.dbm, entity_type="Reporter", location=["Pune", "India"], id="Reporter/REPX")
+        reporter = Entity(self.dbm, entity_type="Reporter", location=["Pune", "India"], id="Reporter/repx")
         reporter.save()
 
         entity = get_by_short_code(self.dbm, short_code="REPX", entity_type=["Reporter"])
         self.assertTrue(entity is not None)
-        self.assertEqual("Reporter/REPX", entity.id)
-
+        self.assertEqual("Reporter/repx", entity.id)

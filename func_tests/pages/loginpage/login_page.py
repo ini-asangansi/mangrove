@@ -65,5 +65,5 @@ class LoginPage(Page):
 
         Return RegistrationPage
         """
-        self.driver.find_element_by_css_selector("a[href='/register']").click()
+        self.driver.find(CREATE_AN_ACCOUNT_LINK).click()
         return RegistrationPage(self.driver)
