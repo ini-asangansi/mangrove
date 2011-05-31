@@ -36,5 +36,6 @@ class DropDown (WebElement):
         """ Selects the provided itemText in the drop down
         """
         for option in self.selectOptions:
-            if option.get_attribute("title") == itemText:
+            value = option.get_attribute("value")
+            if option.get_attribute("value") == itemText:
                 option.select()

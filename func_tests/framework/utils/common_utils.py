@@ -78,7 +78,7 @@ def get_epoch_last_four_digit():
 
 def generateId():
     epoch_last_four_digit = get_epoch_last_four_digit()
-    return get_random_three_digit_string() + str(epoch_last_four_digit)
+    return str(epoch_last_four_digit) + get_random_three_digit_string()
 
 
 # End of class and Starting of normal functions
