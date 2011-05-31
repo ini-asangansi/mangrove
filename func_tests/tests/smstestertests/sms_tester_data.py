@@ -9,7 +9,7 @@ ERROR_MSG = "message"
 SUCCESS_MESSAGE = "message"
 MESSAGE = "message"
 
-SUCCESS_MESSAGE_TEXT = "Thank you for your data record. We successfully received your submission."
+SUCCESS_MESSAGE_TEXT = "Thank you Shweta for your data record. We successfully received your submission."
 
 VALID_DATA = {SENDER: "1234567890",
               RECEIVER: "0987654321",
