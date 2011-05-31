@@ -20,4 +20,4 @@ VALID_DATA = {FIRST_NAME: "Mickey",
               LAST_NAME: "Duck",
               TELEPHONE_NUMBER: "9876543210",
               COMMUNE: "urbaine",
-              SUCCESS_MSG: "Registration has been successful. The short code is REP2."}
+              SUCCESS_MSG: "Registration has been successful. The short code is rep"}
