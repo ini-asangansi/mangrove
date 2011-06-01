@@ -11,14 +11,14 @@ ERROR_MSG = "message"
 PAGE_TITLE = "page_title"
 
 
-VALID_DATA = {PROJECT_NAME: "Water Point Morondava",
+VALID_DATA = {PROJECT_NAME: "Clinic Morondava",
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
               SUBJECT: "[u\\'Clinic\\']",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Questionnaire"}
 
-VALID_DATA2 = {PROJECT_NAME: "Water Point Morondava2",
+VALID_DATA2 = {PROJECT_NAME: "Clinic Morondava2",
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
               SUBJECT: "[u\\'Clinic\\']",
