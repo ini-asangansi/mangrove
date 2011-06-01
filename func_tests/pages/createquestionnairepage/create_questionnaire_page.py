@@ -1,6 +1,6 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 from time import time
-from framework.utils.common_utils import CommonUtilities
+from framework.utils.common_utils import CommonUtilities, generateId
 
 from pages.page import Page
 from framework.utils.data_fetcher import *
@@ -17,7 +17,8 @@ class CreateQuestionnairePage(Page):
         self.SELECT_FUNC = {WORD: self.configure_word_type_question,
                    NUMBER: self.configure_number_type_question,
                    DATE: self.configure_date_type_question,
-                   LIST_OF_CHOICES: self.configure_list_of_choices_type_question}
+                   LIST_OF_CHOICES: self.configure_list_of_choices_type_question,
+                   GEO: self.configure_geo_type_question}
 
     def get_title(self):
         """
@@ -37,8 +38,11 @@ class CreateQuestionnairePage(Page):
 
         Return self
         """
-        self.driver.find_text_box(QUESTIONNAIRE_CODE_TB).enter_text(
-            fetch_(QUESTIONNAIRE_CODE, from_(questionnaire_data)))
+        questionnaire_code = fetch_(QUESTIONNAIRE_CODE, from_(questionnaire_data))
+        gen_ramdom = fetch_(GEN_RANDOM, from_(questionnaire_data))
+        if gen_ramdom:
+            questionnaire_code = questionnaire_code + generateId()
+        self.driver.find_text_box(QUESTIONNAIRE_CODE_TB).enter_text(questionnaire_code)
         self.create_default_question(questionnaire_data[DEFAULT_QUESTION], DEFAULT_QUESTION_LINK)
         for question in fetch_(QUESTIONS, from_(questionnaire_data)):
             self.driver.find(ADD_A_QUESTION_LINK).click()
@@ -148,6 +152,18 @@ class CreateQuestionnairePage(Page):
             self.driver.find_radio_button(MULTIPLE_ANSWER_RB).click()
         return self
 
+    def configure_geo_type_question(self, question_data):
+        """
+        Function to select geo option on the questionnaire page
+
+        Args:
+        question_data is data to select geo type
+
+        return self
+        """
+        self.driver.find_radio_button(GEO_RB).click()
+        return self
+
     def get_error_message(self):
         """
         Function to fetch the error messages from error label of the register
@@ -176,6 +192,14 @@ class CreateQuestionnairePage(Page):
             return self.driver.find(SUCCESS_MESSAGE_LABEL).text
         else:
             return "Success message not appeared on the page."
+
+    def get_remaining_character_count(self):
+        """
+        Function to fetch the remaining character count from label of the questionnaire page
+
+        Return success message
+        """
+        return self.driver.find(CHARACTER_COUNT).text
 
     def get_question_link_text(self, question_number):
         """

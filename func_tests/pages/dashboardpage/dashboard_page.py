@@ -3,6 +3,7 @@ from pages.createprojectpage.create_project_page import CreateProjectPage
 from pages.dashboardpage.dashboard_locator import *
 from pages.page import Page
 from pages.registerreporterpage.register_reporter_page import ReporterRegistrationPage
+from pages.registersubjectpage.register_subject_page import RegisterSubjectPage
 
 
 class DashboardPage(Page):
@@ -37,3 +38,12 @@ class DashboardPage(Page):
          """
         self.driver.find(CREATE_PROJECT_LINK).click()
         return CreateProjectPage(self.driver)
+
+    def navigate_to_register_subject_page(self):
+        """
+        Function to navigate to register a subject page of the website.
+
+        Return register subject page
+         """
+        self.driver.find(REGISTER_SUBJECT_LINK).click()
+        return RegisterSubjectPage(self.driver)

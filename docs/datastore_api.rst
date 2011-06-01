@@ -1,6 +1,92 @@
-----------------------------
+====
+APIs
+====
+
+To get a quick idea of the current state of the mangrove.datastore
+API, we have included the API for all the files in
+mangrove/datastore/.
+
+Here's what's in mangrove.datastore:
+
+.. automodule:: mangrove.datastore
+    :members:
+
+---------------
+aggregationtree
+---------------
+.. automodule:: mangrove.datastore.aggregationtree
+    :members:
+
+------
+config
+------
+.. automodule:: mangrove.datastore.config
+    :members:
+
+--------
+database
+--------
+.. automodule:: mangrove.datastore.database
+    :members:
+
+--------
+datadict
+--------
+.. automodule:: mangrove.datastore.datadict
+    :members:
+
+----
+data
+----
+.. automodule:: mangrove.datastore.data
+    :members:
+
+----------
+datarecord
+----------
+.. automodule:: mangrove.datastore.datarecord
+    :members:
+
+---------
+documents
+---------
+.. automodule:: mangrove.datastore.documents
+    :members:
+
+------
+entity
+------
+.. automodule:: mangrove.datastore.entity
+    :members:
+
+-----------
+initializer
+-----------
+This module tries to import validate.py, but I can't get it to work on
+my machine.
+
+.. .. automodule:: mangrove.datastore.initializer
+..     :members:
+
+
+--------
+reporter
+--------
+This module tries to import validate.py, but I can't get it to work on
+my machine.
+
+.. .. automodule:: mangrove.datastore.reporter
+..     :members:
+
+--------
+settings
+--------
+.. automodule:: mangrove.datastore.settings
+    :members:
+
+============================
 Datastore document structure
-----------------------------
+============================
 
 Entities::
 

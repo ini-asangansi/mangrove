@@ -70,15 +70,15 @@ def get_random_three_digit_string():
     return''.join(random.choice(string.ascii_lowercase) for x in range(3))
 
 
-def get_epoch_last_four_digit():
+def get_epoch_last_three_digit():
     epoch = long(time.time() * 100)
-    epoch_last_four_digit = divmod(epoch, 1000000)[1]
+    epoch_last_four_digit = divmod(epoch, 1000)[1]
     return epoch_last_four_digit
 
 
 def generateId():
-    epoch_last_four_digit = get_epoch_last_four_digit()
-    return get_random_three_digit_string() + str(epoch_last_four_digit)
+    epoch_last_three_digit = get_epoch_last_three_digit()
+    return str(epoch_last_three_digit) + get_random_three_digit_string()
 
 
 # End of class and Starting of normal functions
