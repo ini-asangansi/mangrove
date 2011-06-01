@@ -1,6 +1,6 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 from time import time
-from framework.utils.common_utils import CommonUtilities
+from framework.utils.common_utils import CommonUtilities, generateId
 
 from pages.page import Page
 from framework.utils.data_fetcher import *
@@ -37,8 +37,11 @@ class CreateQuestionnairePage(Page):
 
         Return self
         """
-        self.driver.find_text_box(QUESTIONNAIRE_CODE_TB).enter_text(
-            fetch_(QUESTIONNAIRE_CODE, from_(questionnaire_data)))
+        questionnaire_code = fetch_(QUESTIONNAIRE_CODE, from_(questionnaire_data))
+        gen_ramdom = fetch_(GEN_RANDOM, from_(questionnaire_data))
+        if gen_ramdom:
+            questionnaire_code = questionnaire_code + generateId()
+        self.driver.find_text_box(QUESTIONNAIRE_CODE_TB).enter_text(questionnaire_code)
         self.create_default_question(questionnaire_data[DEFAULT_QUESTION], DEFAULT_QUESTION_LINK)
         for question in fetch_(QUESTIONS, from_(questionnaire_data)):
             self.driver.find(ADD_A_QUESTION_LINK).click()

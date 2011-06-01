@@ -9,19 +9,20 @@ SUBJECT = "subject"
 DEVICES = "devices"
 ERROR_MSG = "message"
 PAGE_TITLE = "page_title"
+GEN_RANDOM = "gen_random"
 
 
-VALID_DATA = {PROJECT_NAME: "Clinic Morondava",
+VALID_DATA = {PROJECT_NAME: "Clinic Morondava ", GEN_RANDOM: True,
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
               SUBJECT: "[u\\'Clinic\\']",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Questionnaire"}
 
-VALID_DATA2 = {PROJECT_NAME: "Clinic Morondava2",
+VALID_DATA2 = {PROJECT_NAME: "Water Point2 Morondava ", GEN_RANDOM: True,
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
-              SUBJECT: "[u\\'Clinic\\']",
+              SUBJECT: "[u\\'Water Point\\']",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Questionnaire"}
 

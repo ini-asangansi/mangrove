@@ -43,10 +43,10 @@ ONLY_ONE_ANSWER_RB = by_css("input[value='select1']")
 MULTIPLE_ANSWER_RB = by_css("input[value='select']")
 
 # Locators for Question List section of the page
-DEFAULT_QUESTION_LINK = by_xpath("//div[@class='question_list']/ol/li/a[contains(text(),'What are you reporting on')]")
-QUESTION_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>li"  # index number to identify question
-QUESTION_LINK_CSS_LOCATOR_PART2 = ">a"  # Add text to locate specific question
-QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>li>a"  # Add text or index number to identify question
+DEFAULT_QUESTION_LINK = by_xpath("//div[@class='question_list']/ol/div/li/a[contains(text(),'What are you reporting on?')]")
+QUESTION_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>div"  # index number to identify question
+QUESTION_LINK_CSS_LOCATOR_PART2 = ">li>a"  # Add text to locate specific question
+QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>div>li>a"  # Add text or index number to identify question
 QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "~div>span.delete>a"
 ADD_A_QUESTION_LINK = by_css("div.add_question>a")
 SAVE_CHANGES_BTN = by_css("input#submit-button")

@@ -3,6 +3,7 @@
 
 ##Variables
 QUESTIONNAIRE_CODE = "questionnaire_code"
+GEN_RANDOM = "gen_random"
 DEFAULT_QUESTION = "default_question"
 QUESTION = "question"
 QUESTIONS = "questions"
@@ -28,8 +29,8 @@ MULTIPLE_ANSWERS = "multiple_answers"
 ERROR_MSG = "message"
 SUCCESS_MSG = "message"
 
-QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS01",
-                      DEFAULT_QUESTION: {QUESTION: "What are you reporting?", CODE: "WID", MIN: "1", MAX: "10"},
+QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS", GEN_RANDOM: True,
+                      DEFAULT_QUESTION: {QUESTION: "What are you reporting on?", CODE: "WID", MIN: "1", MAX: "10"},
                       QUESTIONS: [{QUESTION: "Water Level", CODE: "WL", TYPE: NUMBER, MIN: "1", MAX: "10"},
                                   {QUESTION: "Date of report", CODE: "DR", TYPE: DATE, DATE_FORMAT: DD_MM_YYYY},
                                   {QUESTION: "Color of Water", CODE: "WC", TYPE: LIST_OF_CHOICES,
