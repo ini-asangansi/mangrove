@@ -42,6 +42,9 @@ ADD_CHOICE_LINK = by_xpath("//li[not(contains(@style,'none')) and contains(@data
 ONLY_ONE_ANSWER_RB = by_css("input[value='select1']")
 MULTIPLE_ANSWER_RB = by_css("input[value='select']")
 
+GEO_RB = by_css("input[value='geocode']")
+CHARACTER_COUNT = by_css("div#char-count")
+
 # Locators for Question List section of the page
 DEFAULT_QUESTION_LINK = by_xpath("//div[@class='question_list']/ol/div/li/a[contains(text(),'What are you reporting on?')]")
 QUESTION_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>div"  # index number to identify question

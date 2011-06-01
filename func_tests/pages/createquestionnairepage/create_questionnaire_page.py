@@ -17,7 +17,8 @@ class CreateQuestionnairePage(Page):
         self.SELECT_FUNC = {WORD: self.configure_word_type_question,
                    NUMBER: self.configure_number_type_question,
                    DATE: self.configure_date_type_question,
-                   LIST_OF_CHOICES: self.configure_list_of_choices_type_question}
+                   LIST_OF_CHOICES: self.configure_list_of_choices_type_question,
+                   GEO: self.configure_geo_type_question}
 
     def get_title(self):
         """
@@ -151,6 +152,18 @@ class CreateQuestionnairePage(Page):
             self.driver.find_radio_button(MULTIPLE_ANSWER_RB).click()
         return self
 
+    def configure_geo_type_question(self, question_data):
+        """
+        Function to select geo option on the questionnaire page
+
+        Args:
+        question_data is data to select geo type
+
+        return self
+        """
+        self.driver.find_radio_button(GEO_RB).click()
+        return self
+
     def get_error_message(self):
         """
         Function to fetch the error messages from error label of the register
@@ -179,6 +192,14 @@ class CreateQuestionnairePage(Page):
             return self.driver.find(SUCCESS_MESSAGE_LABEL).text
         else:
             return "Success message not appeared on the page."
+
+    def get_remaining_character_count(self):
+        """
+        Function to fetch the remaining character count from label of the questionnaire page
+
+        Return success message
+        """
+        return self.driver.find(CHARACTER_COUNT).text
 
     def get_question_link_text(self, question_number):
         """
