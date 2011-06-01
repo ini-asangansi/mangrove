@@ -96,7 +96,7 @@ def _generate_new_code(entity_type, count):
 def _make_doc_id(entity_type, short_code):
     ENTITY_ID_FORMAT = "%s/%s"
     _entity_type = ".".join(entity_type)
-    return ENTITY_ID_FORMAT % (_entity_type, short_code.lower())
+    return ENTITY_ID_FORMAT % (_entity_type, short_code)
 
 
 def _make_short_code(entity_type, num):
@@ -189,11 +189,11 @@ def get_entities_in(dbm, geo_path, type_path=None):
     return entities
 
 
-def add_data(dbm, short_code, data, submission_id, entity_type):
+def add_data(dbm, short_code, data, submission_id, entity_type, form_code = None):
     if is_string(entity_type):
         entity_type = [entity_type]
     e = get_by_short_code(dbm, short_code, entity_type)
-    data_record_id = e.add_data(data=data, submission_id=submission_id)
+    data_record_id = e.add_data(data=data, submission_id=submission_id, form_code=form_code)
     return data_record_id
 
 
@@ -252,7 +252,7 @@ class Entity(DataObject):
             doc.gr_id = gr_id
 
         if short_code is not None:
-            doc.short_code = short_code.lower()
+            doc.short_code = short_code
 
         if aggregation_paths is not None:
             reserved_names = (attributes.TYPE_PATH, attributes.GEO_PATH)
@@ -320,7 +320,7 @@ class Entity(DataObject):
         # aggregation paths on data records, in which case we need to
         # set a dirty flag and handle this in save.
 
-    def add_data(self, data=(), event_time=None, submission_id=None):
+    def add_data(self, data=(), event_time=None, submission_id=None, form_code = None):
         '''
         Add a new datarecord to this Entity and return a UUID for the
         datarecord.
@@ -347,7 +347,7 @@ class Entity(DataObject):
             data_list.append((label, dd_type, value))
 
         data_record_doc = DataRecordDocument(entity_doc=self._doc, event_time=event_time,
-                                             data=data_list, submission_id=submission_id)
+                                             data=data_list, submission_id=submission_id, form_code=form_code)
         return self._dbm._save_document(data_record_doc).id
 
     def invalidate_data(self, uid):
