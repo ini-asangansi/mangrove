@@ -59,43 +59,21 @@ class TestDataDict(unittest.TestCase):
         self.assertEqual({}, ddtype.constraints)
         self.assertEqual([], ddtype.tags)
 
-
     def test_should_create_ddtype(self):
         NAME = 'Default Datadict Type'
         SLUG = 'default'
         TYPE = 'string'
         DESC = 'description'
 
-        with patch("mangrove.datastore.datadict.get_datadict_type_by_slug") as get_datadict_type_by_slug_mocked:
-            get_datadict_type_by_slug_mocked.side_effect = DataObjectNotFound("DataDictType", "slug", SLUG)
-            ddtype = create_datadict_type(self.dbm, name=NAME,
-                                          slug=SLUG, primitive_type=TYPE, constraints={}, description=DESC)
-
-            get_datadict_type_by_slug_mocked.assert_called_once_with(self.dbm, SLUG)
-            self.dbm.save.assert_called_once_with(ddtype)
-
-            self.assertEqual(NAME, ddtype.name)
-            self.assertEqual(DESC, ddtype.description)
-            self.assertEqual(SLUG, ddtype.slug)
-            self.assertEqual(TYPE, ddtype.primitive_type)
-
-    def test_should_not_create_ddtype_if_slug_exists(self):
-        NAME = 'Default Datadict Type'
-        SLUG = 'default'
-        TYPE = 'string'
-        DESC = 'description'
-
-        with patch("mangrove.datastore.datadict.get_datadict_type_by_slug") as get_datadict_type_by_slug_mocked:
-            get_datadict_type_by_slug_mocked.return_value = Mock(spec=DataDictType)
-            try:
-                ddtype = DataDictType(self.dbm, name=NAME,
+        ddtype = create_datadict_type(self.dbm, name=NAME,
                                       slug=SLUG, primitive_type=TYPE, constraints={}, description=DESC)
-                ddtype.save()
-                self.fail("Expected DataObjectAlreadyExists exception")
-            except DataObjectAlreadyExists:
-                pass
-            self.assertEqual(0, self.dbm.save.call_count)
 
+        self.dbm._save_document.assert_called_once_with(ddtype._doc)
+
+        self.assertEqual(NAME, ddtype.name)
+        self.assertEqual(DESC, ddtype.description)
+        self.assertEqual(SLUG, ddtype.slug)
+        self.assertEqual(TYPE, ddtype.primitive_type)
 
     def test_should_throw_exception_if_slug_not_found(self):
         self.dbm.load_all_rows_in_view.return_value = []

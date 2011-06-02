@@ -3,7 +3,7 @@
 from couchdb.mapping import TextField, Document, DateTimeField, DictField, BooleanField, ListField, FloatField
 import datetime
 import calendar
-from uuid import uuid4, uuid1
+from uuid import uuid1
 from time import struct_time
 from mangrove.utils.types import is_string
 from mangrove.utils.dates import py_datetime_to_js_datestring, js_datestring_to_py_datetime, utcnow

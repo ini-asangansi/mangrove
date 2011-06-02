@@ -163,7 +163,7 @@ class TestDataStoreApi(unittest.TestCase):
 
     def test_should_create_entity_from_document(self):
         existing = self.dbm.get(self.uuid, Entity)
-        e = Entity.new_from_db(self.dbm, existing._doc)
+        e = Entity.new_from_doc(self.dbm, existing._doc)
         self.assertTrue(e._doc is not None)
         self.assertEqual(e.id, existing.id)
         self.assertEqual(e.type_path, existing.type_path)
@@ -188,6 +188,8 @@ class TestDataStoreApi(unittest.TestCase):
         self.assertFalse(e._doc.void)
         apple_type = DataDictType(self.dbm, name='Apples', slug='apples', primitive_type='number')
         orange_type = DataDictType(self.dbm, name='Oranges', slug='oranges', primitive_type='number')
+        apple_type.save()
+        orange_type.save()
         data = [
                 [('apples', 20, apple_type), ('oranges', 30, orange_type)],
                 [('apples', 10, apple_type), ('oranges', 20, orange_type)]
