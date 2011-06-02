@@ -4,12 +4,11 @@ import copy
 from datetime import datetime
 from time import mktime
 from collections import defaultdict
-from couchdb.http import ResourceConflict
 
 from documents import EntityDocument, DataRecordDocument, attributes
 from datadict import DataDictType, get_datadict_types
 import mangrove.datastore.aggregationtree as atree
-from mangrove.errors.MangroveException import EntityTypeAlreadyDefined, DataObjectAlreadyExists, EntityTypeDoesNotExistsException
+from mangrove.errors.MangroveException import FailedToSaveDataObject, EntityTypeAlreadyDefined, DataObjectAlreadyExists, EntityTypeDoesNotExistsException
 from mangrove.utils.types import is_empty
 from mangrove.utils.types import is_not_empty, is_sequence, is_string
 from mangrove.utils.dates import utcnow
@@ -31,7 +30,7 @@ def create_entity(dbm, entity_type, location=None, aggregation_paths=None, short
                    aggregation_paths=aggregation_paths, id=doc_id, short_code=short_code, geometry=geometry)
         e.save()
         return e
-    except ResourceConflict:
+    except FailedToSaveDataObject:
         raise DataObjectAlreadyExists("Entity", "short code", short_code)
 
 
@@ -75,9 +74,8 @@ def generate_short_code(dbm, entity_type):
 
 
 def _get_entity_count_for_type(dbm, entity_type):
-    rows = dbm.load_all_rows_in_view("mangrove_views/by_short_codes", descending=True,
-                                     startkey=[entity_type, {}], endkey=[entity_type], group_level=1)
-
+    rows = dbm.load_all_rows_in_view("by_short_codes",descending = True,
+                                     startkey=[entity_type, {}], endkey=[entity_type], group_level = 1)
     return rows[0]["value"] if len(rows) else 0
 
 
@@ -96,7 +94,13 @@ def _generate_new_code(entity_type, count):
 def _make_doc_id(entity_type, short_code):
     ENTITY_ID_FORMAT = "%s/%s"
     _entity_type = ".".join(entity_type)
-    return ENTITY_ID_FORMAT % (_entity_type, short_code.lower())
+    return ENTITY_ID_FORMAT % (_entity_type, short_code)
+
+
+def _make_short_code(entity_type, num):
+    SHORT_CODE_FORMAT = "%s%s"
+    entity_prefix = entity_type[-1].upper()[:3]
+    return   SHORT_CODE_FORMAT % (entity_prefix,num)
 
 
 def _make_short_code(entity_type, num):
@@ -108,7 +112,9 @@ def _make_short_code(entity_type, num):
 def get_entities_by_type(dbm, entity_type):
     # TODO: change this?  for now it assumes _type is non-heirarchical
     assert isinstance(dbm, DatabaseManager)
-    rows = dbm.load_all_rows_in_view('mangrove_views/by_type', key=entity_type)
+    assert is_string(entity_type)
+
+    rows = dbm.load_all_rows_in_view('by_type', key=entity_type)
     entities = [dbm.get(row.id, Entity) for row in rows]
 
     return entities
@@ -121,7 +127,7 @@ def get_entities_by_value(dbm, label, value, as_of=None):
     if isinstance(label, DataDictType):
         label = label.slug
 
-    rows = dbm.load_all_rows_in_view('mangrove_views/by_label_value', key=[label, value])
+    rows = dbm.load_all_rows_in_view('by_label_value', key=[label, value])
     entities = [dbm.get(row['value'], Entity) for row in rows]
 
     return [e for e in entities if e.values({label: 'latest'}, asof=as_of) == {label: value}]
@@ -178,22 +184,23 @@ def get_entities_in(dbm, geo_path, type_path=None):
         # TODO: is the type field necessarily a heirarchy?
         # if not, then this needs to perform a query for each type and then take the intersection
         # of the result sets
-        rows = dbm.load_all_rows_in_view('mangrove_views/by_type_geo', key=(type_path + geo_path))
+        rows = dbm.load_all_rows_in_view('by_type_geo', key=(type_path + geo_path))
         entities = [dbm.get(row.id, Entity) for row in rows]
 
     # otherwise, filter by type
     if type_path is None:
-        rows = dbm.load_all_rows_in_view('mangrove_views/by_geo', key=geo_path)
+        rows = dbm.load_all_rows_in_view('by_geo', key=geo_path)
         entities = [dbm.get(row.id, Entity) for row in rows]
 
     return entities
 
 
-def add_data(dbm, short_code, data, submission_id, entity_type):
+def add_data(dbm, short_code, data, submission_id, entity_type, form_code=None):
+
     if is_string(entity_type):
         entity_type = [entity_type]
     e = get_by_short_code(dbm, short_code, entity_type)
-    data_record_id = e.add_data(data=data, submission_id=submission_id)
+    data_record_id = e.add_data(data=data, submission_id=submission_id, form_code=form_code)
     return data_record_id
 
 
@@ -252,7 +259,7 @@ class Entity(DataObject):
             doc.gr_id = gr_id
 
         if short_code is not None:
-            doc.short_code = short_code.lower()
+            doc.short_code = short_code
 
         if aggregation_paths is not None:
             reserved_names = (attributes.TYPE_PATH, attributes.GEO_PATH)
@@ -320,11 +327,8 @@ class Entity(DataObject):
         # aggregation paths on data records, in which case we need to
         # set a dirty flag and handle this in save.
 
-    def add_data(self, data=(), event_time=None, submission_id=None):
-        '''
-        Add a new datarecord to this Entity and return a UUID for the
-        datarecord.
-
+    def add_data(self, data=(), event_time=None, submission_id=None, form_code=None, multiple_records=False):
+        '''Add a new datarecord to this Entity and return a UUID for the datarecord.
         Arguments:
             data: a sequence of ordered tuples, (label, value, type)
                 where type is a DataDictType
@@ -344,11 +348,16 @@ class Entity(DataObject):
         for (label, value, dd_type) in data:
             if not isinstance(dd_type, DataDictType) or is_empty(label):
                 raise ValueError('Data must be of the form (label, value, DataDictType).')
-            data_list.append((label, dd_type, value))
+            if multiple_records:
+                data_list.append(DataRecordDocument(entity_doc=self._doc, event_time=event_time,
+                                             data=[(label, dd_type, value)], submission_id=submission_id))
+                return self._dbm._save_documents(data_list)
+            else:
+                data_list.append((label, dd_type, value))
 
         data_record_doc = DataRecordDocument(entity_doc=self._doc, event_time=event_time,
-                                             data=data_list, submission_id=submission_id)
-        return self._dbm._save_document(data_record_doc).id
+                                             data=data_list, submission_id=submission_id, form_code=form_code)
+        return self._dbm._save_document(data_record_doc)
 
     def invalidate_data(self, uid):
         '''Mark datarecord identified by uid as 'invalid'.
@@ -378,14 +387,14 @@ class Entity(DataObject):
         This should only be used internally to perform update actions on data records as necessary.
         '''
         rows = self._get_rows()
-        return [row['value']['_id'] for row in rows]
+        return [row.id for row in rows]
 
     def _get_rows(self):
         """
         Return a list of all the data records associated with this
         entity.
         """
-        return self._dbm.load_all_rows_in_view('mangrove_views/entity_data', key=self.id)
+        return self._dbm.load_all_rows_in_view('entity_data', key=self.id)
 
     def get_all_data(self):
         """
@@ -393,9 +402,7 @@ class Entity(DataObject):
         the second level is the data dict type slug, and the third
         contains the value.
         """
-        rows = self._dbm.load_all_rows_in_view(
-            'mangrove_views/id_time_slug_value', key=self.id
-        )
+        rows = self._dbm.load_all_rows_in_view('id_time_slug_value', key=self.id)
         result = defaultdict(dict)
         for row in rows:
             row = row['value']
@@ -406,14 +413,14 @@ class Entity(DataObject):
         '''Returns a list of each type of data that is stored on this entity.'''
         assert tags is None or isinstance(tags, list) or is_string(tags)
         if tags is None or is_empty(tags):
-            rows = self._dbm.load_all_rows_in_view('mangrove_views/entity_datatypes', key=self.id)
+            rows = self._dbm.load_all_rows_in_view('entity_datatypes', key=self.id)
             result = get_datadict_types(self._dbm, [row['value'] for row in rows])
         else:
             if is_string(tags):
                 tags = [tags]
             keys = []
             for tag in tags:
-                rows = self._dbm.load_all_rows_in_view('mangrove_views/entity_datatypes_by_tag', key=[self.id, tag])
+                rows = self._dbm.load_all_rows_in_view('entity_datatypes_by_tag', key=[self.id, tag])
                 keys.append([row['value'] for row in rows])
             ids_with_all_tags = list(set.intersection(*map(set, keys)))
             result = get_datadict_types(self._dbm, ids_with_all_tags)
@@ -450,7 +457,7 @@ class Entity(DataObject):
     def _get_aggregate_value(self, field, aggregate_fn, date):
         entity_id = self._doc.id
         time_since_epoch_of_date = int(mktime(date.timetuple())) * 1000
-        rows = self._dbm.load_all_rows_in_view('mangrove_views/' + aggregate_fn, group_level=3, descending=False,
+        rows = self._dbm.load_all_rows_in_view(aggregate_fn, group_level=3, descending=False,
                                                startkey=[self.type_path, entity_id, field],
                                                endkey=[self.type_path, entity_id, field, time_since_epoch_of_date])
         # The above will return rows in the format described:

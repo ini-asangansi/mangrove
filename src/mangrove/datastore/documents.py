@@ -3,7 +3,7 @@
 from couchdb.mapping import TextField, Document, DateTimeField, DictField, BooleanField, ListField, FloatField
 import datetime
 import calendar
-from uuid import uuid4, uuid1
+from uuid import uuid1
 from time import struct_time
 from mangrove.utils.types import is_string
 from mangrove.utils.dates import py_datetime_to_js_datestring, js_datestring_to_py_datetime, utcnow
@@ -113,8 +113,9 @@ class DataRecordDocument(DocumentBase):
     entity_backing_field = DictField()
     submission_id = TextField()
     event_time = TZAwareDateTimeField()
+    form_code = TextField()
 
-    def __init__(self, id=None, entity_doc=None, event_time=None, submission_id=None, data=None):
+    def __init__(self, id=None, entity_doc=None, event_time=None, submission_id=None, data=None, form_code = None):
         assert entity_doc is None or isinstance(entity_doc, EntityDocument)
         DocumentBase.__init__(self, id, 'DataRecord')
         self.submission_id = submission_id
@@ -127,6 +128,8 @@ class DataRecordDocument(DocumentBase):
 
         if entity_doc:
             self.entity_backing_field = entity_doc.unwrap()
+        if form_code:
+            self.form_code = form_code
 
 
 class DataDictDocument(DocumentBase):

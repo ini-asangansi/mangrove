@@ -7,13 +7,13 @@ Will log the submission and forward to the appropriate channel handler.
 
 from mangrove.datastore.documents import SubmissionLogDocument
 from mangrove.datastore import entity
-from mangrove.datastore import reporter
 from mangrove.form_model.form_model import get_form_model_by_code, LOCATION_TYPE_FIELD_NAME, GEO_CODE
 from mangrove.errors.MangroveException import  NoQuestionsSubmittedException
 from mangrove.errors.MangroveException import MangroveException
 from mangrove.transport.player.player import SMSPlayer, WebPlayer
 from mangrove.utils.geo_utils import convert_to_geometry
 from mangrove.utils.types import is_string
+import reporter
 
 
 class Request(object):
@@ -58,7 +58,7 @@ class SubmissionLogger(object):
         return self.dbm._save_document(SubmissionLogDocument(channel=channel, source=source,
                                                              destination=destination, form_code=form_code,
                                                              values=values, status=status,
-                                                             error_message=error_message)).id
+                                                             error_message=error_message))
 
 
 class SubmissionHandler(object):
@@ -75,7 +75,6 @@ class SubmissionHandler(object):
             reporters = reporter.find_reporter(self.dbm, request.source)
         player = self.get_player_for_transport(request)
         form_code, values = player.parse(request.message)
-        form_code = form_code.lower()
         logger = SubmissionLogger(self.dbm)
         submission_id = logger.create_submission_log(channel=request.transport, source=request.source,
                                                      destination=request.destination, form_code=form_code,
@@ -99,7 +98,7 @@ class SubmissionHandler(object):
             else:
                 data_record_id = entity.add_data(dbm=self.dbm, short_code=form_submission.short_code,
                                                  data=form_submission.values, submission_id=submission_id,
-                                                 entity_type=form.entity_type)
+                                                 entity_type=form.entity_type, form_code = form_code)
 
                 logger.update_submission_log(submission_id=submission_id, status=True, errors=[])
                 return Response(reporters, True, {}, submission_id, data_record_id)
@@ -124,10 +123,10 @@ class SubmissionHandler(object):
 def get_submissions_made_for_questionnaire(dbm, form_code, page_number=0, page_size=20, count_only=False):
     assert is_string(form_code)
     if count_only:
-        rows = dbm.load_all_rows_in_view('mangrove_views/submissionlog', startkey=[form_code], endkey=[form_code, {}],
+        rows = dbm.load_all_rows_in_view('submissionlog', startkey=[form_code], endkey=[form_code, {}],
                                          group=True, group_level=1, reduce=True)
     else:
-        rows = dbm.load_all_rows_in_view('mangrove_views/submissionlog', reduce=False, startkey=[form_code],
+        rows = dbm.load_all_rows_in_view('submissionlog', reduce=False, startkey=[form_code],
                                          endkey=[form_code, {}], skip=page_number * page_size, limit=page_size)
 
     answer = [each.value for each in rows]

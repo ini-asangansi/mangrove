@@ -42,6 +42,11 @@
     text-align:right;
 }
 
+/* Text Styles */
+.bold{
+    font-weight:bold;
+}
+
 
 /*Error and Success*/
 .error_message{
@@ -86,4 +91,14 @@ table th{
 /* List styles */
 .alpha_list li{
     list-style-type:upper-alpha;
+}
+
+/* Links with BG images */
+.add_link{
+    padding:3px 0 20px 30px;
+    background:url(/media/images/icons.png) no-repeat top left;
+}
+.delete_link{
+    padding:5px 0 10px 25px;
+    background:url(/media/images/icons.png) no-repeat left -167px;
 }

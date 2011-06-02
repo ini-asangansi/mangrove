@@ -1,5 +1,5 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
-from framework.utils.common_utils import CommonUtilities
+from framework.utils.common_utils import CommonUtilities, generateId
 from pages.createquestionnairepage.create_questionnaire_page import CreateQuestionnairePage
 import time
 from pages.page import Page
@@ -33,8 +33,11 @@ class CreateProjectPage(Page):
 
         Return self
         """
-        self.driver.find_text_box(PROJECT_NAME_TB).enter_text(
-            fetch_(PROJECT_NAME, from_(project_data)))
+        project_name = fetch_(PROJECT_NAME, from_(project_data))
+        gen_ramdom = fetch_(GEN_RANDOM, from_(project_data))
+        if gen_ramdom:
+            project_name = project_name + generateId()
+        self.driver.find_text_box(PROJECT_NAME_TB).enter_text(project_name)
         self.driver.find_text_box(PROJECT_BACKGROUND_TB).enter_text(
             fetch_(PROJECT_BACKGROUND, from_(project_data)))
         # Selecting radio button according to given option

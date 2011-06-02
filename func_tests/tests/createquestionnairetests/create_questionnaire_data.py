@@ -3,6 +3,7 @@
 
 ##Variables
 QUESTIONNAIRE_CODE = "questionnaire_code"
+GEN_RANDOM = "gen_random"
 DEFAULT_QUESTION = "default_question"
 QUESTION = "question"
 QUESTIONS = "questions"
@@ -20,6 +21,7 @@ NUMBER = "number"
 WORD = "word"
 DATE = "date"
 LIST_OF_CHOICES = "list_of_choices"
+GEO = "geo"
 DD_MM_YYYY = "dd.mm.yyyy"
 MM_DD_YYYY = "mm.dd.yyyy"
 MM_YYYY = "mm.yyyy"
@@ -27,9 +29,10 @@ ONLY_ONE_ANSWER = "only_one_answer"
 MULTIPLE_ANSWERS = "multiple_answers"
 ERROR_MSG = "message"
 SUCCESS_MSG = "message"
+CHARACTER_REMAINING = "character_remaining"
 
-QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS01",
-                      DEFAULT_QUESTION: {QUESTION: "What are you reporting?", CODE: "WID", MIN: "1", MAX: "10"},
+QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS", GEN_RANDOM: True,
+                      DEFAULT_QUESTION: {QUESTION: "What are you reporting on?", CODE: "WID", MIN: "1", MAX: "10"},
                       QUESTIONS: [{QUESTION: "Water Level", CODE: "WL", TYPE: NUMBER, MIN: "1", MAX: "10"},
                                   {QUESTION: "Date of report", CODE: "DR", TYPE: DATE, DATE_FORMAT: DD_MM_YYYY},
                                   {QUESTION: "Color of Water", CODE: "WC", TYPE: LIST_OF_CHOICES,
@@ -38,5 +41,7 @@ QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS01",
                                   {QUESTION: "Water point admin name", CODE: "WAN", TYPE: WORD, LIMIT: LIMITED, MAX: "10"},
                                   {QUESTION: "Bacterias in water", CODE: "WB", TYPE: LIST_OF_CHOICES,
                                    CHOICE: ["Aquificae", "Bacteroids", "Chlorobia"],
-                                   ALLOWED_CHOICE: MULTIPLE_ANSWERS}],
+                                   ALLOWED_CHOICE: MULTIPLE_ANSWERS},
+                                  {QUESTION: "Geo points of water point", CODE: "GPS", TYPE: GEO}],
+                      CHARACTER_REMAINING: "75 characters remaining",
                       SUCCESS_MSG: "Your questionnaire has been saved"}
