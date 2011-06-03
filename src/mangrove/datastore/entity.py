@@ -18,6 +18,11 @@ ENTITY_TYPE_TREE = 'entity_type_tree'
 
 
 def create_entity(dbm, entity_type, location=None, aggregation_paths=None, short_code=None, geometry=None):
+    """
+    Initialize and save an entity to the database. Return the entity
+    created unless the short code used is not unique or this entity
+    type has not been defined yet.
+    """
     if is_string(entity_type):
         entity_type = [entity_type]
     if is_empty(short_code):
@@ -35,11 +40,21 @@ def create_entity(dbm, entity_type, location=None, aggregation_paths=None, short
 
 
 def _get_entity_type_tree(dbm):
+    """
+    Return the AggregationTree object with id equal to
+    'entity_type_tree'.
+    """
     assert isinstance(dbm, DatabaseManager)
     return dbm.get(ENTITY_TYPE_TREE, atree.AggregationTree, get_or_create=True)
 
 
 def get_all_entity_types(dbm):
+    """
+    Return a list of all entity types. If we think of all entity types
+    organized in a hierarchical tree, an entity type is a node in this
+    tree and the node is represented by a list containing the node
+    names in the path to this node.
+    """
     return _get_entity_type_tree(dbm).get_paths()
 
 
@@ -54,6 +69,11 @@ def validate_entity_type_already_defined(dbm, entity_type):
 
 
 def define_type(dbm, entity_type):
+    """
+    Add this entity type to the tree of all entity types and save it
+    to the database. entity_type may be a string or a list of
+    strings.
+    """
     assert is_not_empty(entity_type)
     assert is_sequence(entity_type)
     type_path = ([entity_type] if is_string(entity_type) else entity_type)
@@ -67,6 +87,11 @@ def define_type(dbm, entity_type):
 
 
 def generate_short_code(dbm, entity_type):
+    # todo: couchdb cannot guarantee uniqueness, so short codes should
+    # be assigned from an application using the mangrove
+    # library. ideally, we would put a short code onto an entity using
+    # the add_data method and then there should be a view that can
+    # easily find all entities with a particular short code.
     assert is_sequence(entity_type)
     count = _get_entity_count_for_type(dbm, entity_type=entity_type)
     assert count >= 0
@@ -74,12 +99,15 @@ def generate_short_code(dbm, entity_type):
 
 
 def _get_entity_count_for_type(dbm, entity_type):
+    # todo: this function can be removed when generate_short_code
+    # gets removed.
     rows = dbm.load_all_rows_in_view("by_short_codes",descending = True,
                                      startkey=[entity_type, {}], endkey=[entity_type], group_level = 1)
     return rows[0]["value"] if len(rows) else 0
 
 
 def get_by_short_code(dbm, short_code, entity_type):
+    # todo: remove
     assert is_string(short_code)
     assert is_sequence(entity_type)
     doc_id = _make_doc_id(entity_type, short_code)
@@ -87,35 +115,43 @@ def get_by_short_code(dbm, short_code, entity_type):
 
 
 def _generate_new_code(entity_type, count):
+    # todo: remove
     short_code = _make_short_code(entity_type, count + 1)
     return _make_doc_id(entity_type, short_code)
 
 
 def _make_doc_id(entity_type, short_code):
+    # todo: remove
     ENTITY_ID_FORMAT = "%s/%s"
     _entity_type = ".".join(entity_type)
     return ENTITY_ID_FORMAT % (_entity_type, short_code)
 
 
 def _make_short_code(entity_type, num):
+    # todo: remove
     SHORT_CODE_FORMAT = "%s%s"
     entity_prefix = entity_type[-1].upper()[:3]
     return   SHORT_CODE_FORMAT % (entity_prefix,num)
 
 
 def _make_short_code(entity_type, num):
+    # todo: remove
     SHORT_CODE_FORMAT = "%s%s"
     entity_prefix = entity_type[-1].lower()[:3]
     return   SHORT_CODE_FORMAT % (entity_prefix, num)
 
 
 def get_entities_by_type(dbm, entity_type):
-    # TODO: change this?  for now it assumes _type is non-heirarchical
+    """
+    Return a list of all entities with this type.
+    """
+    # TODO: change this?  for now it assumes _type is
+    # non-heirarchical. Might also benefit from using get_many.
     assert isinstance(dbm, DatabaseManager)
     assert is_string(entity_type)
 
     rows = dbm.load_all_rows_in_view('by_type', key=entity_type)
-    entities = [dbm.get(row.id, Entity) for row in rows]
+    entities = dbm.get_many([row.id for row in rows], Entity)
 
     return entities
 
@@ -128,42 +164,9 @@ def get_entities_by_value(dbm, label, value, as_of=None):
         label = label.slug
 
     rows = dbm.load_all_rows_in_view('by_label_value', key=[label, value])
-    entities = [dbm.get(row['value'], Entity) for row in rows]
+    entities = dbm.get_many([row['value'] for row in rows], Entity)
 
     return [e for e in entities if e.values({label: 'latest'}, asof=as_of) == {label: value}]
-
-
-def entities_for_attributes(attrs):
-    '''
-    retrieve entities with datarecords with the given
-    named attributes. Can be used to search for entities
-    by identifying info like a phone number
-
-    Include 'type' as an attr to restrict to a given entity type
-
-    returns a sequence of 0, 1 or more matches
-
-    ex:
-    attrs = { 'type':'clinic', 'name': 'HIV Clinic' }
-    print entities_for_attributes(attrs)
-
-    '''
-
-    pass
-
-
-# geo aggregation specific calls
-def entities_near(geocode, radius=1, attrs=None):
-    '''
-    Retrieve an entity within the given radius (in kilometers) of
-    the given geocode that matches the given attrs
-
-    Include 'type' as an attr to restrict to a given entity type
-
-    returns a sequence
-
-    '''
-    pass
 
 
 def get_entities_in(dbm, geo_path, type_path=None):
@@ -185,12 +188,12 @@ def get_entities_in(dbm, geo_path, type_path=None):
         # if not, then this needs to perform a query for each type and then take the intersection
         # of the result sets
         rows = dbm.load_all_rows_in_view('by_type_geo', key=(type_path + geo_path))
-        entities = [dbm.get(row.id, Entity) for row in rows]
+        entities = dbm.get_many([row.id for row in rows], Entity)
 
     # otherwise, filter by type
     if type_path is None:
         rows = dbm.load_all_rows_in_view('by_geo', key=geo_path)
-        entities = [dbm.get(row.id, Entity) for row in rows]
+        entities = dbm.get_many([row.id for row in rows], Entity)
 
     return entities
 
@@ -339,25 +342,39 @@ class Entity(DataObject):
         '''
         assert is_sequence(data)
         assert event_time is None or isinstance(event_time, datetime)
-        assert self.id is not None  # should never be none, even if haven't been saved, should have a UUID
-        # TODO: should we have a flag that says that this has been saved at least once to avoid adding data
-        # records for an Entity that may never be saved? Should docs just be saved on init?
+        assert self.id is not None, "id should never be none, even if haven't been saved, an entity should have a UUID."
+        # TODO: should we have a flag that says that this has been
+        # saved at least once to avoid adding data records for an
+        # Entity that may never be saved? Should docs just be saved on
+        # init?
         if event_time is None:
             event_time = utcnow()
-        data_list = []
         for (label, value, dd_type) in data:
             if not isinstance(dd_type, DataDictType) or is_empty(label):
                 raise ValueError('Data must be of the form (label, value, DataDictType).')
-            if multiple_records:
-                data_list.append(DataRecordDocument(entity_doc=self._doc, event_time=event_time,
-                                             data=[(label, dd_type, value)], submission_id=submission_id))
-                return self._dbm._save_documents(data_list)
-            else:
-                data_list.append((label, dd_type, value))
 
-        data_record_doc = DataRecordDocument(entity_doc=self._doc, event_time=event_time,
-                                             data=data_list, submission_id=submission_id, form_code=form_code)
-        return self._dbm._save_document(data_record_doc)
+        if multiple_records:
+            data_list = []
+            for (label, value, dd_type) in data:
+                data_record = DataRecordDocument(
+                        entity_doc=self._doc,
+                        event_time=event_time,
+                        data=[(label, value, dd_type)],
+                        submission_id=submission_id
+                        )
+                data_list.append(data_record)
+            return self._dbm._save_documents(data_list)
+        else:
+            data_record_doc = DataRecordDocument(
+                entity_doc=self._doc,
+                event_time=event_time,
+                data=data,
+                submission_id=submission_id,
+                form_code=form_code
+                )
+            return self._dbm._save_document(data_record_doc)
+
+
 
     def invalidate_data(self, uid):
         '''Mark datarecord identified by uid as 'invalid'.
