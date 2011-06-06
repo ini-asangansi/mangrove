@@ -41,5 +41,6 @@ class TestCreateQuestionnaire(BaseTest):
             question_link_text = fetch_(QUESTION, from_(question)) + " " + fetch_(CODE, from_(question))
             self.assertEquals(create_questionnaire_page.get_question_link_text(index), question_link_text)
             index = index + 1
+        time.sleep(5)
         self.assertEquals(create_questionnaire_page.get_remaining_character_count(),
                           fetch_(CHARACTER_REMAINING, from_(QUESTIONNAIRE_DATA)))
