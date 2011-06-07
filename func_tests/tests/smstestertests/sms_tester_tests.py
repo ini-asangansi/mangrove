@@ -23,8 +23,7 @@ class TestSMSTester(BaseTest):
     @attr('functional_test')
     def test_sms_player_without_entering_data(self):
         """
-        Function to test the error message on the set up project page while
-        creation of project
+        Function to test the error message on the sms submission page for blank field
         """
         self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
         sms_tester_page = SMSTesterPage(self.driver)
@@ -34,10 +33,69 @@ class TestSMSTester(BaseTest):
     @attr('functional_test')
     def test_sms_player_for_exceeding_word_length(self):
         """
-        Function to test the error message on the set up project page while
-        creation of project
+        Function to test the error message on the sms submission page for exceeding word limit for word type question
         """
         self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
         sms_tester_page = SMSTesterPage(self.driver)
         sms_tester_page.send_sms_with(EXCEED_NAME_LENGTH)
         self.assertEqual(sms_tester_page.get_response_message(), fetch_(ERROR_MSG, from_(EXCEED_NAME_LENGTH)))
+
+    @attr('functional_test')
+    def test_sms_player_for_plus_in_the_beginning(self):
+        """
+        Function to test the error message on the sms submission page for plus sign in the beginning of SMS
+        """
+        self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
+        sms_tester_page = SMSTesterPage(self.driver)
+        sms_tester_page.send_sms_with(PLUS_IN_THE_BEGINNING)
+        self.assertEqual(sms_tester_page.get_response_message(), fetch_(ERROR_MSG, from_(PLUS_IN_THE_BEGINNING)))
+
+    @attr('functional_test')
+    def test_sms_player_for_unregistered_from_number(self):
+        """
+        Function to test the error message on the sms submission page for unregistered number in from field
+        """
+        self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
+        sms_tester_page = SMSTesterPage(self.driver)
+        sms_tester_page.send_sms_with(UNREGISTERED_FROM_NUMBER)
+        self.assertEqual(sms_tester_page.get_response_message(), fetch_(ERROR_MSG, from_(UNREGISTERED_FROM_NUMBER)))
+
+    @attr('functional_test')
+    def test_sms_player_for_registration_of_reporter(self):
+        """
+        Function to test the registration of the reporter using sms submission with registered number
+        """
+        self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
+        sms_tester_page = SMSTesterPage(self.driver)
+        sms_tester_page.send_sms_with(REGISTER_REPORTER)
+        self.assertEqual(sms_tester_page.get_response_message(), fetch_(SUCCESS_MESSAGE, from_(REGISTER_REPORTER)))
+
+    @attr('functional_test')
+    def test_sms_player_for_registration_of_reporter_from_unknown_number(self):
+        """
+        Function to test the registration of the reporter using sms submission with unregistered number
+        """
+        self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
+        sms_tester_page = SMSTesterPage(self.driver)
+        sms_tester_page.send_sms_with(REGISTER_REPORTER_FROM_UNKNOWN_NUMBER)
+        self.assertEqual(sms_tester_page.get_response_message(), fetch_(ERROR_MSG, from_(REGISTER_REPORTER_FROM_UNKNOWN_NUMBER)))
+
+    @attr('functional_test')
+    def test_sms_player_for_registration_of_new_subject(self):
+        """
+        Function to test the registration of the new subject using sms submission with registered number
+        """
+        self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
+        sms_tester_page = SMSTesterPage(self.driver)
+        sms_tester_page.send_sms_with(REGISTER_NEW_SUBJECT)
+        self.assertEqual(sms_tester_page.get_response_message(), fetch_(SUCCESS_MESSAGE, from_(REGISTER_NEW_SUBJECT)))
+
+    @attr('functional_test')
+    def test_sms_player_for_registration_with_invalid_geo_code(self):
+        """
+        Function to test the registration of the new subject with invalid geo code using sms submission with registered number
+        """
+        self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
+        sms_tester_page = SMSTesterPage(self.driver)
+        sms_tester_page.send_sms_with(REGISTER_INVALID_GEO_CODE)
+        self.assertEqual(sms_tester_page.get_response_message(), fetch_(ERROR_MSG, from_(REGISTER_INVALID_GEO_CODE)))

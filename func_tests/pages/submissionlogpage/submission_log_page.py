@@ -27,4 +27,16 @@ class SubmissionLogPage(Page):
         Return submission log
         """
         unique_value = fetch_(UNIQUE_VALUE, from_(sms_data))
-        return self.driver.find(by_xpath(SUBMISSION_LOG_TR_XPATH_PART1 + unique_value + SUBMISSION_LOG_TR_XPATH_PART2)).text
+        return self.driver.find(by_xpath(SUBMISSION_LOG_TR_XPATH % unique_value)).text
+
+    def get_failure_message(self, sms_data):
+        """
+        Function to fetch the submission log from the row of the table
+
+        Return submission log
+        """
+        unique_value = fetch_(UNIQUE_VALUE, from_(sms_data))
+        failure_msg_xpath = SUBMISSION_LOG_TR_XPATH + SUBMISSION_LOG_FAILURE_MSG_XPATH
+        return self.driver.find(by_xpath(failure_msg_xpath % unique_value)).get_attribute("title")
+
+

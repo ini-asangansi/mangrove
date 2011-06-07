@@ -20,5 +20,5 @@ LOCATOR = "locator"
 BY = "by"
 
 SUBMISSION_LOG_TR = by_xpath("//div[@id='sms_results']/div/div[@id='results']/div/table/tbody/tr[2]")
-SUBMISSION_LOG_TR_XPATH_PART1 = "//div[@id='sms_results']/div/div[@id='results']/div/table/tbody/tr/td[contains(text(),\""
-SUBMISSION_LOG_TR_XPATH_PART2 = "\")]/.."
+SUBMISSION_LOG_TR_XPATH = "//div[@id='sms_results']/div/div[@id='results']/div/table/tbody/tr/td[contains(text(),\"%s\")]/.."
+SUBMISSION_LOG_FAILURE_MSG_XPATH = "/td[3]/span"

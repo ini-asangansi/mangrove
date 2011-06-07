@@ -9,7 +9,7 @@ from pages.smstesterpage.sms_tester_page import SMSTesterPage
 from pages.submissionlogpage.submission_log_page import SubmissionLogPage
 from testdata.test_data import DATA_WINNER_SUBMISSION_LOG_PAGE, DATA_WINNER_SMS_TESTER_PAGE, DATA_WINNER_LOGIN_PAGE
 from tests.logintests.login_data import VALID_CREDENTIALS, WELCOME_MESSAGE
-from tests.smstestertests.sms_tester_data import VALID_DATA2, MESSAGE, EXCEED_NAME_LENGTH2
+from tests.smstestertests.sms_tester_data import *
 from tests.submissionlogtests.submission_log_data import *
 
 
@@ -21,7 +21,6 @@ class TestSubmissionLog(BaseTest):
         dashboard_page = login_page.do_successful_login_with(VALID_CREDENTIALS)
         self.assertEqual(dashboard_page.welcome_message(),
             fetch_(WELCOME_MESSAGE, from_(VALID_CREDENTIALS)))
-        self.test_var = "help"
         self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
         sms_tester_page = SMSTesterPage(self.driver)
         sms_tester_page.send_sms_with(sms_data)
@@ -37,7 +36,7 @@ class TestSubmissionLog(BaseTest):
         self.driver.go_to(DATA_WINNER_SUBMISSION_LOG_PAGE)
         time.sleep(3)
         submission_log_page = SubmissionLogPage(self.driver)
-        self.assertRegexpMatches(submission_log_page.get_submission_message(SMS_DATA), fetch_(SMS_SUBMISSION, from_(SMS_DATA)))
+        self.assertRegexpMatches(submission_log_page.get_submission_message(SMS_DATA_LOG), fetch_(SMS_SUBMISSION, from_(SMS_DATA_LOG)))
 
     @attr('functional_test')
     def test_invalid_sms_submission_log(self):
@@ -48,4 +47,27 @@ class TestSubmissionLog(BaseTest):
         self.driver.go_to(DATA_WINNER_SUBMISSION_LOG_PAGE)
         time.sleep(3)
         submission_log_page = SubmissionLogPage(self.driver)
-        self.assertRegexpMatches(submission_log_page.get_submission_message(EXCEED_WORD_LIMIT), fetch_(SMS_SUBMISSION, from_(EXCEED_WORD_LIMIT)))
+        self.assertRegexpMatches(submission_log_page.get_submission_message(EXCEED_WORD_LIMIT_LOG), fetch_(SMS_SUBMISSION, from_(EXCEED_WORD_LIMIT_LOG)))
+        self.assertEqual(submission_log_page.get_failure_message(EXCEED_WORD_LIMIT_LOG), fetch_(FAILURE_MSG, from_(EXCEED_WORD_LIMIT_LOG)))
+
+    @attr('functional_test')
+    def test_submission_log_for_extra_plus_in_btw_sms(self):
+        """
+        Function to test the successful SMS submission
+        """
+        self.prerequisites_of_submission_log(EXTRA_PLUS_IN_BTW)
+        self.driver.go_to(DATA_WINNER_SUBMISSION_LOG_PAGE)
+        time.sleep(3)
+        submission_log_page = SubmissionLogPage(self.driver)
+        self.assertRegexpMatches(submission_log_page.get_submission_message(EXTRA_PLUS_IN_BTW_LOG), fetch_(SMS_SUBMISSION, from_(EXTRA_PLUS_IN_BTW_LOG)))
+
+    @attr('functional_test')
+    def test_submission_log_for_extra_plus_in_btw_sms(self):
+        """
+        Function to test the successful SMS submission
+        """
+        self.prerequisites_of_submission_log(PLUS_IN_THE_BEGINNING)
+        self.driver.go_to(DATA_WINNER_SUBMISSION_LOG_PAGE)
+        time.sleep(3)
+        submission_log_page = SubmissionLogPage(self.driver)
+        self.assertRegexpMatches(submission_log_page.get_submission_message(PLUS_IN_THE_BEGINNING_LOG), fetch_(SMS_SUBMISSION, from_(PLUS_IN_THE_BEGINNING_LOG)))
