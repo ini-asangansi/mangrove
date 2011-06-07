@@ -14,10 +14,10 @@ BLANK_FIELDS = {FIRST_NAME: "",
                 LAST_NAME: "",
                 TELEPHONE_NUMBER: "",
                 COMMUNE: "",
-                ERROR_MSG: "* First Name   This field is required.* Last Name   This field is required.* Telephone Number   This field is required.* Commune   This field is required."}
+                ERROR_MSG: "* First Name   This field is required.* Last Name   This field is required.* Telephone Number   This field is required."}
 
 VALID_DATA = {FIRST_NAME: "Mickey",
               LAST_NAME: "Duck",
               TELEPHONE_NUMBER: "9876543210",
               COMMUNE: "urbaine",
-              SUCCESS_MSG: "Registration has been successful. The short code is rep"}
+              SUCCESS_MSG: "Registration successful. Reporter identification number: rep"}
