@@ -2,22 +2,19 @@
 
 
 ##Variables
-FIRST_NAME = "first_name"
-LAST_NAME = "last_name"
+NAME = "name"
 TELEPHONE_NUMBER = "telephone_number"
 COMMUNE = "commune"
 SUCCESS_MSG = "message"
 ERROR_MSG = "message"
 
 
-BLANK_FIELDS = {FIRST_NAME: "",
-                LAST_NAME: "",
+BLANK_FIELDS = {NAME: "",
                 TELEPHONE_NUMBER: "",
                 COMMUNE: "",
-                ERROR_MSG: "* First Name   This field is required.* Last Name   This field is required.* Telephone Number   This field is required."}
+                ERROR_MSG: "* Name   This field is required.* Mobile Number   This field is required."}
 
-VALID_DATA = {FIRST_NAME: "Mickey",
-              LAST_NAME: "Duck",
+VALID_DATA = {NAME: "Mickey Duck",
               TELEPHONE_NUMBER: "9876543210",
               COMMUNE: "urbaine",
               SUCCESS_MSG: "Registration successful. Reporter identification number: rep"}

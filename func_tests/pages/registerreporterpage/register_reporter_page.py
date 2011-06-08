@@ -31,9 +31,7 @@ class ReporterRegistrationPage(Page):
         Return self
         """
         self.driver.find_text_box(FIRST_NAME_TB).enter_text(
-            fetch_(FIRST_NAME, from_(registration_data)))
-        self.driver.find_text_box(LAST_NAME_TB).enter_text(
-            fetch_(LAST_NAME, from_(registration_data)))
+            fetch_(NAME, from_(registration_data)))
         self.driver.find_text_box(TELEPHONE_NUMBER_TB).enter_text(
             fetch_(TELEPHONE_NUMBER, from_(registration_data)))
         self.driver.find_text_box(COMMUNE_TB).enter_text(

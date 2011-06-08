@@ -19,7 +19,6 @@ LOCATOR = "locator"
 BY = "by"
 
 FIRST_NAME_TB = by_css("input#id_first_name")
-LAST_NAME_TB = by_css("input#id_last_name")
 TELEPHONE_NUMBER_TB = by_css("input#id_telephone_number")
 COMMUNE_TB = by_css("input#id_commune")
 
