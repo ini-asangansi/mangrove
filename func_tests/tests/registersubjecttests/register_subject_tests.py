@@ -19,6 +19,7 @@ class TestRegisterSubject(BaseTest):
         login_page = LoginPage(self.driver)
         dashboard_page = login_page.do_successful_login_with(VALID_CREDENTIALS)
         return dashboard_page.navigate_to_register_subject_page()
+
     @SkipTest
     @attr('functional_test', 'smoke')
     def test_successful_registration_of_subject(self):
@@ -29,6 +30,7 @@ class TestRegisterSubject(BaseTest):
         register_subject_page = self.prerequisites_of_register_subject()
         message = register_subject_page.successfully_register_subject_with(VALID_DATA)
         self.assertRegexpMatches(register_subject_page.get_flash_message(), message)
+
     @SkipTest
     @attr('functional_test')
     def test_registration_of_subject_without_entering_data(self):

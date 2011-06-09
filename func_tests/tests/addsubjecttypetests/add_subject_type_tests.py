@@ -37,4 +37,3 @@ class TestAddSubjectType(BaseTest):
         add_subject_type_page = self.prerequisites_of_add_subject_type()
         add_subject_type_page.add_entity_type_with(BLANK)
         self.assertEqual(add_subject_type_page.get_error_message(), fetch_(ERROR_MESSAGE, from_(BLANK)))
-

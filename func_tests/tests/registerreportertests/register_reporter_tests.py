@@ -4,10 +4,8 @@ from nose.plugins.attrib import attr
 from framework.base_test import BaseTest
 from framework.utils.data_fetcher import fetch_, from_
 from pages.loginpage.login_page import LoginPage
-from pages.registerreporterpage.register_reporter_page import ReporterRegistrationPage
 from testdata.test_data import DATA_WINNER_LOGIN_PAGE
 from tests.logintests.login_data import VALID_CREDENTIALS
-from tests.logintests.login_tests import TestLoginPage
 from tests.registerreportertests.register_reporter_data import VALID_DATA, SUCCESS_MSG, BLANK_FIELDS, ERROR_MSG
 
 

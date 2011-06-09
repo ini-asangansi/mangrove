@@ -91,6 +91,16 @@ class TestSMSTester(BaseTest):
         self.assertEqual(sms_tester_page.get_response_message(), fetch_(SUCCESS_MESSAGE, from_(REGISTER_NEW_SUBJECT)))
 
     @attr('functional_test')
+    def test_sms_player_for_registration_of_existing_subject_short_code(self):
+        """
+        Function to test the registration of the existing subject short code using sms submission with registered number
+        """
+        self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
+        sms_tester_page = SMSTesterPage(self.driver)
+        sms_tester_page.send_sms_with(REGISTER_EXISTING_SUBJECT_SHORT_CODE)
+        self.assertEqual(sms_tester_page.get_response_message(), fetch_(ERROR_MSG, from_(REGISTER_EXISTING_SUBJECT_SHORT_CODE)))
+
+    @attr('functional_test')
     def test_sms_player_for_registration_with_invalid_geo_code(self):
         """
         Function to test the registration of the new subject with invalid geo code using sms submission with registered number

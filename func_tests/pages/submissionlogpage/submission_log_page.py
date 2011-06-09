@@ -38,5 +38,3 @@ class SubmissionLogPage(Page):
         unique_value = fetch_(UNIQUE_VALUE, from_(sms_data))
         failure_msg_xpath = SUBMISSION_LOG_TR_XPATH + SUBMISSION_LOG_FAILURE_MSG_XPATH
         return self.driver.find(by_xpath(failure_msg_xpath % unique_value)).get_attribute("title")
-
-
