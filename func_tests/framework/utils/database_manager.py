@@ -20,6 +20,8 @@ class DatabaseManager(object):
         Return connection
         """
         dbfile = os.path.join(os.path.dirname(__file__), database_name)
+        print database_name
+        print dbfile
         return sqlite3.connect(dbfile)
 
     def get_activation_code(self, email, database_name=DEFAULT_DB_FILE):
