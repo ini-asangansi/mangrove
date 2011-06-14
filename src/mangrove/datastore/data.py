@@ -332,7 +332,7 @@ def _load_all_fields_aggregated(dbm, type_path,group_level,filter=None):
     latest_values = _load_all_fields_latest_values(dbm, type_path, group_level,filter)
 
     for k, v in values:
-        v["latest"] = _find_in(latest_values, k)["latest"]
+        v["latest"] = _find_in(latest_values, k)['value']
         v['average'] = v['sum']/v['count']
 
     for k, v in latest_values:
