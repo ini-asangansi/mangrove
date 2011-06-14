@@ -7,7 +7,6 @@ from pages.loginpage.login_page import LoginPage
 from pages.registersubjectpage.register_subject_page import RegisterSubjectPage
 from testdata.test_data import DATA_WINNER_LOGIN_PAGE
 from tests.logintests.login_data import VALID_CREDENTIALS
-from tests.logintests.login_tests import TestLoginPage
 from tests.registersubjecttests.register_subject_data import VALID_DATA, SUCCESS_MSG, ERROR_MSG
 
 

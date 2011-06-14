@@ -48,14 +48,14 @@ class RegistrationPage(Page):
             fetch_(FIRST_NAME, from_(registration_data)))
         self.driver.find_text_box(ORGANIZATION_LAST_NAME_TB).enter_text(
             fetch_(LAST_NAME, from_(registration_data)))
-        email = fetch_(EMAIL, from_(registration_data)) + generateId()
-        self.driver.find_text_box(ORGANIZATION_EMAIL_TB).enter_text(email + "@ngo.com")
+        email = fetch_(EMAIL, from_(registration_data)) + generateId() + "@ngo.com"
+        self.driver.find_text_box(ORGANIZATION_EMAIL_TB).enter_text(email)
         self.driver.find_text_box(ORGANIZATION_PASSWORD_TB).enter_text(
             fetch_(REGISTRATION_PASSWORD, from_(registration_data)))
         self.driver.find_text_box(ORGANIZATION_CONFIRM_PASSWORD_TB).enter_text(
             fetch_(REGISTRATION_CONFIRM_PASSWORD, from_(registration_data)))
         self.driver.find(ORGANIZATION_REGISTER_BTN).click()
-        return RegistrationConfirmationPage(self.driver)
+        return (RegistrationConfirmationPage(self.driver), email)
 
     def register_with(self, registration_data):
         self.driver.find_text_box(ORGANIZATION_NAME_TB).enter_text(

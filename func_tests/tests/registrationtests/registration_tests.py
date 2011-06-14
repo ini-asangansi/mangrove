@@ -15,7 +15,7 @@ class TestRegistrationPage(BaseTest):
 
         self.driver.go_to(DATA_WINNER_REGISTER_PAGE)
         registration_page = RegistrationPage(self.driver)
-        registration_confirmation_page = registration_page.successful_registration_with(REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION)
+        registration_confirmation_page, email = registration_page.successful_registration_with(REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION)
         self.assertEquals(registration_confirmation_page.registration_success_message(),
             fetch_(SUCCESS_MESSAGE,
                    from_(REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION)))

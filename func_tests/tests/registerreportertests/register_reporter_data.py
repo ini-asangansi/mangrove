@@ -5,6 +5,7 @@
 NAME = "name"
 TELEPHONE_NUMBER = "telephone_number"
 COMMUNE = "commune"
+GPS = "gps"
 SUCCESS_MSG = "message"
 ERROR_MSG = "message"
 
@@ -12,9 +13,11 @@ ERROR_MSG = "message"
 BLANK_FIELDS = {NAME: "",
                 TELEPHONE_NUMBER: "",
                 COMMUNE: "",
-                ERROR_MSG: "* Name   This field is required.* Mobile Number   This field is required."}
+                GPS: "",
+                ERROR_MSG: "Required information for registration. Please fill out at least one location field correctly.* Name   This field is required.* Mobile Number   This field is required."}
 
 VALID_DATA = {NAME: "Mickey Duck",
               TELEPHONE_NUMBER: "9876543210",
               COMMUNE: "urbaine",
+              GPS: "48.955267  1.816013",
               SUCCESS_MSG: "Registration successful. Reporter identification number: rep"}

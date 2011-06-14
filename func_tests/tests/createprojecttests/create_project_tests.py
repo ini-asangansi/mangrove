@@ -4,7 +4,6 @@ from nose.plugins.skip import SkipTest
 from framework.base_test import BaseTest
 from framework.utils.data_fetcher import fetch_, from_
 from pages.loginpage.login_page import LoginPage
-from pages.createprojectpage.create_project_page import CreateProjectPage
 from testdata.test_data import DATA_WINNER_LOGIN_PAGE
 from tests.logintests.login_data import VALID_CREDENTIALS
 from tests.createprojecttests.create_project_data import *
