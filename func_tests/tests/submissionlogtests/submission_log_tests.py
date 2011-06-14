@@ -41,7 +41,7 @@ class TestSubmissionLog(BaseTest):
     @attr('functional_test')
     def test_invalid_sms_submission_log(self):
         """
-        Function to test the successful SMS submission
+        Function to test the invalid SMS submission by exceeding value of the word field limit
         """
         self.prerequisites_of_submission_log(EXCEED_NAME_LENGTH2)
         self.driver.go_to(DATA_WINNER_SUBMISSION_LOG_PAGE)
@@ -53,7 +53,7 @@ class TestSubmissionLog(BaseTest):
     @attr('functional_test')
     def test_submission_log_for_extra_plus_in_btw_sms(self):
         """
-        Function to test the successful SMS submission
+        Function to test the successful SMS submission while using extra plus in between of SMS
         """
         self.prerequisites_of_submission_log(EXTRA_PLUS_IN_BTW)
         self.driver.go_to(DATA_WINNER_SUBMISSION_LOG_PAGE)
@@ -62,12 +62,13 @@ class TestSubmissionLog(BaseTest):
         self.assertRegexpMatches(submission_log_page.get_submission_message(EXTRA_PLUS_IN_BTW_LOG), fetch_(SMS_SUBMISSION, from_(EXTRA_PLUS_IN_BTW_LOG)))
 
     @attr('functional_test')
-    def test_submission_log_for_extra_plus_in_btw_sms(self):
+    def test_submission_log_for_invalid_geo_code_format(self):
         """
-        Function to test the successful SMS submission
+        Function to test the invalid SMS submission for invalid geo code
         """
-        self.prerequisites_of_submission_log(PLUS_IN_THE_BEGINNING)
+        self.prerequisites_of_submission_log(WITH_INVALID_GEO_CODE_FORMAT)
         self.driver.go_to(DATA_WINNER_SUBMISSION_LOG_PAGE)
         time.sleep(3)
         submission_log_page = SubmissionLogPage(self.driver)
-        self.assertRegexpMatches(submission_log_page.get_submission_message(PLUS_IN_THE_BEGINNING_LOG), fetch_(SMS_SUBMISSION, from_(PLUS_IN_THE_BEGINNING_LOG)))
+        self.assertRegexpMatches(submission_log_page.get_submission_message(WITH_INVALID_GEO_CODE_FORMAT_LOG), fetch_(SMS_SUBMISSION, from_(WITH_INVALID_GEO_CODE_FORMAT_LOG)))
+        self.assertEqual(submission_log_page.get_failure_message(WITH_INVALID_GEO_CODE_FORMAT_LOG), fetch_(FAILURE_MSG, from_(WITH_INVALID_GEO_CODE_FORMAT_LOG)))

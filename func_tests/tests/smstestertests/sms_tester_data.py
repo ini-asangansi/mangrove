@@ -18,17 +18,17 @@ VALID_DATA = {SENDER: "1234567890",
 
 VALID_DATA2 = {SENDER: "1234567890",
               RECEIVER: "261333782943",
-              SMS: "cli002 +EID cid005 +NA Mr. Tessy +FA 58 +RD 17.05.2011 +BG b +SY ade",
+              SMS: "cli002 +EID cid005 +NA Mr. Tessy +FA 58 +RD 17.05.2011 +BG b +SY ade +GPS 27.178057  -78.007789",
               SUCCESS_MESSAGE: SUCCESS_MESSAGE_TEXT}
 
 EXCEED_NAME_LENGTH = {SENDER: "1234567890",
               RECEIVER: "261333782943",
-              SMS: "cli001 +EID CID003 +NA Mr. O'brain +FA 58 +RD 17.05.2011 +BG b +SY ade",
+              SMS: "cli001 +EID CID003 +NA Mr. O'brain +FA 58 +RD 17.05.2011 +BG b +SY ade +GPS 27.178057  -78.007789",
               ERROR_MSG: "Error. Invalid Submission. Refer to printed Questionnaire. Resend the question ID and answer for na"}
 
 EXCEED_NAME_LENGTH2 = {SENDER: "1234567890",
               RECEIVER: "261333782943",
-              SMS: "cli002 +EID CID005 +NA Mr. O'brain +FA 58 +RD 17.05.2011 +BG b +SY ade",
+              SMS: "cli002 +EID CID005 +NA Mr. O'brain +FA 58 +RD 17.05.2011 +BG b +SY ade +GPS 27.178057  -78.007789",
               ERROR_MSG: "Error. Invalid Submission. Refer to printed Questionnaire. Resend the question ID and answer for na"}
 
 BLANK_FIELDS = {SENDER: "",
@@ -38,7 +38,7 @@ BLANK_FIELDS = {SENDER: "",
 
 EXTRA_PLUS_IN_BTW = {SENDER: "1234567890",
               RECEIVER: "261333782943",
-              SMS: "cli002 +EID cid002 + +NA Mr. Dessy +FA 58 ++ +RD 17.05.2011 +BG b +SY ade +",
+              SMS: "cli002 +EID cid002 + +NA Mr. Dessy +FA 58 ++ +RD 17.05.2011 +BG b +SY ade +  +GPS 27.178057  -78.007789",
               ERROR_MSG: SUCCESS_MESSAGE_TEXT}
 
 PLUS_IN_THE_BEGINNING = {SENDER: "1234567890",
@@ -66,6 +66,11 @@ REGISTER_NEW_SUBJECT = {SENDER: "1234567890",
               SMS: "REG +T Clinic +m   123456 +l Jaipur +G 26.917 75.817 ++  +n Clinic Jaipur +S CLIJPR + ",
               ERROR_MSG: SUCCESS_MESSAGE_TEXT}
 
+REGISTER_EXISTING_SUBJECT_SHORT_CODE = {SENDER: "1234567890",
+              RECEIVER: "261333782943",
+              SMS: "REG +T Clinic +m   123456 +l Jaipur +G 26.917 75.817 ++  +n Clinic Jaipur +S cid001 + ",
+              ERROR_MSG: "Entity with short code = cid001 already exists."}
+
 REGISTER_INVALID_GEO_CODE = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "REG +T Clinic +m   123456 +l Agra +G 127.178057 -78.007789 +n Clinic Agra +S CLIAGRA",
@@ -73,5 +78,5 @@ REGISTER_INVALID_GEO_CODE = {SENDER: "1234567890",
 
 WITH_INVALID_GEO_CODE_FORMAT = {SENDER: "1234567890",
               RECEIVER: "261333782943",
-              SMS: 'cli002 +EID CID005 + +NA Mr. Túlio de Melo +FA 58 +RD 17.05.2011 +BG ab +SY ade +GPS 127.178057  -78.007789',
+              SMS: 'cli002 +EID cid002 + +NA Mr. De`Melo +FA 58 +RD 17.05.2011 +BG ab +SY ade +GPS 127.178057  -78.007789',
               ERROR_MSG: "Error. Invalid Submission. Refer to printed Questionnaire. Resend the question ID and answer for na, bg, gps"}

@@ -3,7 +3,7 @@ import unittest
 
 import os
 from couchdb.client import Server
-from tests.testdatasetup.couch_http_wrapper import CouchHttpWrapper
+from framework.utils.couch_http_wrapper import CouchHttpWrapper
 
 
 class TestCouchHTTPWrapper(unittest.TestCase):

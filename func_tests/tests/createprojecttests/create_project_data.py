@@ -22,7 +22,7 @@ VALID_DATA = {PROJECT_NAME: "Clinic Morondava ", GEN_RANDOM: True,
 VALID_DATA2 = {PROJECT_NAME: "Water Point2 Morondava ", GEN_RANDOM: True,
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
-              SUBJECT: "[u\\'Water Point\\']",
+              SUBJECT: "[u\\'Waterpoint\\']",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Questionnaire"}
 

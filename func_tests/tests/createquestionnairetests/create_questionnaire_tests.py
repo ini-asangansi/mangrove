@@ -3,9 +3,7 @@ from nose.plugins.attrib import attr
 from nose.plugins.skip import SkipTest
 from framework.base_test import BaseTest
 from framework.utils.data_fetcher import fetch_, from_
-from pages.createprojectpage.create_project_page import CreateProjectPage
 from pages.loginpage.login_page import LoginPage
-from pages.createquestionnairepage.create_questionnaire_page import CreateQuestionnairePage
 from testdata.test_data import DATA_WINNER_LOGIN_PAGE
 from tests.logintests.login_data import VALID_CREDENTIALS
 from tests.createquestionnairetests.create_questionnaire_data import *
@@ -29,8 +27,7 @@ class TestCreateQuestionnaire(BaseTest):
     @attr('functional_test', 'smoke')
     def test_successful_questionnaire_creation(self):
         """
-        Function to test the successful Creation of a Questionnaire with given
-        details
+        Function to test the successful Creation of a Questionnaire with given details
         """
         create_questionnaire_page = self.prerequisites_of_create_questionnaire()
         create_questionnaire_page.create_questionnaire_with(QUESTIONNAIRE_DATA)

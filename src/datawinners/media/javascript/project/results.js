@@ -60,6 +60,24 @@ $(document).ready(function(){
             new DW.show_data(page_number + 1);
         }
     });
+
+   $('#action').change(function(){
+       var ids = [];
+       $(".selected_submissions:checked").each(function(){
+           ids.push($(this).val());
+       });
+       var answer = confirm("Are you sure you want to delete the selected record/s?");
+       if(answer){
+           $.post(
+                   window.location.pathname,
+                   {'id_list': JSON.stringify(ids)},
+                   function(response){
+                       window.location.reload();
+                       $('#action').val(0);
+                   }
+           );
+       }
+    })
     
 });
 

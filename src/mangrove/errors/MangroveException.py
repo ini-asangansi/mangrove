@@ -212,7 +212,15 @@ class SMSParserInvalidFormatException(MangroveException):
     def __init__(self, data):
         MangroveException.__init__(self, "Could not parse, invalid format: %s" % data)
 
+class CSVParserInvalidHeaderFormatException(MangroveException):
+    def __init__(self):
+        MangroveException.__init__(self, "Could not parse header, invalid format.")
+
 class AggregationNotSupportedForTypeException(MangroveException):
     def __init__(self, field, aggregation):
         error_message = "%s for %s is not supported" % (aggregation, field)
         MangroveException.__init__(self, error_message, (aggregation, field))
+
+
+class UnknownTransportException(MangroveException):
+    pass

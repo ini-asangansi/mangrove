@@ -2,6 +2,7 @@
 from pages.createprojectpage.create_project_page import CreateProjectPage
 from pages.dashboardpage.dashboard_locator import *
 from pages.page import Page
+from pages.projectspage.projects_page import ProjectsPage
 from pages.registerreporterpage.register_reporter_page import ReporterRegistrationPage
 from pages.registersubjectpage.register_subject_page import RegisterSubjectPage
 
@@ -32,12 +33,21 @@ class DashboardPage(Page):
 
     def navigate_to_create_project_page(self):
         """
-        Function to navigate to register a reporter page of the website.
+        Function to navigate to create project page of the website.
 
-        Return register reporter page
+        Return create project page
          """
         self.driver.find(CREATE_PROJECT_LINK).click()
         return CreateProjectPage(self.driver)
+
+    def navigate_to_view_all_project_page(self):
+        """
+        Function to navigate to view all projects page of the website.
+
+        Return view all projects page
+         """
+        self.driver.find(VIEW_ALL_PROJECT_LINK).click()
+        return ProjectsPage(self.driver)
 
     def navigate_to_register_subject_page(self):
         """

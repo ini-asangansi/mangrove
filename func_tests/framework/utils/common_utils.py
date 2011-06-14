@@ -76,6 +76,12 @@ def get_epoch_last_three_digit():
     return epoch_last_four_digit
 
 
+def get_epoch_last_ten_digit():
+    epoch = long(time.time() * 100)
+    epoch_last_four_digit = divmod(epoch, 10000000000)[1]
+    return epoch_last_four_digit
+
+
 def generateId():
     epoch_last_three_digit = get_epoch_last_three_digit()
     return str(epoch_last_three_digit) + get_random_three_digit_string()
