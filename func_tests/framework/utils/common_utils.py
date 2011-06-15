@@ -73,16 +73,26 @@ def get_random_three_digit_string():
 def get_epoch_last_three_digit():
     epoch = long(time.time() * 100)
     epoch_last_three_digit = divmod(epoch, 1000)[1]
+    i = 0
     while len(str(epoch_last_three_digit)) < 3:
+        i = i + 1
+        epoch = long(time.time() * 100)
         epoch_last_three_digit = divmod(epoch, 1000)[1]
+        if i > 20:
+            break;
     return epoch_last_three_digit
 
 
 def get_epoch_last_ten_digit():
-    epoch = long(time.time() * 100)
+    epoch = long(time.time() * 1000000)
     epoch_last_ten_digit = divmod(epoch, 10000000000)[1]
+    i = 0
     while len(str(epoch_last_ten_digit)) < 10:
+        i = i + 1
+        epoch = long(time.time() * 1000000)
         epoch_last_ten_digit = divmod(epoch, 10000000000)[1]
+        if i > 20:
+            break;
     return epoch_last_ten_digit
 
 
