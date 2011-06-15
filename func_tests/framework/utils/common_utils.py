@@ -82,7 +82,7 @@ def get_epoch_last_ten_digit():
     epoch = long(time.time() * 100)
     epoch_last_ten_digit = divmod(epoch, 10000000000)[1]
     while len(str(epoch_last_ten_digit)) < 10:
-        epoch_last_ten_digit = divmod(epoch, 1000)[1]
+        epoch_last_ten_digit = divmod(epoch, 10000000000)[1]
     return epoch_last_ten_digit
 
 
