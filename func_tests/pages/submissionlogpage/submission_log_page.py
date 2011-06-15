@@ -17,7 +17,7 @@ class SubmissionLogPage(Page):
 
         Return title of the web page
         """
-        page_title = self.driver.title()
+        page_title = self.driver.title
         return page_title
 
     def get_submission_message(self, sms_data):

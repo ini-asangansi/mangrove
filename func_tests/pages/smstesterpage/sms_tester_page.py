@@ -18,7 +18,7 @@ class SMSTesterPage(Page):
 
         Return title of the web page
         """
-        page_title = self.driver.title()
+        page_title = self.driver.title
         return page_title
 
     def send_sms_with(self, sms_data):
