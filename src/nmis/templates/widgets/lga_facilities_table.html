@@ -21,7 +21,14 @@
 		opacity: 0.8;
 	}
 	tr.selected-facility td {
-		background-color: #eee;
+		background-color: #F2F2F2;
+		border-color: #ddd;
+	}
+	tr.selected-facility td.selected-column {
+		background-color: #E2E2E2;
+	}
+	.selected-column {
+		background-color: #F2F2F2;
 		border-color: #ddd;
 	}
 	table.facility-list td {
@@ -54,37 +61,165 @@
 		border: 1px solid black;
 		float: left;
 	}
+	#column-description {
+		padding: 20px 10px;
+		background-color: rgba(0,0,0,0.1);
+		margin-top: 20px;
+	}
 </style>
+
+<div id="description-template" style="display:none">
+	<h2 class="description"></h2>
+	<hr />
+	<ul class="counts">
+	</ul>
+</div>
 <script type="text/javascript" charset="utf-8">
+
+function buildColumnDescriptionBox(columnData) {
+	var cdTemplate = $('#description-template').clone();
+	cdTemplate.attr('id', 'column-description-box');
+	var boxWrap = $('#facility-tabs').find('#column-description');
+	if(boxWrap.length===0) {
+		boxWrap = $('<div />', {'id': 'column-description'}).appendTo('#facility-tabs');
+	}
+	cdTemplate.find('.description').text(columnData.description);
+	function zz(number) {
+       return Math.floor(number*1000)/10
+    }
+	var countUl = cdTemplate.find('.counts');
+	if(columnData.counts !== undefined) {
+		var total = columnData.counts._total;
+		$.each(columnData.counts, function(k, val){
+            if (k !== '_total') {
+				countUl.append($("<li />").text(k + ': '+ val + ' (' + zz((parseFloat(val)/parseFloat(total))) + '%)'))
+			}
+		});
+	} else {
+		countUl.hide();
+	}
+	
+	cdTemplate.css({'display':'block'})
+	boxWrap.html(cdTemplate);
+}
+/*
+$(smthg).each(function(){}) //no dicts :'(
+$.each(smthg, function(){}) //the main way to iterate through dicts w/ jquery
+*/
 var defaultSectorSlug = 'health';
 var facilityDataLoaded = function(){};
+
+var selectedSector, selectedFacility, selectedColumn;
+
 widgets.push(function(){
 	facilityDataLoaded = function(){
-		function getKeys(x){
-			var keys = [];
-			$.each(x, function(i){keys.push(i)});
-			return keys;
-		}
-		$('body').bind('facility-click', function(evt, edata){
+		$('body').bind('facility-select', function(evt, edata){
 			var facility = facilityData.list[edata.uid];
+			if(facility === selectedFacility) {
+				return false;
+			}
+			
+			selectedFacility === undefined || $('body').trigger('facility-unselect', {uid: selectedFacility.uid});
+			selectedFacility = facility;
+			
+			
+			//scrolls to row by default (?)
+			if (edata.scrollToRow === undefined) { edata.scrollToRow = true; }
+			
+			edata.scrollToRow && (function scrollToTheFacilitysTr(){
+				if(facility.tr!==undefined) {
+					var ourTr = $(facility.tr);
+					var offsetTop = ourTr.offset().top - ourTr.parents('table').eq(0).offset().top
+					var tabPanel = ourTr.parents('.ui-tabs-panel');
+					tabPanel.scrollTo(offsetTop, 500, {
+						axis: 'y'
+					});
+				}
+			})()
+			
+			$.each(facilityData.list, function(i, fdp){
+				fdp.mrkr === undefined || $(fdp.mrkr.icon.imageDiv).hide();
+			});
+			$(facility.mrkr.icon.imageDiv).show();
+			
+			var popup = $("<div />");
+			var sector = $(facilitySectors).filter(function(){return this.slug==facility.sector}).get(0);
+			(function buildDefinitionList(){
+				var tab = $("<table />").css({
+					'width': 400
+				});
+				var imgFullUrl = ("http://nmis.mvpafrica.org/site-media/attachments/" + facility.img_id).toLowerCase();
+				var imgLink = $("<a />", {'href':imgFullUrl, 'target': '_BLANK'}).html($("<img />", {src: imgFullUrl}).css({'width': 90}));
+				popup.prepend(imgLink);
+				
+				$(sector.columns).each(function(i, col){
+					var tr = $("<tr />");
+					var colSlug = col.slug;
+					var colName = col.name;
+					tr.append($("<td />").text(colName))
+					tr.append($("<td />").text(facility[colSlug]))
+					tab.append(tr);
+				});
+				popup.append(tab);
+			})();
+			
+			popup.dialog({
+				height: 275,
+				width: 520,
+//				position: 
+				close: function(){
+					$('body').trigger('facility-unselect');
+				}
+			});
+		});
+		$('body').bind('facility-unselect', function(evt, edata){
 			$('.ui-dialog').remove();
-			$('<div />').text("Clicked on point with data: " + getKeys(facility)).dialog();
+			selectedSector === undefined || (typeof(filterPointsBySector)!=='function') ||filterPointsBySector(selectedSector);
+			$('.selected-facility').removeClass('selected-facility');
+			selectedFacility = undefined;
+//			var facility = facilityData.list[edata.uid];
 		});
 		$('body').bind('facility-mouseover', function(evt, edata){var facility = facilityData.list[edata.uid];});
 		$('body').bind('facility-mouseout', function(evt, edata){var facility = facilityData.list[edata.uid];});
-		$('body').bind('sector-change', function(evt, edata){var sector = edata.sector;});
-		/* actions to be taken for the facility navigation table and image stuff.
-		*/
-		$('body').bind('facility-click', function(evt, edata){
-			var facility = facilityData.list[edata.uid];
-			$('.selected-facility').removeClass('selected-facility');
-			$(facility.tr).addClass('selected-facility');
-		});
 		$('body').bind('sector-change', function(evt, edata){
-			var sector = edata.sector;
-	//		populateImageDivForSector(sector);
+			$('body').trigger('facility-unselect');
+			if(selectedSector !== edata.sector) {
+				selectedSector = edata.sector;
+				ftabs.tabs('select', facilitySectorSlugs.indexOf(selectedSector));
+				(typeof(filterPointsBySector)==='function') && filterPointsBySector(selectedSector);
+			}
 		});
 		
+		$('body').bind('column-select', function(evt, edata){
+			var wrapElement = $('#lga-facilities-table');
+			var column = edata.column;
+			var sector = edata.sector;
+			if(selectedColumn!==edata.column) {
+				$('body').trigger('column-unselect', {column:selectedColumn});
+				if(column.description !== undefined && column.description !== null) {
+					$('.selected-column', wrapElement).removeClass('selected-column');
+					(function highlightTheColumn(columnIndex){
+						var table = $('table.facility-list');
+						table.find('tr').each(function(){
+							$(this).find('td').eq(columnIndex).addClass('selected-column');
+						})
+					})(column.thIndex);
+					
+					buildColumnDescriptionBox(edata.column);
+					$('#column-description').show();
+				}
+				selectedColumn = edata.column;
+			}
+		});
+		$('body').bind('column-unselect', function(evt, edata){
+			$('#column-description').hide();
+		})
+		/* actions to be taken for the facility navigation table and image stuff.
+		*/
+		$('body').bind('facility-select', function(evt, edata){
+			var facility = facilityData.list[edata.uid];
+			facility.tr === undefined || $(facility.tr).addClass('selected-facility');
+		});
 		
 		var facilityTableWrap = $('#lga-facilities-table').html($('<div />', {'id': 'facility-tabs'}).html($('<ul />'))).append($('<div />', {'id':'image-nav'}));
 		var ftabs = $('div#facility-tabs', facilityTableWrap).css({'padding-bottom':18});
@@ -103,11 +238,12 @@ widgets.push(function(){
 			ftabs.append(createTableForSectorWithData(sector, facilityData));
 		});
 
-		$(facilityTableWrap).trigger('sector-change', {sector: defaultSectorSlug});
-
 		ftabs.tabs({select: function(evt, ui){
 			$(evt.target).trigger('sector-change', {sector: $(ui.panel).data('sector-slug')})
 		}});
+		
+		$(facilityTableWrap).trigger('sector-change', {sector: defaultSectorSlug});
+		
 		(function deleteThisWhenYouWantToDoItProperly(){
 			var stColors = {
 	  			'facilities-water': "blue",
@@ -139,7 +275,15 @@ widgets.push(function(){
 		var sectorData  = data.bySector[sector.slug] || data.bySector[sector.name];
 		if(sector.columns!==undefined && sector.columns.length>0 && sectorData!==undefined && sectorData.length>0) {
 			$.each(sector.columns, function(i, col){
-				thRow.append($("<th />", {'class':'col-'+col[0]}).text(col[1]))
+				var th = $("<th />", {'class':'col-'+col.slug}).text(col.name);
+				col.thIndex = i;
+				th.click(function(){
+					$('body').trigger('column-select', {
+						sector: sector,
+						column: col
+					});
+				});
+				thRow.append(th)
 				});
 			var tbod = $("<tbody />");
 			$.each(sectorData, function(i, fUid){
@@ -152,11 +296,16 @@ widgets.push(function(){
 	function createRowForFacilityWithColumns(fpoint, cols){
 		var tr = $("<tr />");
 		$.each(cols, function(i, col){
-			var colSlug = col[0];
-			tr.append($("<td />", {'class':'col-'+colSlug}).text(fpoint[colSlug] || '–'));
+			var colSlug = col.slug;
+			var value = fpoint[colSlug];
+			if(value===undefined) { value = '—'; }
+			tr.append($("<td />", {'class':'col-'+colSlug}).text(value));
 			tr.data('facility-uid', fpoint.uid);
 		});
-		tr.click(function(){$(this).trigger('facility-click', {'uid': fpoint.uid})});
+		tr.click(function(){$(this).trigger('facility-select', {
+			'uid': fpoint.uid,
+			'scrollToRow': false
+		})});
 		tr.mouseover(function(){$(this).trigger('facility-mouseover', {uid: fpoint.uid})})
 		tr.mouseout(function(){$(this).trigger('facility-mouseout', {uid: fpoint.uid})})
 		fpoint.tr = tr.get(0);

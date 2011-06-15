@@ -80,7 +80,7 @@ class SubmissionHandler(object):
                     return SubmissionResponse(True, submission_id, {}, data_record_id)
                 except DataObjectNotFound as e:
                     logger.update_submission_log(submission_id=submission_id, status=False, errors=e.message)
-                    raise DataObjectNotFound('Entity','id','short_code')
+                    raise DataObjectNotFound('Entity','short_code',form_submission.short_code)
         else:
             _errors = form_submission.errors
             logger.update_submission_log(submission_id=submission_id, status=False, errors=_errors.values())
@@ -88,9 +88,15 @@ class SubmissionHandler(object):
 
 
 class SubmissionLogger(object):
+
     def __init__(self, dbm):
         assert isinstance(dbm, DatabaseManager)
         self.dbm = dbm
+
+    def void_data_record(self, submission_id):
+        submission_log = self.dbm._load_document(submission_id, SubmissionLogDocument)
+        submission_log.voided = True
+        self.dbm._save_document(submission_log)
 
     def update_submission_log(self, submission_id, status, errors, data_record_id=None):
         error_message = ""
@@ -121,13 +127,11 @@ def get_submissions_made_for_form(dbm, form_code, page_number=0, page_size=20, c
         rows = dbm.load_all_rows_in_view('submissionlog', startkey=[form_code], endkey=[form_code, {}],
                                          group=True, group_level=1, reduce=True)
     else:
-        rows = dbm.load_all_rows_in_view('submissionlog', reduce=False, startkey=[form_code],
-                                         endkey=[form_code, {}], skip=page_number * page_size, limit=page_size)
+        rows = dbm.load_all_rows_in_view('submissionlog', reduce=False, descending = True, startkey=[form_code, {}],
+                                         endkey=[form_code], skip=page_number * page_size, limit=page_size)
     answers, ids = list(), list()
     for each in rows:
         answers.append(each.value)
         if not count_only:
             ids.append(each.value["data_record_id"])
-    answers.reverse()
-    ids.reverse()
     return answers, ids
