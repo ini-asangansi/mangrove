@@ -2,6 +2,7 @@
 # performing all aggregation in python
 
 from _collections import defaultdict
+import datetime
 import time
 from mangrove.datastore.data import BY_VALUES_FORM_CODE_INDEX, BY_VALUES_EVENT_TIME_INDEX
 from mangrove.form_model.form_model import get_form_model_by_code
@@ -85,16 +86,31 @@ def _map(dbm, type_path, group_level, form_code=None, start_time=None, end_time=
     epoch_end = _convert_to_epoch(end_time)
     start_key = [form_code, epoch_start] if epoch_start is not None else [form_code]
     end_key = [form_code, epoch_end] if epoch_end is not None else [form_code, {}]
+
+    start = datetime.datetime.now()
     rows = dbm.load_all_rows_in_view(view_name, startkey=start_key, endkey=end_key)
+
+    end = datetime.datetime.now()
+    print "time for  by_form_code_time view to load %s" % (end - start,)
+
+    start = datetime.datetime.now()
+
     values = []
     for row in rows:
         form_code, timestamp, entity_id, field = row.key
         values.append(([entity_id, field], row.value))
 
+    end = datetime.datetime.now()
+    print "time for first view transform %s" % (end - start,)
+
+    start = datetime.datetime.now()
+
     transformed_values = defaultdict(list)
     for key, value in values:
         transformed_values[tuple(key)].append(value)
 
+    end = datetime.datetime.now()
+    print "time for second view transform %s" % (end - start,)
     return transformed_values
 
 

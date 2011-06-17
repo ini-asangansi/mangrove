@@ -64,8 +64,8 @@ class TestViewPerf(unittest.TestCase):
         return le
 
     def test_should_create_with_bulk_upload(self):
-        NUM_ENTITIES = 10
-        DATA_REC_PER_ENTITY = 2
+        NUM_ENTITIES = 1000
+        DATA_REC_PER_ENTITY = 52
         BATCH = (NUM_ENTITIES * DATA_REC_PER_ENTITY) / 4
 
         le = self._create_entity_batch(NUM_ENTITIES)
@@ -151,6 +151,7 @@ class TestViewPerf(unittest.TestCase):
             entity_doc=e._doc,
             event_time=utcnow(),
             data=data,
+            submission={'form_code':self.form_code}
             )
         self.bulk.append(data_record_doc)
 
