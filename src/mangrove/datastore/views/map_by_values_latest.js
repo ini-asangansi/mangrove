@@ -8,9 +8,7 @@ function(doc) {
     for (k in doc.data){
       value = {};
       key = [entity_type,entity_id,k,form_code,date];
-      value["timestamp"] = date;
-      value["value"] = doc.data[k].value;
-      emit(key, value);
+      emit(key, doc.data[k].value);
     }
   }
 }

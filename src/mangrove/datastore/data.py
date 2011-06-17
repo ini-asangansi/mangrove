@@ -1,4 +1,5 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
+import datetime
 from documents import attributes
 from mangrove.errors.MangroveException import AggregationNotSupportedForTypeException
 from mangrove.form_model.form_model import get_form_model_by_code
@@ -328,19 +329,22 @@ def _load_all_fields_aggregated(dbm, type_path,group_level,filter=None):
     values = []
     for row in rows:
         values.append((row.key, row.value))
+    start = datetime.datetime.now()
 
     latest_values = _load_all_fields_latest_values(dbm, type_path, group_level,filter)
+    end_view = datetime.datetime.now()
+    print "Loading the latest value view took %s" % (end_view - start,)
 
     for k, v in values:
-        v["latest"] = _find_in(latest_values, k)['value']
+        v["latest"] = _find_in(latest_values, k)
         v['average'] = v['sum']/v['count']
 
     for k, v in latest_values:
         v_dict = _find_in(values, k)
-        if v_dict is not None:
-            v.update(v_dict)
+        if v_dict is None:
+            values.append((k,{"latest":v}))
 
-    return latest_values
+    return values
 
 
 def _load_all_fields_by_aggregation_path(dbm, entity_type, aggregate_on_level,aggregate_on):
