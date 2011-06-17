@@ -14,4 +14,5 @@ gdata
 django-css
 BeautifulSoup
 networkx
+pymongo
 
