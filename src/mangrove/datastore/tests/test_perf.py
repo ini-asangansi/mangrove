@@ -64,8 +64,8 @@ class TestViewPerf(unittest.TestCase):
         return le
 
     def test_should_create_with_bulk_upload(self):
-        NUM_ENTITIES = 300
-        DATA_REC_PER_ENTITY = 52
+        NUM_ENTITIES = 10
+        DATA_REC_PER_ENTITY = 2
         BATCH = (NUM_ENTITIES * DATA_REC_PER_ENTITY) / 4
 
         le = self._create_entity_batch(NUM_ENTITIES)
@@ -82,23 +82,17 @@ class TestViewPerf(unittest.TestCase):
         print "Firing view..."
         start = datetime.datetime.now()
         values = data.aggregate(self.dbm, entity_type=["Health_Facility", "Clinic"],
-                            aggregates={"meds": data.reduce_functions.SUM},aggregate_on=EntityAggregration()
+                            aggregates={"beds": data.reduce_functions.LATEST,
+                                        "meds": data.reduce_functions.SUM},aggregate_on=EntityAggregration()
                             )
-#        values = data.aggregate(self.dbm, entity_type=["Health_Facility", "Clinic"],
-#                            aggregates={"beds": data.reduce_functions.LATEST,
-#                                        "meds": data.reduce_functions.SUM},aggregate_on=EntityAggregration()
-#                            )
         end = datetime.datetime.now()
         print "first time data.aggregate took %s" % (end - start,)
 
         start = datetime.datetime.now()
 
         values = aggregate_by_form_code_python(self.dbm, self.form_code,
-                            aggregates={Sum("meds")},aggregate_on=EntityAggregration()
+                            aggregates={Latest("beds"),Sum("meds")},aggregate_on=EntityAggregration()
                             )
-#        values = aggregate_by_form_code_python(self.dbm, self.form_code,
-#                            aggregates={Latest("beds"),Sum("meds")},aggregate_on=EntityAggregration()
-#                            )
         end = datetime.datetime.now()
         print "first time aggregate_by_form_code_python took %s" % (end - start,)
 
@@ -109,16 +103,16 @@ class TestViewPerf(unittest.TestCase):
 #                                        "meds": data.reduce_functions.SUM},aggregate_on=EntityAggregration()
 #                            )
         values = data.aggregate(self.dbm, entity_type=["Health_Facility", "Clinic"],
-                            aggregates={"meds": data.reduce_functions.SUM},aggregate_on=EntityAggregration()
+                            aggregates={"beds": data.reduce_functions.LATEST,
+                                        "meds": data.reduce_functions.SUM},aggregate_on=EntityAggregration()
                             )
-
         end = datetime.datetime.now()
         print "second time data.aggregate took %s" % (end - start,)
 
         start = datetime.datetime.now()
 
         values = aggregate_by_form_code_python(self.dbm, self.form_code,
-                            aggregates={Sum("meds")},aggregate_on=EntityAggregration()
+                            aggregates={Latest("beds"),Sum("meds")},aggregate_on=EntityAggregration()
                             )
 #        values = aggregate_by_form_code_python(self.dbm, self.form_code,
 #                            aggregates={Latest("beds"),Sum("meds")},aggregate_on=EntityAggregration()
@@ -156,7 +150,7 @@ class TestViewPerf(unittest.TestCase):
         data_record_doc = DataRecordDocument(
             entity_doc=e._doc,
             event_time=utcnow(),
-            data=data,submission=dict(form_code=self.form_code)
+            data=data,
             )
         self.bulk.append(data_record_doc)
 
