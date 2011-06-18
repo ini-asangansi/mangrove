@@ -287,10 +287,10 @@ class TableBuilder(object):
             d[u'img_id'] = d[u'photo']
             result1.append(d)
         t2 = datetime.datetime.now()
-        dt1 = t2 - t1
+        dt1 = (t2 - t1)
         #self._data_for_table = result1
         # way #2 (query for each facility)
-        t1 = datetime.datetime.now()
+        t3 = datetime.datetime.now()
         for facility in facilities:
             data = facility.get_all_data()
             times = data.keys()
@@ -309,12 +309,11 @@ class TableBuilder(object):
                 )
             result2.append(d)
         self._data_for_table = result2
-        t2 = datetime.datetime.now()
-        dt2 = t2 - t1
-        #print json.dumps(result1, sort_keys=True, indent=4)
-        #print json.dumps(result2, sort_keys=True, indent=4)
-        print "-----\nmethod #1: %s.%s\nmethod #2: %s.%s\n-----" % \
-              (dt1.seconds, dt1.microseconds, dt2.seconds, dt2.microseconds)
+        t4 = datetime.datetime.now()
+        dt2 = (t4 - t3)
+        print "***** AGGREGATE CALL: %s" % (dt1.seconds + (dt1.microseconds / 1000000.0))
+        print "***** VALUES LOOP: %s" % (dt2.seconds + (dt2.microseconds / 1000000.0))
+
         
     def _set_counts(self):
         self._set_data_for_table()
