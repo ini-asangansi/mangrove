@@ -1,6 +1,8 @@
 $(document).ready(function() {
     $.validator.addMethod('regexrule', function(value, element, params) {
-        var text = $('#' + element.id).val();
+        var text = $('#' + element.id).val().trim();
+        if (text=="")
+            return true;
         var re = new RegExp("^[0-9]+(\-[0-9]+)*$");
         return re.test(text);
     }, "Please enter a valid phone number");
@@ -19,7 +21,7 @@ $(document).ready(function() {
                 && (lat_long[1] > -180 && lat_long[1] < 180);
     }, "Incorrect GPS coordinates. Please resubmit");
 
-    var validator = $('#question_form').validate({
+    DW.validator = $('#question_form').validate({
         messages:{
             geo_code:{
                 required:"Required information for registration. Please fill out at least one location field."
@@ -35,8 +37,8 @@ $(document).ready(function() {
             },
 
             mobile_number:{
-                regexrule:true,
-                required: true
+                regexrule:true
+
             },
             geo_code:{
                 required:function(element) {
@@ -55,17 +57,5 @@ $(document).ready(function() {
         }
     });
 
-    $('#autogen').unbind('change').change(function(event) {
 
-        if ($('#autogen').attr('checked') != true) {
-            $('#short_name').attr('disabled', '');
-
-        }
-        else {
-            $('#short_name').removeClass('error');
-            $("#short_name").parent().find('label.error').hide();
-            $('#short_name').val("");
-            $('#short_name').attr('disabled', 'disabled');
-        }
-    });
 });

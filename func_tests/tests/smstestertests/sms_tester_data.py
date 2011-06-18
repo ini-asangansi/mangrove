@@ -14,12 +14,12 @@ SUCCESS_MESSAGE_TEXT = "Thank you Shweta for your data record. We successfully r
 VALID_DATA = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "cli001 +EID cid003 +NA Mr. Tessy +FA 58 +RD 17.05.2011 +BG b +SY ade +GPS 27.178057  -78.007789",
-              SUCCESS_MESSAGE: SUCCESS_MESSAGE_TEXT}
+              SUCCESS_MESSAGE: "Thank you Shweta. We received : SY: Rapid weight loss,Memory loss,Neurological disorders BG: O- NA: Mr. Tessy RD: 17.05.2011 FA: 58.0 EID: cid003 GPS: (27.178057, -78.007789)"}
 
 VALID_DATA2 = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "cli002 +EID cid005 +NA Mr. Tessy +FA 58 +RD 17.05.2011 +BG b +SY ade +GPS 27.178057  -78.007789",
-              SUCCESS_MESSAGE: SUCCESS_MESSAGE_TEXT}
+              SUCCESS_MESSAGE: "Thank you Shweta. We received : SY: Rapid weight loss,Memory loss,Neurological disorders BG: O- NA: Mr. Tessy RD: 17.05.2011 FA: 58.0 EID: cid005 GPS: (27.178057, -78.007789)"}
 
 EXCEED_NAME_LENGTH = {SENDER: "1234567890",
               RECEIVER: "261333782943",
@@ -39,7 +39,7 @@ BLANK_FIELDS = {SENDER: "",
 EXTRA_PLUS_IN_BTW = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "cli002 +EID cid002 + +NA Mr. Dessy +FA 58 ++ +RD 17.05.2011 +BG b +SY ade +  +GPS 27.178057  -78.007789",
-              ERROR_MSG: SUCCESS_MESSAGE_TEXT}
+              ERROR_MSG: "Thank you Shweta. We received : SY: Rapid weight loss,Memory loss,Neurological disorders BG: O- NA: Mr. Dessy RD: 17.05.2011 FA: 58.0 EID: cid002 GPS: (27.178057, -78.007789)"}
 
 PLUS_IN_THE_BEGINNING = {SENDER: "1234567890",
               RECEIVER: "261333782943",
@@ -54,7 +54,7 @@ UNREGISTERED_FROM_NUMBER = {SENDER: "123445567",
 REGISTER_REPORTER = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "REG +t Reporter +m 0123456789 +L  Jaipur +g 26.917 75.817 +N Donald Duck",
-              ERROR_MSG: SUCCESS_MESSAGE_TEXT}
+              ERROR_MSG: "Registration successful. Subject identification number: rep4.We received : N: Donald Duck M: 0123456789 L: Jaipur G: (26.917, 75.817) T: Reporter"}
 
 REGISTER_REPORTER_FROM_UNKNOWN_NUMBER = {SENDER: "12345678453",
               RECEIVER: "261333782943",
@@ -64,7 +64,7 @@ REGISTER_REPORTER_FROM_UNKNOWN_NUMBER = {SENDER: "12345678453",
 REGISTER_NEW_SUBJECT = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "REG +T Clinic +m   123456 +l Jaipur +G 26.917 75.817 ++  +n Clinic Jaipur +S CLIJPR + ",
-              ERROR_MSG: SUCCESS_MESSAGE_TEXT}
+              ERROR_MSG: "Registration successful. Subject identification number: clijpr.We received : G: (26.917, 75.817) M: 123456 L: Jaipur N: Clinic Jaipur S: CLIJPR T: Clinic"}
 
 REGISTER_EXISTING_SUBJECT_SHORT_CODE = {SENDER: "1234567890",
               RECEIVER: "261333782943",

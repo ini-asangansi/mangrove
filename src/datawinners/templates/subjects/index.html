@@ -40,11 +40,13 @@
             <h3>Errors in Import</h3>
             <table>
                 <tr>
+                    <th>Row Number</th>
                     <th>Row</th>
                     <th>Error</th>
                 </tr>
                 {% for each in failure_data %}
                     <tr>
+                        <td>{{ each.row_num }}</td>
                         <td>{{ each.row }}</td>
                         <td>{{ each.error }}</td>
                     </tr>
@@ -66,7 +68,11 @@
                 {% for each in all_subjects %}
                     <tr>
                         <td>{{ each.id }}</td>
-                        <td>{{ each.name }}</td>
+                        {% if each.name %}
+                            <td>{{ each.name }}</td>
+                        {% else %}
+                            <td>--</td>
+                        {% endif %}
                         <td>{{ each.short_name }}</td>
                         <td>{{ each.type }}</td>
                         {% if each.location %}
@@ -74,8 +80,16 @@
                         {% else %}
                             <td>--</td>
                         {% endif %}
-                        <td>--</td>
-                        <td>--</td>
+                        {% if each.description %}
+                            <td>{{ each.description }}</td>
+                        {% else %}
+                            <td>--</td>
+                        {% endif %}
+                        {% if each.mobile_number %}
+                            <td>{{ each.mobile_number }}</td>
+                        {% else %}
+                            <td>--</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </table>

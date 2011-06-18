@@ -24,7 +24,7 @@ class SubmissionRequest(object):
 
 
 class SubmissionResponse(object):
-    def __init__(self, success, submission_id, errors=None, datarecord_id=None, short_code=None):
+    def __init__(self, success, submission_id, errors=None, datarecord_id=None, short_code=None, processed_data=None):
         assert success is not None
         assert submission_id is not None
 
@@ -33,6 +33,7 @@ class SubmissionResponse(object):
         self.errors = {} if errors is None else errors
         self.datarecord_id = datarecord_id
         self.short_code = short_code
+        self.processed_data = processed_data
 
 
 class SubmissionHandler(object):
@@ -68,7 +69,7 @@ class SubmissionHandler(object):
                 logger.update_submission_log(submission_id=submission_id, status=True, errors=[],
                                              data_record_id=data_record_id)
 
-                return SubmissionResponse(True, submission_id, {}, data_record_id, e.short_code)
+                return SubmissionResponse(True, submission_id, {}, data_record_id, e.short_code, form_submission.cleaned_data)
             else:
                 try:
                     data_record_id = entity.add_data(dbm=self.dbm, short_code=form_submission.short_code,
@@ -77,14 +78,14 @@ class SubmissionHandler(object):
 
                     logger.update_submission_log(submission_id=submission_id, data_record_id=data_record_id, status=True
                                                  , errors=[])
-                    return SubmissionResponse(True, submission_id, {}, data_record_id)
+                    return SubmissionResponse(True, submission_id, {}, data_record_id, processed_data=form_submission.cleaned_data)
                 except DataObjectNotFound as e:
                     logger.update_submission_log(submission_id=submission_id, status=False, errors=e.message)
                     raise DataObjectNotFound('Entity','short_code',form_submission.short_code)
         else:
             _errors = form_submission.errors
             logger.update_submission_log(submission_id=submission_id, status=False, errors=_errors.values())
-            return SubmissionResponse(False, submission_id, _errors)
+            return SubmissionResponse(False, submission_id, _errors, processed_data=form_submission.cleaned_data)
 
 
 class SubmissionLogger(object):
@@ -127,12 +128,12 @@ def get_submissions_made_for_form(dbm, form_code, page_number=0, page_size=20, c
     if count_only:
         rows = dbm.load_all_rows_in_view('submissionlog', startkey=[form_code], endkey=[form_code, {}],
                                          group=True, group_level=1, reduce=True)
-    else:
-        rows = dbm.load_all_rows_in_view('submissionlog', reduce=False, descending = True, startkey=[form_code, {}],
+        count = rows[0].value if rows else None
+        return count
+    rows = dbm.load_all_rows_in_view('submissionlog', reduce=False, descending = True, startkey=[form_code, {}],
                                          endkey=[form_code], skip=page_number * page_size, limit=page_size)
     answers, ids = list(), list()
     for each in rows:
         answers.append(each.value)
-        if not count_only:
-            ids.append(each.value["data_record_id"])
+        ids.append(each.value["data_record_id"])
     return answers, ids

@@ -10,11 +10,12 @@ from mangrove.form_model.field import TextField, GeoCodeField
 from mangrove.utils.types import is_sequence, is_string, is_empty, is_not_empty
 from mangrove.form_model import field
 
-REGISTRATION_FORM_CODE = "REG"
+REGISTRATION_FORM_CODE = "reg"
 ENTITY_TYPE_FIELD_CODE = "T"
 ENTITY_TYPE_FIELD_NAME = "entity_type"
 LOCATION_TYPE_FIELD_NAME = "location"
-GEO_CODE = "geo_code"
+LOCATION_TYPE_FIELD_CODE = "L"
+GEO_CODE = "G"
 
 NAME_FIELD = "name"
 SHORT_NAME_FIELD = "short_name"
@@ -181,7 +182,7 @@ class FormModel(DataObject):
                 continue
             is_valid, result, error_data = self._validate_answer_for_field(answer, field)
             if is_valid:
-                cleaned_answers[field.name] = result
+                cleaned_answers[field.code] = result
             else:
                 success = False
                 errors[key] = result
@@ -190,9 +191,9 @@ class FormModel(DataObject):
 
     def validate_submission(self, values):
         success, cleaned_answers, errors, data = self._is_valid(values)
-        short_code = cleaned_answers.get(self.entity_question.name)
+        short_code = cleaned_answers.get(self.entity_question.code)
         if self._is_registration_form():
-            entity_type = cleaned_answers.get(ENTITY_TYPE_FIELD_NAME)
+            entity_type = cleaned_answers.get(ENTITY_TYPE_FIELD_CODE)
         else:
             entity_type = self.entity_type
         return FormSubmission(self, cleaned_answers, short_code, success, errors, entity_type, data)
@@ -258,7 +259,8 @@ class FormModel(DataObject):
 
 class FormSubmission(object):
     def _to_three_tuple(self):
-        return [(field, value, self.form_model.get_field_by_name(field).ddtype)  for (field, value) in
+
+        return [(self.form_model.get_field_by_code(field).name, value, self.form_model.get_field_by_code(field).ddtype)  for (field, value) in
                 self.cleaned_data.items()]
 
     def __init__(self, form_model, form_answers, short_code, success, errors, entity_type, data):
@@ -270,7 +272,7 @@ class FormSubmission(object):
 
         self.form_model = form_model
         self._cleaned_data = form_answers
-        self.short_code = short_code
+        self.short_code = short_code.lower() if short_code is not None else None
         self.form_code = self.form_model.form_code
         self.is_valid = success
         self.errors = errors
@@ -321,6 +323,6 @@ def _construct_registration_form(manager):
                           defaultValue="some default value", language="eng", ddtype=description_type)
     question7 = TextField(name=MOBILE_NUMBER_FIELD, code="M", label="What is the associated mobile number?",
                           defaultValue="some default value", language="eng", ddtype=mobile_number_type)
-    form_model = FormModel(manager, name="REG", form_code=REGISTRATION_FORM_CODE, fields=[
+    form_model = FormModel(manager, name="reg", form_code=REGISTRATION_FORM_CODE, fields=[
             question1, question2, question3, question4, question5, question6, question7], entity_type=["Registration"])
     return form_model

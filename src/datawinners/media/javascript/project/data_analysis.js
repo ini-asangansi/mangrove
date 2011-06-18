@@ -1,9 +1,11 @@
 $(document).ready(function() {
-  $('.dataTables_scrollHead select').customStyle();
-  $("#dateRangePicker").daterangepicker( { presetRanges: [
-    {text: 'Past 7 days', dateStart: 'last week', dateEnd: 'Today' },
-    {text: 'Past 30 days', dateStart: 'last month', dateEnd: 'Today' },
-    {text: 'Past year', dateStart: 'last year', dateEnd: 'Today'}],
+  $("#dateRangePicker").daterangepicker( {
+    presetRanges: [
+    {text: 'Current month', dateStart: function(){ return Date.parse('today').moveToFirstDayOfMonth();  }, dateEnd: 'today' },
+    {text: 'Last Month', dateStart: 'last month', dateEnd: 'today' },
+    {text: 'Year to date', dateStart: function(){ var x= Date.parse('today'); x.setMonth(0); x.setDate(1); return x; }, dateEnd: 'today' }
+    ],
+    presets: {dateRange: 'Date Range'},
     earliestDate:'1/1/2011', latestDate:'21/12/2012', dateFormat:'dd-mm-yy', rangeSplitter:'/',
     onClose:function(){submit_data()}
   });
@@ -12,13 +14,14 @@ $(document).ready(function() {
          "bDestroy":destroy,
         "bRetrieve": retrive,
         "sPaginationType": "full_numbers",
-        "sScrollX": "100%",
-        "sScrollXInner": "110%",
-        "bScrollCollapse": true,
+//        "sScrollX": "100%",
+//        "sScrollXInner": "100%",
+//        "bScrollCollapse": true,
         "aaData": data
     });
   }
   dataBinding(initial_data, false, true);
+  $('#data_analysis select').customStyle();
    function submit_data(){
        var aggregation_selectBox_Array = $(".aggregation_type"), aggregationArray = new Array();
          aggregation_selectBox_Array.each(function(){
@@ -43,9 +46,9 @@ $(document).ready(function() {
 
          }});
    }
+    $("#data_analysis").wrap("<div class='data_table'/>")
     $(".aggregation_type").live("change", function(){
         submit_data();
-
   });
     function hide_message() {
         $('#dateErrorDiv label').delay(5000).fadeOut();
