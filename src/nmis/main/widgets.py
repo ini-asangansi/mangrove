@@ -8,6 +8,7 @@ import json
 from django.conf import settings
 from mangrove.datastore.database import DatabaseManager, get_db_manager
 from mangrove.datastore.entity import get_entities_by_type, get_entities_in
+import mangrove.datastore.data as mangrove_data
 
 WIDGETS_BY_REGION_LEVEL = [
         #country:
@@ -251,9 +252,45 @@ class TableBuilder(object):
             'water': 'Water Point'
         }
         facility_type = sector_to_facility[self._sector]
-        facilities = get_entities_in(dbm, self._region_thing.entity.location_path, facility_type)
+        location_path = self._region_thing.entity.location_path
+        facilities = get_entities_in(dbm, location_path, facility_type)
+        facilities_by_id = dict([(facility.id, facility) for facility in facilities])
         slugs = [header.slug for header in self._headers]
-        result = []
+        slugs.append('photo')
+        result1 = []
+        result2 = []
+        entity_type = ["Facility", facility_type]
+        import datetime
+        # way #1 (aggregate call)
+        t1 = datetime.datetime.now()
+        aggregate_on = mangrove_data.EntityAggregration()
+        aggregates = dict([(slug, mangrove_data.reduce_functions.LATEST) for slug in slugs])
+        aggregate_filter = mangrove_data.LocationFilter(location_path)
+        print "calling aggregate:\n\tdbm: %s\n\tentity_type: %s\n\taggregate_on: %s\n\taggregates: %s\n\tfilter: %s" % (dbm, entity_type, aggregate_on, aggregates, aggregate_filter)
+        values = mangrove_data.aggregate(
+            dbm,
+            entity_type=entity_type,
+            aggregate_on=aggregate_on,
+            aggregates=aggregates,
+            filter=aggregate_filter)
+        print "done with aggregate"
+        print "values: %s" % values
+        for eid in values:
+            d = dict(values[eid])
+            d.update(
+                {
+                    u'sector': self._sector,
+                    u'facility_type': facility_type,
+                    u'latlng': facilities_by_id[eid].geometry['coordinates']
+                    }
+                )
+            d[u'img_id'] = d[u'photo']
+            result1.append(d)
+        t2 = datetime.datetime.now()
+        dt1 = t2 - t1
+        #self._data_for_table = result1
+        # way #2 (query for each facility)
+        t1 = datetime.datetime.now()
         for facility in facilities:
             data = facility.get_all_data()
             times = data.keys()
@@ -264,14 +301,20 @@ class TableBuilder(object):
             d = dict([(slug, latest_data[slug]) for slug in slugs])
             d.update(
                 {
-                    'sector': self._sector,
-                    'facility_type': facility_type,
-                    'latlng': facility.geometry['coordinates'],
-                    'img_id': latest_data['photo']
+                    u'sector': self._sector,
+                    u'facility_type': facility_type,
+                    u'latlng': facility.geometry['coordinates'],
+                    u'img_id': latest_data['photo']
                     }
                 )
-            result.append(d)
-        self._data_for_table = result
+            result2.append(d)
+        self._data_for_table = result2
+        t2 = datetime.datetime.now()
+        dt2 = t2 - t1
+        #print json.dumps(result1, sort_keys=True, indent=4)
+        #print json.dumps(result2, sort_keys=True, indent=4)
+        print "-----\nmethod #1: %s.%s\nmethod #2: %s.%s\n-----" % \
+              (dt1.seconds, dt1.microseconds, dt2.seconds, dt2.microseconds)
         
     def _set_counts(self):
         self._set_data_for_table()
