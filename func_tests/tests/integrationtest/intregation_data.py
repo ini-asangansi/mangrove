@@ -123,7 +123,7 @@ VALID_DATA_FOR_REPORTER = {REPORTER_NAME: "Donald Mouse",
 VALID_SUBJECT_TYPE1 = {ENTITY_TYPE: "Waterpoint", SUCCESS_MESSAGE: "Entity definition successful"}
 VALID_SUBJECT_TYPE2 = {ENTITY_TYPE: "Well", SUCCESS_MESSAGE: "Entity definition successful"}
 
-VALID_DATA_FOR_SUBJECT = {ENTITY_TYPE: "Well",
+VALID_DATA_FOR_SUBJECT = {ENTITY_TYPE: "well",
               AUTO_GENERATE: True,
               SHORT_NAME: "",
               NAME: "Well Monodova",
@@ -136,7 +136,7 @@ VALID_DATA_FOR_SUBJECT = {ENTITY_TYPE: "Well",
 VALID_DATA_FOR_PROJECT = {PROJECT_NAME: "well morondava", GEN_RANDOM: False,
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
-              SUBJECT: "Well",
+              SUBJECT: "well",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Subjects"}
 
