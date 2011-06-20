@@ -62,8 +62,10 @@ class TestIntregationOfApplication(BaseTest):
 
         self.driver.go_to(DATA_WINNER_ADD_SUBJECT_TYPE)
         add_subject_type_page = AddSubjectTypePage(self.driver)
-        add_subject_type_page.add_entity_type_with(VALID_SUBJECT_TYPE)
-        self.assertEqual(add_subject_type_page.get_flash_message(), fetch_(SUCCESS_MESSAGE, from_(VALID_SUBJECT_TYPE)))
+        add_subject_type_page.add_entity_type_with(VALID_SUBJECT_TYPE1)
+        self.assertEqual(add_subject_type_page.get_flash_message(), fetch_(SUCCESS_MESSAGE, from_(VALID_SUBJECT_TYPE1)))
+        add_subject_type_page.add_entity_type_with(VALID_SUBJECT_TYPE2)
+        self.assertEqual(add_subject_type_page.get_flash_message(), fetch_(SUCCESS_MESSAGE, from_(VALID_SUBJECT_TYPE2)))
 
         self.driver.go_to(DATA_WINNER_HOME_PAGE)
         register_subject_page = dashboard_page.navigate_to_register_subject_page()
@@ -101,8 +103,15 @@ class TestIntregationOfApplication(BaseTest):
 
         self.driver.go_to(DATA_WINNER_HOME_PAGE)
         view_all_project_page = dashboard_page.navigate_to_view_all_project_page()
+        time.sleep(3)
         project_overview_project = view_all_project_page.navigate_to_project_page(fetch_(PROJECT_NAME, VALID_DATA_FOR_PROJECT))
         submission_log_page = project_overview_project.navigate_to_submission_log_page()
         self.assertRegexpMatches(submission_log_page.get_title(), "Activity Log")
         time.sleep(3)
         self.assertRegexpMatches(submission_log_page.get_submission_message(SMS_DATA_LOG), fetch_(SMS_SUBMISSION, from_(SMS_DATA_LOG)))
+
+        self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
+        sms_tester_data = VALID_DATA_FOR_SMS
+        sms_tester_data[RECEIVER] = organization_sms_tel_number
+        sms_tester_page.send_sms_with(sms_tester_data)
+        self.assertEqual(sms_tester_page.get_response_message(), fetch_(SUCCESS_MESSAGE, from_(sms_tester_data)))

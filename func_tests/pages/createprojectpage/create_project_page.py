@@ -5,7 +5,6 @@ from pages.page import Page
 from framework.utils.data_fetcher import *
 from pages.createprojectpage.create_project_locator import *
 from tests.createprojecttests.create_project_data import *
-from framework.utils.common_utils import *
 
 
 class CreateProjectPage(Page):

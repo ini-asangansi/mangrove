@@ -81,7 +81,7 @@ RECEIVER = "from"
 SMS = "sms"
 MESSAGE = "message"
 
-SUCCESS_MESSAGE_TEXT = "Thank you Donald Mouse for your data record. We successfully received your submission."
+SUCCESS_MESSAGE_TEXT = "Thank you Donald Mouse. We received : WAN: Mr. Tessy WID: wel1 WC: DARK YELLOW WB: Aquificae,Bacteroids WL: 598.0 MDY: 04.12.2011 DMY: 12.04.2011 MY: 04.2011 GPS: (27.178057, -78.007789)"
 
 SMS_SUBMISSION = "sms"
 UNIQUE_VALUE = "unique_value"
@@ -120,22 +120,23 @@ VALID_DATA_FOR_REPORTER = {REPORTER_NAME: "Donald Mouse",
               SUCCESS_MESSAGE: "Registration successful. Reporter identification number: rep1"}
 
 # valid entity data
-VALID_SUBJECT_TYPE = {ENTITY_TYPE: "Waterpoint", SUCCESS_MESSAGE: "Entity definition successful"}
+VALID_SUBJECT_TYPE1 = {ENTITY_TYPE: "Waterpoint", SUCCESS_MESSAGE: "Entity definition successful"}
+VALID_SUBJECT_TYPE2 = {ENTITY_TYPE: "Well", SUCCESS_MESSAGE: "Entity definition successful"}
 
-VALID_DATA_FOR_SUBJECT = {ENTITY_TYPE: "Waterpoint",
+VALID_DATA_FOR_SUBJECT = {ENTITY_TYPE: "Well",
               AUTO_GENERATE: True,
               SHORT_NAME: "",
-              NAME: "Waterpoint Monodova",
+              NAME: "Well Monodova",
               LOCATION: "Monodova",
               GEO_CODE: "47.411631 28.369885",
-              DESCRIPTION: "This is a Waterpoint in monodova",
+              DESCRIPTION: "This is a Well in monodova",
               MOBILE_NUMBER: "3456789012",
-              SUCCESS_MESSAGE: "Registration successful. Subject identification number: wat1."}
+              SUCCESS_MESSAGE: "Registration successful. Subject identification number: wel1."}
 
-VALID_DATA_FOR_PROJECT = {PROJECT_NAME: "waterpoint morondava", GEN_RANDOM: False,
+VALID_DATA_FOR_PROJECT = {PROJECT_NAME: "well morondava", GEN_RANDOM: False,
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
-              SUBJECT: "Waterpoint",
+              SUBJECT: "Well",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Subjects"}
 
@@ -144,7 +145,9 @@ VALID_DATA_FOR_SUBJECT_QUESTIONNAIRE = {PAGE_TITLE: "Questionnaire"}
 QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS01", GEN_RANDOM: False,
                       DEFAULT_QUESTION: {QUESTION: "What are you reporting on?", CODE: "WID", MIN: "1", MAX: "10"},
                       QUESTIONS: [{QUESTION: "Water Level", CODE: "WL", TYPE: NUMBER, MIN: "1", MAX: "1000"},
-                                  {QUESTION: "Date of report", CODE: "DR", TYPE: DATE, DATE_FORMAT: DD_MM_YYYY},
+                                  {QUESTION: "Date of report in DD.MM.YYY format", CODE: "DMY", TYPE: DATE, DATE_FORMAT: DD_MM_YYYY},
+                                  {QUESTION: "Date of report in MM.YYY format", CODE: "MY", TYPE: DATE, DATE_FORMAT: MM_YYYY},
+                                  {QUESTION: "Date of report in MM.DD.YYY format", CODE: "MDY", TYPE: DATE, DATE_FORMAT: MM_DD_YYYY},
                                   {QUESTION: "Color of Water", CODE: "WC", TYPE: LIST_OF_CHOICES,
                                    CHOICE: ["LIGHT RED", "LIGHT YELLOW", "DARK YELLOW"],
                                    ALLOWED_CHOICE: ONLY_ONE_ANSWER},
@@ -152,14 +155,14 @@ QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS01", GEN_RANDOM: False,
                                   {QUESTION: "Bacterias in water", CODE: "WB", TYPE: LIST_OF_CHOICES,
                                    CHOICE: ["Aquificae", "Bacteroids", "Chlorobia"],
                                    ALLOWED_CHOICE: MULTIPLE_ANSWERS},
-                                  {QUESTION: "Geo points of water point", CODE: "GPS", TYPE: GEO}],
-                      CHARACTER_REMAINING: "83 / 160 characters used",
+                                  {QUESTION: "Geo points of Well", CODE: "GPS", TYPE: GEO}],
+                      CHARACTER_REMAINING: "112 / 160 characters used",
                       SUCCESS_MESSAGE: "Your questionnaire has been saved"}
 
 VALID_DATA_FOR_SMS = {SENDER: "1234567890",
               RECEIVER: "",
-              SMS: "WPS01 +WID wat1 +wl 598 +DR 12.04.2011 +wc c +WAN Mr. Tessy +wb ab +GPS 27.178057  -78.007789",
+              SMS: "WPS01 +WID wel1 +wl 598 +DMY 12.04.2011 +MY 04.2011 +MDY 04.12.2011  +wc c +WAN Mr. Tessy +wb ab +GPS 27.178057  -78.007789",
               SUCCESS_MESSAGE: SUCCESS_MESSAGE_TEXT}
 
-SMS_DATA_LOG = {SMS_SUBMISSION: "sms True False wat1 598 12.04.2011 c Mr. Tessy ab 27.178057 -78.007789",
+SMS_DATA_LOG = {SMS_SUBMISSION: "sms True False wel1 598 12.04.2011 04.2011 04.12.2011 c Mr. Tessy ab 27.178057 -78.007789",
             UNIQUE_VALUE: "Mr. Tessy"}
