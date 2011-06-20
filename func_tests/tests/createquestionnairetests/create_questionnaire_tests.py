@@ -19,10 +19,11 @@ class TestCreateQuestionnaire(BaseTest):
         login_page = LoginPage(self.driver)
         dashboard_page = login_page.do_successful_login_with(VALID_CREDENTIALS)
         # going on setup project page
-        CreateProjectPage = dashboard_page.navigate_to_create_project_page()
+        create_project_page = dashboard_page.navigate_to_create_project_page()
         #Navigating to Create Questionnaire Page by successfully creating a Project
-        CreateQuestionnairePage = CreateProjectPage.successfully_create_project_with(VALID_DATA2)
-        return CreateQuestionnairePage
+        create_subject_questionnaire_page = create_project_page.successfully_create_project_with(VALID_DATA2)
+        create_questionnaire_page = create_subject_questionnaire_page.successfully_create_subject_questionnaire_with(None)
+        return create_questionnaire_page
 
     @attr('functional_test', 'smoke')
     def test_successful_questionnaire_creation(self):

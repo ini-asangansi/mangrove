@@ -28,8 +28,8 @@ class TestCreateProject(BaseTest):
         Subject and Devices
         """
         create_project_page = self.prerequisites_of_create_project()
-        create_questionnaire_page = create_project_page.successfully_create_project_with(VALID_DATA)
-        self.assertRegexpMatches(create_questionnaire_page.get_title(),
+        create_subject_questionnaire_page = create_project_page.successfully_create_project_with(VALID_DATA)
+        self.assertRegexpMatches(create_subject_questionnaire_page.get_title(),
                                  fetch_(PAGE_TITLE, from_(VALID_DATA)))
 
     @attr('functional_test')

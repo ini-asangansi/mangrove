@@ -1,7 +1,6 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 from framework.utils.common_utils import CommonUtilities, generateId
-from pages.createquestionnairepage.create_questionnaire_page import CreateQuestionnairePage
-import time
+from pages.createsubjectquestionnairepage.create_subject_questionnaire_page import CreateSubjectQuestionnairePage
 from pages.page import Page
 from framework.utils.data_fetcher import *
 from pages.createprojectpage.create_project_locator import *
@@ -20,7 +19,7 @@ class CreateProjectPage(Page):
 
         Return title of the web page
         """
-        page_title = self.driver.title()
+        page_title = self.driver.title
         return page_title
 
     def successfully_create_project_with(self, project_data):
@@ -72,7 +71,7 @@ class CreateProjectPage(Page):
         elif comm_utils.is_element_present(WEB_CB_CHECKED):
                 self.driver.find(WEB_CB).toggle()
         self.driver.find(SAVE_CHANGES_BTN).click()
-        return CreateQuestionnairePage(self.driver)
+        return CreateSubjectQuestionnairePage(self.driver)
 
     def create_project_with(self, project_data):
         """

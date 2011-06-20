@@ -137,7 +137,9 @@ VALID_DATA_FOR_PROJECT = {PROJECT_NAME: "waterpoint morondava", GEN_RANDOM: Fals
               PROJECT_TYPE: "survey",
               SUBJECT: "Waterpoint",
               DEVICES: "sms,smartphone",
-              PAGE_TITLE: "Questionnaire"}
+              PAGE_TITLE: "Subjects"}
+
+VALID_DATA_FOR_SUBJECT_QUESTIONNAIRE = {PAGE_TITLE: "Questionnaire"}
 
 QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS01", GEN_RANDOM: False,
                       DEFAULT_QUESTION: {QUESTION: "What are you reporting on?", CODE: "WID", MIN: "1", MAX: "10"},
