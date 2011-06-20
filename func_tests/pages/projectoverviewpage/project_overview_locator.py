@@ -18,3 +18,4 @@ LOCATOR = "locator"
 BY = "by"
 
 VIEW_SUBMISSIONS_CLICK_HERE_LINK = by_xpath("//h5[text()='View Submissions']/following-sibling::p/a[text()='Click here']")
+PROJECT_EDIT_LINK = by_css("a[href~='/project/profile/edit']")

@@ -1,6 +1,6 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 from pages.createprojectpage.create_project_page import CreateProjectPage
-from pages.projectoverviewpage.project_overview_locator import VIEW_SUBMISSIONS_CLICK_HERE_LINK
+from pages.projectoverviewpage.project_overview_locator import *
 from pages.page import Page
 from pages.submissionlogpage.submission_log_page import SubmissionLogPage
 
@@ -18,3 +18,12 @@ class ProjectOverviewPage(Page):
          """
         self.driver.find(VIEW_SUBMISSIONS_CLICK_HERE_LINK).click()
         return SubmissionLogPage(self.driver)
+
+    def navigate_to_create_project_page(self):
+        """
+        Function to navigate to create project page
+
+        Return create project page
+         """
+        self.driver.find(PROJECT_EDIT_LINK).click()
+        return CreateProjectPage(self.driver)

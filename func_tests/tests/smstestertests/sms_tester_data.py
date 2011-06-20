@@ -14,12 +14,12 @@ SUCCESS_MESSAGE_TEXT = "Thank you Shweta for your data record. We successfully r
 VALID_DATA = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "cli001 +EID cid003 +NA Mr. Tessy +FA 58 +RD 17.05.2011 +BG b +SY ade +GPS 27.178057  -78.007789",
-              SUCCESS_MESSAGE: SUCCESS_MESSAGE_TEXT}
+              SUCCESS_MESSAGE: "Thank you Shweta. We received : SY: Rapid weight loss,Memory loss,Neurological disorders BG: O- NA: Mr. Tessy RD: 17.05.2011 FA: 58.0 EID: cid003 GPS: (27.178057, -78.007789)"}
 
 VALID_DATA2 = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "cli002 +EID cid005 +NA Mr. Tessy +FA 58 +RD 17.05.2011 +BG b +SY ade +GPS 27.178057  -78.007789",
-              SUCCESS_MESSAGE: SUCCESS_MESSAGE_TEXT}
+              SUCCESS_MESSAGE: "Thank you Shweta. We received : SY: Rapid weight loss,Memory loss,Neurological disorders BG: O- NA: Mr. Tessy RD: 17.05.2011 FA: 58.0 EID: cid005 GPS: (27.178057, -78.007789)"}
 
 EXCEED_NAME_LENGTH = {SENDER: "1234567890",
               RECEIVER: "261333782943",
@@ -39,7 +39,7 @@ BLANK_FIELDS = {SENDER: "",
 EXTRA_PLUS_IN_BTW = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "cli002 +EID cid002 + +NA Mr. Dessy +FA 58 ++ +RD 17.05.2011 +BG b +SY ade +  +GPS 27.178057  -78.007789",
-              ERROR_MSG: SUCCESS_MESSAGE_TEXT}
+              ERROR_MSG: "Thank you Shweta. We received : SY: Rapid weight loss,Memory loss,Neurological disorders BG: O- NA: Mr. Dessy RD: 17.05.2011 FA: 58.0 EID: cid002 GPS: (27.178057, -78.007789)"}
 
 PLUS_IN_THE_BEGINNING = {SENDER: "1234567890",
               RECEIVER: "261333782943",
