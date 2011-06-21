@@ -198,12 +198,14 @@ def get_entities_in(dbm, geo_path, type_path=None):
     return entities
 
 
-def add_data(dbm, short_code, data, entity_type, submission=None):
+def add_data(dbm, short_code, data, entity_type, submission=None,event_time=None):
 
     if is_string(entity_type):
         entity_type = [entity_type]
     e = get_by_short_code(dbm, short_code, entity_type)
-    data_record_id = e.add_data(data=data, submission=submission)
+    e.update_latest_data(latest_data=data)
+    e.save()
+    data_record_id = e.add_data(data=data, submission=submission,event_time=event_time)
     return data_record_id
 
 def get_all_entities(dbm , include_docs=False):
@@ -266,6 +268,7 @@ class Entity(DataObject):
         if short_code is not None:
             doc.short_code = short_code
 
+
         if aggregation_paths is not None:
             reserved_names = (attributes.TYPE_PATH, attributes.GEO_PATH)
             for name in aggregation_paths.keys():
@@ -319,6 +322,10 @@ class Entity(DataObject):
     @property
     def short_code(self):
         return self._doc.short_code
+
+    @property
+    def data(self):
+        return self._doc.data
 
     def set_aggregation_path(self, name, path):
         assert self._doc is not None
@@ -374,6 +381,12 @@ class Entity(DataObject):
                 submission=submission
                 )
             return self._dbm._save_document(data_record_doc)
+
+
+
+    def update_latest_data(self,latest_data):
+        for (label, value, dd_type) in latest_data:
+            self.data[label] = {'value': value, 'type': dd_type._doc.unwrap()}
 
 
 

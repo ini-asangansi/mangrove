@@ -47,6 +47,12 @@ class LocationFilter(object):
         self.location=location
 
 
+def get_latest(dbm, entity_type, aggregates=None, aggregate_on=None,
+              filter=None):
+    assert filter is not None and isinstance(filter,LocationFilter)
+    location_filter=filter.location if filter is not None else None
+    latest_values = _load_all_fields_latest_values(dbm, entity_type,location_filter )
+
 def aggregate(dbm, entity_type, aggregates=None, aggregate_on=None,
               filter=None, starttime=None, endtime=None):
     """
@@ -290,18 +296,18 @@ def _get_aggregate_strategy(aggregate_on,for_form_code=False):
         group_level= FORM_CODE_GROUP_LEVEL if for_form_code is True else ENTITY_GROUP_LEVEL
         return _load_all_fields_aggregated,group_level
 
-def _load_all_fields_latest_values(dbm, type_path, group_level,filter=None):
+def _load_all_fields_latest_values(dbm, type_path,location_filter=None):
     view_name = "by_values_latest"
+    
     startkey = [type_path]
     endkey = [type_path, {}]
-#    if filter is not None and filter.get('form_code') is not None:
-    view_group_level = BY_VALUES_FORM_CODE_INDEX + 1
-#    else:
-#        view_group_level = BY_VALUES_FIELD_INDEX + 1
-    rows = dbm.load_all_rows_in_view(view_name, group_level=group_level,
-                                     startkey=startkey,
-                                     endkey=endkey)
+
+    if (location_filter is not None):
+        startkey = [type_path,location_filter]
+        endkey = [type_path, location_filter,{}]
+
     values = []
+    rows = dbm.load_all_rows_in_view(view_name, startkey=startkey,endkey=endkey)
     for row in rows:
         values.append((row.key, row.value))
     return values
@@ -318,10 +324,7 @@ def _load_all_fields_aggregated(dbm, type_path,group_level,filter=None):
     view_name = "by_values"
     startkey = [type_path]
     endkey = [type_path, {}]
-#    if filter is not None and filter.get('form_code') is not None:
-#        view_group_level = BY_VALUES_FORM_CODE_INDEX + 1
-#    else:
-#        view_group_level = BY_VALUES_FIELD_INDEX + 1
+
     rows = dbm.load_all_rows_in_view(view_name, group_level=group_level,
                                      startkey=startkey,
                                      endkey=endkey)
