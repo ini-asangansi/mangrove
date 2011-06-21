@@ -71,3 +71,6 @@ src/nmis/data
 
 # SCSS Generated Files #
 src/datawinners/.sass-cache/
+
+# Emacs files
+.ropeproject
