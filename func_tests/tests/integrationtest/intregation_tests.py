@@ -28,7 +28,7 @@ class TestIntregationOfApplication(BaseTest):
         except TypeError as e:
             pass
 
-    @attr('functional_test', 'smoke')
+    @attr('functional_test', 'smoke', "intregation")
     def test_intregation_of_application(self):
 
         self.driver.go_to(DATA_WINNER_LOGIN_PAGE)
