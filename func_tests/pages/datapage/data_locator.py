@@ -17,5 +17,5 @@ from framework.utils.common_utils import *
 LOCATOR = "locator"
 BY = "by"
 
-DATA_TAB = by_xpath("//div[contains(@class,'tab_navigation')]/ul/li/a[text()='Data']")
-PROJECT_EDIT_LINK = by_css("a[href~='/project/profile/edit']")
+ANALYSIS_LINK = by_css("ul.secondary_tab>li>a:contains('Analysis')")
+ALL_DATA_RECORDS_LINK = by_xpath("//ul[@class='secondary_tab']/li/a[text()='All Data Records']")
