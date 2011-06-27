@@ -43,6 +43,7 @@ DESCRIPTION = "description"
 PROJECT_NAME = "project_name"
 PROJECT_BACKGROUND = "project_background"
 PROJECT_TYPE = "project_type"
+REPORT_TYPE = "report_type"
 SUBJECT = "subject"
 DEVICES = "devices"
 ERROR_MSG = "message"
@@ -137,6 +138,7 @@ VALID_DATA_FOR_PROJECT = {PROJECT_NAME: "well morondava", GEN_RANDOM: False,
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
               SUBJECT: "well",
+              REPORT_TYPE: "other subject",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Subjects"}
 
