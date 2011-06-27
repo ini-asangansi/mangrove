@@ -5,6 +5,7 @@
 PROJECT_NAME = "project_name"
 PROJECT_BACKGROUND = "project_background"
 PROJECT_TYPE = "project_type"
+REPORT_TYPE = "report_type"
 SUBJECT = "subject"
 DEVICES = "devices"
 ERROR_MSG = "message"
@@ -16,6 +17,7 @@ VALID_DATA = {PROJECT_NAME: "Clinic Morondava ", GEN_RANDOM: True,
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
               SUBJECT: "clinic",
+              REPORT_TYPE: "data sender work",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Subjects"}
 
@@ -23,6 +25,7 @@ VALID_DATA2 = {PROJECT_NAME: "Water Point2 Morondava ", GEN_RANDOM: True,
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
               SUBJECT: "waterpoint",
+              REPORT_TYPE: "other subject",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Questionnaire"}
 
@@ -31,4 +34,4 @@ BLANK_FIELDS = {PROJECT_NAME: "",
               PROJECT_TYPE: "",
               SUBJECT: "",
               DEVICES: "",
-              ERROR_MSG: "Name  This field is required."}
+              ERROR_MSG: "Name  This field is required.Activity Report Type  This field is required."}
