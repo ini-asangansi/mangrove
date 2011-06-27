@@ -28,7 +28,7 @@ class TestIntregationOfApplication(BaseTest):
         except TypeError as e:
             pass
 
-    @attr('functional_test', 'smoke')
+    @attr('functional_test', 'smoke', "intregation")
     def test_intregation_of_application(self):
 
         self.driver.go_to(DATA_WINNER_LOGIN_PAGE)
@@ -105,8 +105,10 @@ class TestIntregationOfApplication(BaseTest):
         view_all_project_page = dashboard_page.navigate_to_view_all_project_page()
         time.sleep(3)
         project_overview_project = view_all_project_page.navigate_to_project_page(fetch_(PROJECT_NAME, VALID_DATA_FOR_PROJECT))
-        submission_log_page = project_overview_project.navigate_to_submission_log_page()
-        self.assertRegexpMatches(submission_log_page.get_title(), "Activity Log")
+        time.sleep(3)
+        data_page = project_overview_project.navigate_to_data_page()
+        time.sleep(3)
+        submission_log_page = data_page.navigate_to_all_data_record_page()
         time.sleep(3)
         self.assertRegexpMatches(submission_log_page.get_submission_message(SMS_DATA_LOG), fetch_(SMS_SUBMISSION, from_(SMS_DATA_LOG)))
 
