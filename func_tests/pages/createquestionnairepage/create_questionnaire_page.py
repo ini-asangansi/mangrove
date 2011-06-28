@@ -48,6 +48,14 @@ class CreateQuestionnairePage(Page):
             self.driver.find(ADD_A_QUESTION_LINK).click()
             self.fill_question_and_code_tb(question)
             self.SELECT_FUNC[fetch_(TYPE, from_(question))](question)
+        return self
+
+    def save_questionnaire(self):
+        """
+        Function to save the questionnaire page
+
+        return self
+        """
         self.driver.find(SAVE_CHANGES_BTN).click()
         return self
 
