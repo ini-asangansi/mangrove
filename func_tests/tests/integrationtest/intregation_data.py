@@ -82,7 +82,7 @@ RECEIVER = "from"
 SMS = "sms"
 MESSAGE = "message"
 
-SUCCESS_MESSAGE_TEXT = "Thank you Donald Mouse. We received : WAN: Mr. Tessy WID: wel1 WC: DARK YELLOW WB: Aquificae,Bacteroids WL: 598.0 MDY: 04.12.2011 DMY: 12.04.2011 MY: 04.2011 GPS: (27.178057, -78.007789)"
+SUCCESS_MESSAGE_TEXT = "Thank you Donald Mouse. We received : WAN: Mr. Tessy WID: wat1 WC: DARK YELLOW WB: Aquificae,Bacteroids WL: 598.0 MDY: 04.12.2011 DMY: 12.04.2011 MY: 04.2011 GPS: (27.178057, -78.007789)"
 
 SMS_SUBMISSION = "sms"
 UNIQUE_VALUE = "unique_value"
