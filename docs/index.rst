@@ -41,7 +41,9 @@ Design and Technical Documents
     api_toplevel_spec
     datadict_api
     querying_by_loc_and_time
-    website_setup_on_local_env	
+    website_setup_on_local_env
+    location_setup
+
 
 Indices and tables
 ==================
