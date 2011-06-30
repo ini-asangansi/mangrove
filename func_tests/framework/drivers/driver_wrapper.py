@@ -4,7 +4,7 @@ from framework.utils.drop_down_web_element import DropDown
 from framework.utils.text_box_web_element import TextBox
 from framework.utils.radio_button_web_element import RadioButton
 from pages.loginpage.login_locator import *
-from selenium.webdriver.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 
 
 class DriverWrapper():
