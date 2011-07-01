@@ -2,7 +2,7 @@
 from mangrove.datastore.database import DatabaseManager
 from mangrove.datastore.documents import SubmissionLogDocument
 from mangrove.datastore import entity
-from mangrove.form_model.form_model import get_form_model_by_code, LOCATION_TYPE_FIELD_NAME, GEO_CODE
+from mangrove.form_model.form_model import get_form_model_by_code, LOCATION_TYPE_FIELD_NAME, GEO_CODE, LOCATION_TYPE_FIELD_CODE
 from mangrove.errors.MangroveException import  NoQuestionsSubmittedException, DataObjectNotFound
 from mangrove.utils.geo_utils import convert_to_geometry
 from mangrove.utils.types import is_string
@@ -71,8 +71,10 @@ class SubmissionHandler(object):
             if len(form_submission.values) == 1:
                 raise NoQuestionsSubmittedException()
             if form._is_registration_form():
+                location_string = form_submission.cleaned_data.get(LOCATION_TYPE_FIELD_CODE)
+                location = None if location_string is None else [location_string]
                 e = entity.create_entity(dbm=self.dbm, entity_type=form_submission.entity_type.lower(),
-                                         location=[form_submission.cleaned_data.get(LOCATION_TYPE_FIELD_NAME)],
+                                         location=location,
                                          short_code=form_submission.short_code,
                                          geometry=convert_to_geometry(form_submission.cleaned_data.get(GEO_CODE)))
 
