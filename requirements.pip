@@ -16,3 +16,4 @@ BeautifulSoup
 networkx
 xlwt
 xlrd
+psycopg2
