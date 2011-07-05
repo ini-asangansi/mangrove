@@ -19,7 +19,7 @@ LOCATOR = "locator"
 BY = "by"
 
 WELCOME_MESSAGE_LABEL = by_css("span.welcome")
-REGISTER_REPORTER_LINK = by_css("a[href='reporter/register']")
+REGISTER_REPORTER_LINK = by_css("a[href='/reporter/register']")
 CREATE_PROJECT_LINK = by_css("a[href='/project/profile/create']")
 REGISTER_SUBJECT_LINK = by_css("a[href='/admin/register/entity']")
 VIEW_ALL_PROJECT_LINK = by_css("a[href='/project/']")

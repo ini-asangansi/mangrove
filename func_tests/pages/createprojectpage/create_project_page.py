@@ -44,6 +44,13 @@ class CreateProjectPage(Page):
             self.driver.find(SURVEY_PROJECT_RB).click()
         elif project_type == "public information":
             self.driver.find(PUBLIC_INFORMATION_RB).click()
+
+        report_type = fetch_(REPORT_TYPE, from_(project_data))
+        if report_type == "data sender work":
+            self.driver.find(DATA_SENDER_RB).click()
+        elif report_type == "other subject":
+            self.driver.find(OTHER_SUBJECT_RB).click()
+
         subject = fetch_(SUBJECT, from_(project_data))
         if len(subject) != 0:
             self.driver.execute_script("document.getElementById('id_entity_type').value = '" + subject + "';")
@@ -132,4 +139,7 @@ class CreateProjectPage(Page):
         locator = comm_utils.is_element_present(PROJECT_TYPE_ERROR_MSG_LABEL)
         if locator:
             error_message = error_message + "Project Type  " + locator.text
+        locator = comm_utils.is_element_present(QUESTIONNAIRE_ABOUT_MSG_LABEL)
+        if locator:
+            error_message = error_message + "Activity Report Type  " + locator.text
         return error_message == "" and "No error message on the page" or error_message

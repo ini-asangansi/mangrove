@@ -15,3 +15,5 @@ django-css
 BeautifulSoup
 networkx
 xlwt
+xlrd
+psycopg2
