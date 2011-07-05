@@ -172,23 +172,6 @@ class CreateQuestionnairePage(Page):
         self.driver.find_radio_button(GEO_RB).click()
         return self
 
-    def get_error_message(self):
-        """
-        Function to fetch the error messages from error label of the register
-        reporter page
-
-        Return error message
-        """
-        error_message = ""
-        comm_utils = CommonUtilities(self.driver)
-        locator = comm_utils.is_element_present(PROJECT_NAME_ERROR_MSG_LABEL)
-        if locator:
-            error_message = error_message + "Name  " + locator.text
-        locator = comm_utils.is_element_present(PROJECT_TYPE_ERROR_MSG_LABEL)
-        if locator:
-            error_message = error_message + "Project Type  " + locator.text
-        return error_message == "" and "No error message on the page" or error_message
-
     def get_success_message(self):
         """
         Function to fetch the success message from label of the questionnaire page

@@ -42,4 +42,4 @@ class TestCreateQuestionnaire(BaseTest):
                           fetch_(CHARACTER_REMAINING, from_(QUESTIONNAIRE_DATA)))
         create_questionnaire_page.save_questionnaire()
         time.sleep(3)
-        self.assertEqual(create_questionnaire_page.get_title(), "Finish & Test")
+        self.assertEqual(create_questionnaire_page.get_title(), "Data Senders")

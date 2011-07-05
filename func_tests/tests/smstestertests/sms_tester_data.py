@@ -34,7 +34,7 @@ EXCEED_NAME_LENGTH2 = {SENDER: "1234567890",
 BLANK_FIELDS = {SENDER: "",
               RECEIVER: "",
               SMS: "",
-              ERROR_MSG: "From *   This field is required.To *   This field is required.SMS *   This field is required."}
+              ERROR_MSG: "From * This field is required.To * This field is required.SMS * This field is required."}
 
 EXTRA_PLUS_IN_BTW = {SENDER: "1234567890",
               RECEIVER: "261333782943",
@@ -54,7 +54,7 @@ UNREGISTERED_FROM_NUMBER = {SENDER: "123445567",
 REGISTER_REPORTER = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "REG +t Reporter +m 0123456789 +L  Jaipur +g 26.917 75.817 +N Donald Duck",
-              ERROR_MSG: "Registration successful. Subject identification number: rep4.We received : N: Donald Duck M: 0123456789 L: Jaipur G: (26.917, 75.817) T: Reporter"}
+              ERROR_MSG: "Registration successful. Subject identification number: rep\d.We received : N: Donald Duck M: 0123456789 L: Jaipur G: \(26.917, 75.817\) T: Reporter"}
 
 REGISTER_REPORTER_FROM_UNKNOWN_NUMBER = {SENDER: "12345678453",
               RECEIVER: "261333782943",

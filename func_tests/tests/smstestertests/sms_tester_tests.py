@@ -68,7 +68,7 @@ class TestSMSTester(BaseTest):
         self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
         sms_tester_page = SMSTesterPage(self.driver)
         sms_tester_page.send_sms_with(REGISTER_REPORTER)
-        self.assertEqual(sms_tester_page.get_response_message(), fetch_(SUCCESS_MESSAGE, from_(REGISTER_REPORTER)))
+        self.assertRegexpMatches(sms_tester_page.get_response_message(), fetch_(SUCCESS_MESSAGE, from_(REGISTER_REPORTER)))
 
     @attr('functional_test')
     def test_sms_player_for_registration_of_reporter_from_unknown_number(self):

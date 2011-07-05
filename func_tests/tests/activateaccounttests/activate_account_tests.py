@@ -32,7 +32,7 @@ class TestActivateAccount(BaseTest):
             couchwrapper.deleteDb(dbname)
         except TypeError as e:
             pass
-
+    @SkipTest
     @attr('functional_test', 'smoke')
     def test_successful_activation_of_account(self):
         """

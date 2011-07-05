@@ -46,7 +46,7 @@ GEO_RB = by_css("input[value='geocode']")
 CHARACTER_COUNT = by_css("div#char-count")
 
 # Locators for Question List section of the page
-DEFAULT_QUESTION_LINK = by_xpath("//div[@class='question_list']/ol/div/li/a[contains(text(),'What are you reporting on?')]")
+DEFAULT_QUESTION_LINK = by_xpath("//div[@class='question_list']/ol/div/li/a[contains(text(),'Which subject are you reporting on?')]")
 QUESTION_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>div"  # index number to identify question
 QUESTION_LINK_CSS_LOCATOR_PART2 = ">li>a"  # Add text to locate specific question
 QUESTION_DELETE_LINK_CSS_LOCATOR_PART1 = "div.question_list>ol>div>li>a"  # Add text or index number to identify question
