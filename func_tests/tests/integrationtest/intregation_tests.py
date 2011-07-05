@@ -83,8 +83,6 @@ class TestIntregationOfApplication(BaseTest):
                                  fetch_(PAGE_TITLE, from_(VALID_DATA_FOR_SUBJECT_QUESTIONNAIRE)))
 
         create_questionnaire_page.create_questionnaire_with(QUESTIONNAIRE_DATA)
-        self.assertEqual(create_questionnaire_page.get_success_message(),
-                                 fetch_(SUCCESS_MESSAGE, from_(QUESTIONNAIRE_DATA)))
         index = 2
         for question in fetch_(QUESTIONS, from_(QUESTIONNAIRE_DATA)):
             question_link_text = fetch_(QUESTION, from_(question)) + " " + fetch_(CODE, from_(question))
@@ -93,7 +91,9 @@ class TestIntregationOfApplication(BaseTest):
         time.sleep(5)
         self.assertEquals(create_questionnaire_page.get_remaining_character_count(),
                           fetch_(CHARACTER_REMAINING, from_(QUESTIONNAIRE_DATA)))
-
+        create_questionnaire_page.save_questionnaire()
+        time.sleep(3)
+        self.assertEqual(create_questionnaire_page.get_title(), "Finish & Test")
         self.driver.go_to(DATA_WINNER_SMS_TESTER_PAGE)
         sms_tester_page = SMSTesterPage(self.driver)
         sms_tester_data = VALID_DATA_FOR_SMS
@@ -105,8 +105,10 @@ class TestIntregationOfApplication(BaseTest):
         view_all_project_page = dashboard_page.navigate_to_view_all_project_page()
         time.sleep(3)
         project_overview_project = view_all_project_page.navigate_to_project_page(fetch_(PROJECT_NAME, VALID_DATA_FOR_PROJECT))
-        submission_log_page = project_overview_project.navigate_to_submission_log_page()
-        self.assertRegexpMatches(submission_log_page.get_title(), "Activity Log")
+        time.sleep(3)
+        data_page = project_overview_project.navigate_to_data_page()
+        time.sleep(3)
+        submission_log_page = data_page.navigate_to_all_data_record_page()
         time.sleep(3)
         self.assertRegexpMatches(submission_log_page.get_submission_message(SMS_DATA_LOG), fetch_(SMS_SUBMISSION, from_(SMS_DATA_LOG)))
 

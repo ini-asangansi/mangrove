@@ -25,6 +25,6 @@ class ProjectsPage(Page):
 
         Return project overview page
          """
-        project_link = by_xpath(PROJECT_LINK_XPATH % project_name)
+        project_link = by_xpath(PROJECT_LINK_XPATH % project_name.lower())
         self.driver.find(project_link).click()
         return ProjectOverviewPage(self.driver)

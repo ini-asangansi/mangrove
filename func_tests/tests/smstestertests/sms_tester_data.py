@@ -69,7 +69,7 @@ REGISTER_NEW_SUBJECT = {SENDER: "1234567890",
 REGISTER_EXISTING_SUBJECT_SHORT_CODE = {SENDER: "1234567890",
               RECEIVER: "261333782943",
               SMS: "REG +T Clinic +m   123456 +l Jaipur +G 26.917 75.817 ++  +n Clinic Jaipur +S cid001 + ",
-              ERROR_MSG: "Entity with short code = cid001 already exists."}
+              ERROR_MSG: "Entity with Unique Identification Number (ID) = cid001 already exists."}
 
 REGISTER_INVALID_GEO_CODE = {SENDER: "1234567890",
               RECEIVER: "261333782943",

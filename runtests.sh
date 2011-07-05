@@ -35,11 +35,9 @@ done
 cd src/datawinners
 
 if [ "${RECREATEDB}" != "N" -a "${RECREATEDB}" != "n" ]; then
-    python manage.py syncdb
+    python manage.py syncdb --noinput
     python manage.py recreatedb
 fi
-
-python manage.py flush --noinput
 
 case "${TESTCHOICE}" in
 "ft")

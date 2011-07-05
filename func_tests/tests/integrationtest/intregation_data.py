@@ -43,6 +43,7 @@ DESCRIPTION = "description"
 PROJECT_NAME = "project_name"
 PROJECT_BACKGROUND = "project_background"
 PROJECT_TYPE = "project_type"
+REPORT_TYPE = "report_type"
 SUBJECT = "subject"
 DEVICES = "devices"
 ERROR_MSG = "message"
@@ -81,7 +82,7 @@ RECEIVER = "from"
 SMS = "sms"
 MESSAGE = "message"
 
-SUCCESS_MESSAGE_TEXT = "Thank you Donald Mouse. We received : WAN: Mr. Tessy WID: wel1 WC: DARK YELLOW WB: Aquificae,Bacteroids WL: 598.0 MDY: 04.12.2011 DMY: 12.04.2011 MY: 04.2011 GPS: (27.178057, -78.007789)"
+SUCCESS_MESSAGE_TEXT = "Thank you Donald Mouse. We received : WAN: Mr. Tessy WID: wat1 WC: DARK YELLOW WB: Aquificae,Bacteroids WL: 598.0 MDY: 04.12.2011 DMY: 12.04.2011 MY: 04.2011 GPS: (27.178057, -78.007789)"
 
 SMS_SUBMISSION = "sms"
 UNIQUE_VALUE = "unique_value"
@@ -123,20 +124,21 @@ VALID_DATA_FOR_REPORTER = {REPORTER_NAME: "Donald Mouse",
 VALID_SUBJECT_TYPE1 = {ENTITY_TYPE: "Waterpoint", SUCCESS_MESSAGE: "Entity definition successful"}
 VALID_SUBJECT_TYPE2 = {ENTITY_TYPE: "Well", SUCCESS_MESSAGE: "Entity definition successful"}
 
-VALID_DATA_FOR_SUBJECT = {ENTITY_TYPE: "well",
+VALID_DATA_FOR_SUBJECT = {ENTITY_TYPE: "waterpoint",
               AUTO_GENERATE: True,
               SHORT_NAME: "",
-              NAME: "Well Monodova",
+              NAME: "Waterpoint Monodova",
               LOCATION: "Monodova",
               GEO_CODE: "47.411631 28.369885",
-              DESCRIPTION: "This is a Well in monodova",
+              DESCRIPTION: "This is a waterpoint in monodova",
               MOBILE_NUMBER: "3456789012",
-              SUCCESS_MESSAGE: "Registration successful. Subject identification number: wel1."}
+              SUCCESS_MESSAGE: "Registration successful. Subject identification number: wat1."}
 
-VALID_DATA_FOR_PROJECT = {PROJECT_NAME: "well morondava", GEN_RANDOM: False,
+VALID_DATA_FOR_PROJECT = {PROJECT_NAME: "Waterpoint morondava", GEN_RANDOM: False,
               PROJECT_BACKGROUND: "This project is created by functional automation suite.",
               PROJECT_TYPE: "survey",
-              SUBJECT: "well",
+              SUBJECT: "waterpoint",
+              REPORT_TYPE: "other subject",
               DEVICES: "sms,smartphone",
               PAGE_TITLE: "Subjects"}
 
@@ -161,8 +163,8 @@ QUESTIONNAIRE_DATA = {QUESTIONNAIRE_CODE: "WPS01", GEN_RANDOM: False,
 
 VALID_DATA_FOR_SMS = {SENDER: "1234567890",
               RECEIVER: "",
-              SMS: "WPS01 +WID wel1 +wl 598 +DMY 12.04.2011 +MY 04.2011 +MDY 04.12.2011  +wc c +WAN Mr. Tessy +wb ab +GPS 27.178057  -78.007789",
+              SMS: "WPS01 +WID wat1 +wl 598 +DMY 12.04.2011 +MY 04.2011 +MDY 04.12.2011  +wc c +WAN Mr. Tessy +wb ab +GPS 27.178057  -78.007789",
               SUCCESS_MESSAGE: SUCCESS_MESSAGE_TEXT}
 
-SMS_DATA_LOG = {SMS_SUBMISSION: "sms True False wel1 598 12.04.2011 04.2011 04.12.2011 c Mr. Tessy ab 27.178057 -78.007789",
+SMS_DATA_LOG = {SMS_SUBMISSION: "True False wat1 598 12.04.2011 04.2011 04.12.2011 c Mr. Tessy ab 27.178057 -78.007789",
             UNIQUE_VALUE: "Mr. Tessy"}

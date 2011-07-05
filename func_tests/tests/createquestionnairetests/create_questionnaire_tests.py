@@ -32,8 +32,6 @@ class TestCreateQuestionnaire(BaseTest):
         """
         create_questionnaire_page = self.prerequisites_of_create_questionnaire()
         create_questionnaire_page.create_questionnaire_with(QUESTIONNAIRE_DATA)
-        self.assertEqual(create_questionnaire_page.get_success_message(),
-                                 fetch_(SUCCESS_MSG, from_(QUESTIONNAIRE_DATA)))
         index = 2
         for question in fetch_(QUESTIONS, from_(QUESTIONNAIRE_DATA)):
             question_link_text = fetch_(QUESTION, from_(question)) + " " + fetch_(CODE, from_(question))
@@ -42,3 +40,6 @@ class TestCreateQuestionnaire(BaseTest):
         time.sleep(5)
         self.assertEquals(create_questionnaire_page.get_remaining_character_count(),
                           fetch_(CHARACTER_REMAINING, from_(QUESTIONNAIRE_DATA)))
+        create_questionnaire_page.save_questionnaire()
+        time.sleep(3)
+        self.assertEqual(create_questionnaire_page.get_title(), "Finish & Test")

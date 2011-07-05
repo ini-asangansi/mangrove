@@ -17,5 +17,5 @@ from framework.utils.common_utils import *
 LOCATOR = "locator"
 BY = "by"
 
-VIEW_SUBMISSIONS_CLICK_HERE_LINK = by_xpath("//h5[text()='View Submissions']/following-sibling::p/a[text()='Click here']")
+DATA_TAB = by_xpath("//div[contains(@class,'tab_navigation')]/ul/li/a[text()='Data']")
 PROJECT_EDIT_LINK = by_css("a[href~='/project/profile/edit']")

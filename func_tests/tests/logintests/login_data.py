@@ -22,11 +22,11 @@ INVALID_PASSWORD = {USERNAME: "nogo@mail.com",
 # Login without entering Email Address
 BLANK_EMAIL_ADDRESS = {USERNAME: "",
                        PASSWORD: "nogo123",
-                       ERROR_MESSAGE: "Email  This field is required."}
+                       ERROR_MESSAGE: "Email   This field is required."}
 
 BLANK_PASSWORD = {USERNAME: "nogo@mail.com",
                   PASSWORD: "",
-                  ERROR_MESSAGE: "Password  This field is required."}
+                  ERROR_MESSAGE: "Password   This field is required."}
 
 # blank username and password
 UNACTIVATED_ACCOUNT_CREDENTIALS = {USERNAME: "tester@gmail.com",
@@ -36,4 +36,4 @@ UNACTIVATED_ACCOUNT_CREDENTIALS = {USERNAME: "tester@gmail.com",
 # blank username and password
 BLANK_CREDENTIALS = {USERNAME: "",
                      PASSWORD: "",
-                     ERROR_MESSAGE: "Email  This field is required.Password  This field is required."}
+                     ERROR_MESSAGE: "Email   This field is required.Password   This field is required."}
