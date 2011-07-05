@@ -58,7 +58,7 @@ EXISTING_EMAIL_ADDRESS = {ORGANIZATION_NAME: "NGO 001",
                         EMAIL: "tester150411@gmail.com",
                         REGISTRATION_PASSWORD: "ngo001",
                         REGISTRATION_CONFIRM_PASSWORD: "ngo001",
-                        ERROR_MESSAGE: "Email address   This email address is already in use. Please supply a different email address."}
+                        ERROR_MESSAGE: "Email address This email address is already in use. Please supply a different email address."}
 
 INVALID_EMAIL_FORMAT = {ORGANIZATION_NAME: "NGO 001",
                         ORGANIZATION_SECTOR: "PublicHealth",
@@ -76,7 +76,7 @@ INVALID_EMAIL_FORMAT = {ORGANIZATION_NAME: "NGO 001",
                         EMAIL: "com.invalid@email",
                         REGISTRATION_PASSWORD: "ngo001",
                         REGISTRATION_CONFIRM_PASSWORD: "ngo001",
-                        ERROR_MESSAGE: "Email address   Enter a valid e-mail address."}
+                        ERROR_MESSAGE: "Email address Enter a valid e-mail address."}
 
 UNMATCHED_PASSWORD = {ORGANIZATION_NAME: "NGO 001",
                        ORGANIZATION_SECTOR: "PublicHealth",
@@ -94,7 +94,7 @@ UNMATCHED_PASSWORD = {ORGANIZATION_NAME: "NGO 001",
                        EMAIL: "valid@email.com",
                        REGISTRATION_PASSWORD: "password",
                        REGISTRATION_CONFIRM_PASSWORD: "different_password",
-                       ERROR_MESSAGE: "Password   The two password fields didn't match."}
+                       ERROR_MESSAGE: "Password The two password fields didn't match."}
 
 WITHOUT_ENTERING_REQUIRED_FIELDS = {ORGANIZATION_NAME: "",
                        ORGANIZATION_SECTOR: "PublicHealth",
@@ -112,7 +112,7 @@ WITHOUT_ENTERING_REQUIRED_FIELDS = {ORGANIZATION_NAME: "",
                        EMAIL: "",
                        REGISTRATION_PASSWORD: "",
                        REGISTRATION_CONFIRM_PASSWORD: "",
-                       ERROR_MESSAGE: "* Organization name   This field is required.* Address Line 1   This field is required.* City   This field is required.* Country   This field is required.* Postal / Zip Code   This field is required.* First name   This field is required.* Last name   This field is required.Email address   This field is required.Password   This field is required.Password (again)   This field is required."}
+                       ERROR_MESSAGE: "* Organization name This field is required.* Address Line 1 This field is required.* City This field is required.* Country This field is required.* Postal / Zip Code This field is required.* First name This field is required.* Last name This field is required.Email address This field is required.Password This field is required.Password (again) This field is required."}
 
 INVALID_WEBSITE_URL = {ORGANIZATION_NAME: "NGO 001",
                        ORGANIZATION_SECTOR: "PublicHealth",
@@ -130,4 +130,4 @@ INVALID_WEBSITE_URL = {ORGANIZATION_NAME: "NGO 001",
                        EMAIL: "ngo002@ngo.com",
                        REGISTRATION_PASSWORD: "ngo001",
                        REGISTRATION_CONFIRM_PASSWORD: "ngo001",
-                       ERROR_MESSAGE: "Website Url   Enter a valid URL."}
+                       ERROR_MESSAGE: "Website Url Enter a valid URL."}

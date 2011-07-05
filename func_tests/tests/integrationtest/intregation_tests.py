@@ -27,7 +27,7 @@ class TestIntregationOfApplication(BaseTest):
             couchwrapper.deleteDb(dbname)
         except TypeError as e:
             pass
-
+    @SkipTest
     @attr('functional_test', 'smoke', "intregation")
     def test_intregation_of_application(self):
 

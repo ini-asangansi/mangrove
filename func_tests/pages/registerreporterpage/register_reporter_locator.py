@@ -20,9 +20,9 @@ BY = "by"
 
 FIRST_NAME_TB = by_css("input#id_first_name")
 TELEPHONE_NUMBER_TB = by_css("input#id_telephone_number")
-COMMUNE_TB = by_css("input#id_commune")
+COMMUNE_TB = by_css("input#id_location")
 GPS_TB = by_css("input#id_geo_code")
 
-REGISTER_BTN = by_css("input[value='Register']")
+REGISTER_BTN = by_css("input#id_register_button")
 ERROR_MESSAGE_LABEL = by_xpath("//li[contains(@class,'error')] | //div[contains(@class,'error')]")
-FLASH_MESSAGE_LABEL = by_xpath("//div[@id='flash-message' and not(contains(@id, 'none'))]")
+FLASH_MESSAGE_LABEL = by_xpath("//div[@class='success' and @id='flash-message']")
