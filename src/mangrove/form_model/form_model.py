@@ -1,13 +1,12 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 from mangrove.datastore import entity
-
 from mangrove.datastore.database import DatabaseManager, DataObject
 from mangrove.datastore.datadict import get_or_create_data_dict
-from mangrove.datastore.documents import FormModelDocument
+from mangrove.datastore.documents import FormModelDocument, attributes
 from mangrove.errors.MangroveException import FormModelDoesNotExistsException, QuestionCodeAlreadyExistsException,\
     EntityQuestionAlreadyExistsException, MangroveException, DataObjectAlreadyExists, EntityQuestionCodeNotSubmitted,\
     EntityTypeCodeNotSubmitted, ShortCodeTooLongException
-from mangrove.form_model.field import TextField, GeoCodeField
+from mangrove.form_model.field import TextField, GeoCodeField, ListField
 from mangrove.utils.geo_utils import convert_to_geometry
 from mangrove.utils.types import is_sequence, is_string, is_empty, is_not_empty
 from mangrove.form_model import field
@@ -27,7 +26,6 @@ DESCRIPTION_FIELD = "description"
 MOBILE_NUMBER_FIELD = "mobile_number"
 REPORTER = "reporter"
 
-
 def get_form_model_by_code(dbm, code):
     assert isinstance(dbm, DatabaseManager)
     assert is_string(code)
@@ -38,7 +36,6 @@ def get_form_model_by_code(dbm, code):
     doc = dbm._load_document(rows[0]['value']['_id'], FormModelDocument)
     form = FormModel.new_from_doc(dbm, doc)
     return form
-
 
 class FormModel(DataObject):
     __document_class__ = FormModelDocument
@@ -264,6 +261,15 @@ class FormModel(DataObject):
     def entity_defaults_to_reporter(self):
         return self.entity_type == [REPORTER]
 
+    def is_active(self):
+        return True if self._doc.state == attributes.ACTIVE_STATE else False
+
+    def deactivate(self):
+        self._doc.state=attributes.INACTIVE_STATE
+
+    def activate(self):
+        self._doc.state=attributes.ACTIVE_STATE
+
 
 class FormSubmission(object):
     def _to_three_tuple(self):
@@ -297,8 +303,8 @@ class FormSubmission(object):
 
     def to_entity(self, dbm, create=False):
         if create:
-            location_string = self.cleaned_data.get(LOCATION_TYPE_FIELD_CODE)
-            location = None if location_string is None else [location_string]
+            location = self.cleaned_data.get(LOCATION_TYPE_FIELD_CODE)
+
             return entity.create_entity(dbm=dbm, entity_type=self.entity_type.lower(),
                                  location=location,
                                  short_code=self.short_code,
@@ -310,7 +316,7 @@ def create_default_reg_form_model(manager):
     form_model = _construct_registration_form(manager)
     try:
         form_model.save()
-    except DataObjectAlreadyExists as e:
+    except DataObjectAlreadyExists:
         form_model = get_form_model_by_code(manager, "reg")
     return form_model
 
@@ -329,14 +335,14 @@ def _construct_registration_form(manager):
 
     question1 = TextField(name=ENTITY_TYPE_FIELD_NAME, code=ENTITY_TYPE_FIELD_CODE,
                           label="What is associated subject type?",
-                          language="eng", entity_question_flag=False, ddtype=entity_id_type)
+                          language="eng", ddtype=entity_id_type)
 
     question2 = TextField(name=NAME_FIELD, code="N", label="What is the subject's name?",
                           defaultValue="some default value", language="eng", ddtype=name_type)
     question3 = TextField(name=SHORT_NAME_FIELD, code="S", label="What is the subject's short name?",
                           defaultValue="some default value", language="eng", ddtype=name_type,
                           entity_question_flag=True)
-    question4 = TextField(name=LOCATION_TYPE_FIELD_NAME, code="L", label="What is the subject's location?",
+    question4 = ListField(name=LOCATION_TYPE_FIELD_NAME, code="L", label="What is the subject's location?",
                           language="eng", ddtype=location_type)
     question5 = GeoCodeField(name=GEO_CODE, code="G", label="What is the subject's geo code?",
                              language="eng", ddtype=geo_code_type)
@@ -347,3 +353,4 @@ def _construct_registration_form(manager):
     form_model = FormModel(manager, name="reg", form_code=REGISTRATION_FORM_CODE, fields=[
             question1, question2, question3, question4, question5, question6, question7], entity_type=["Registration"])
     return form_model
+
