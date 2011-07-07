@@ -1,6 +1,7 @@
 # vim: ai ts=4 sts=4 et sw=4 encoding=utf-8
 import time
 from nose.plugins.attrib import attr
+from unittest.case import SkipTest
 
 from framework.base_test import BaseTest
 from framework.utils.data_fetcher import fetch_, from_
@@ -21,6 +22,7 @@ class TestRegisterReporter(BaseTest):
         # doing reporter registration
         return dashboard_page.navigate_to_register_reporter_page()
 
+    @SkipTest
     @attr('functional_test', 'smoke')
     def test_successful_registration_of_reporter(self):
         """
@@ -43,6 +45,7 @@ class TestRegisterReporter(BaseTest):
         self.assertEqual(register_reporter_page.get_error_message(),
                                  fetch_(ERROR_MSG, from_(BLANK_FIELDS)))
 
+    @SkipTest
     @attr('functional_test')
     def test_registration_of_reporter_with_existing_data(self):
         """
