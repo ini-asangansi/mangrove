@@ -3,14 +3,14 @@ import os
 import sys
 import psycopg2
 from framework.utils.couch_http_wrapper import CouchHttpWrapper
-import
+from resources.local_settings import DATABASES
 
-DEFAULT_DNS = "host='localhost' dbname=" + + " user=" +
+DEFAULT_DNS = "dbname='" + DATABASES['default']['NAME'] + "' user='" + DATABASES['default']['USER'] + "'"
 
 
 class DatabaseManager(object):
 
-    def get_connection(self, database_name=DEFAULT_DB_FILE):
+    def get_connection(self, database_name=DEFAULT_DNS):
         """
         Function to get the connection to SQLite3 database
 
@@ -20,11 +20,10 @@ class DatabaseManager(object):
 
         Return connection
         """
-        dbfile = os.path.join(os.path.dirname(__file__), database_name)
-        print "Database file should be on the following location: %s" % dbfile
-        return sqlite3.connect(dbfile)
+        con = psycopg2.connect(database_name)
+        return con
 
-    def get_activation_code(self, email, database_name=DEFAULT_DB_FILE):
+    def get_activation_code(self, email, database_name=DEFAULT_DNS):
         """
         Function to get activation code for the given email id from SQLite3 database
 
@@ -39,7 +38,7 @@ class DatabaseManager(object):
             con = self.get_connection(database_name)
             cur = con.cursor()
             cur.execute(
-                "select activation_key from registration_registrationprofile where user_id=(select id from auth_user where email=?);", (email,))
+                "select activation_key from registration_registrationprofile where user_id=(select id from auth_user where email=%s);", (email,))
             values = cur.fetchone()
             if values is not None:
                 return values[0]
@@ -49,7 +48,7 @@ class DatabaseManager(object):
             cur.close()
             con.close()
 
-    def set_sms_telephone_number(self, telephone_number, email, database_name=DEFAULT_DB_FILE):
+    def set_sms_telephone_number(self, telephone_number, email, database_name=DEFAULT_DNS):
         """
         Function to set the SMS telephone number for the organization
 
@@ -62,15 +61,17 @@ class DatabaseManager(object):
         try:
             con = self.get_connection(database_name)
             cur = con.cursor()
-            cur.execute("update accountmanagement_organizationsetting set sms_tel_number=? where \
+            cur.execute("update accountmanagement_organizationsetting set sms_tel_number=%s where \
                   organization_id=(select org_id from accountmanagement_ngouserprofile where \
-                  user_id=(select id from auth_user where email=?));", (telephone_number, email))
+                  user_id=(select id from auth_user where email=%s));" , (telephone_number, email))
             con.commit()
+        except Exception as e:
+            print e
         finally:
             cur.close()
             con.close()
 
-    def delete_organization_all_details(self, email, database_name=DEFAULT_DB_FILE):
+    def delete_organization_all_details(self, email, database_name=DEFAULT_DNS):
         """
         Function to delete all the organization related details
 
@@ -82,17 +83,18 @@ class DatabaseManager(object):
         try:
             con = self.get_connection(database_name)
             cur = con.cursor()
-            cur.execute("select id from auth_user where email=?;", (email,))
+            cur.execute("select id from auth_user where email=%s;", (email,))
             user_id = int(cur.fetchone()[0])
-            cur.execute("select org_id from accountmanagement_ngouserprofile where user_id=?;", (user_id,))
+            cur.execute("select org_id from accountmanagement_ngouserprofile where user_id=%s;", (user_id,))
             org_id = str(cur.fetchone()[0])
-            cur.execute("select document_store from accountmanagement_organizationsetting where organization_id=?;", (org_id,))
+            cur.execute("select document_store from accountmanagement_organizationsetting where organization_id=%s;", (org_id,))
             organization_db_name = str(cur.fetchone()[0])
-            cur.execute("delete from auth_user where id=?;", (user_id,))
-            cur.execute("delete from accountmanagement_organization where org_id=?;", (org_id,))
-            cur.execute("delete from registration_registrationprofile where user_id=?;", (user_id,))
-            cur.execute("delete from accountmanagement_ngouserprofile where org_id=?;", (org_id,))
-            cur.execute("delete from accountmanagement_organizationsetting where organization_id=?;", (org_id,))
+            cur.execute("delete from accountmanagement_organization where org_id=%s;", (org_id,))
+            cur.execute("delete from registration_registrationprofile where user_id=%s;", (user_id,))
+            cur.execute("delete from accountmanagement_ngouserprofile where org_id=%s;", (org_id,))
+            cur.execute("delete from accountmanagement_organizationsetting where organization_id=%s;", (org_id,))
+            cur.execute("delete from auth_user_groups where user_id=%s;", (user_id,))
+            cur.execute("delete from auth_user where id=%s;", (user_id,))
             con.commit()
             return organization_db_name
         finally:
@@ -101,4 +103,5 @@ class DatabaseManager(object):
 
 if __name__ == "__main__":
     db = DatabaseManager()
-    dbname = db.set_sms_telephone_number(123456,"tester150411@gmail.com")
+    dbname = db.delete_organization_all_details("ngo993cmv@ngo.com")
+    print dbname

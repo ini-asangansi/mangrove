@@ -9,7 +9,7 @@ from testdata.test_data import DATA_WINNER_REGISTER_PAGE
 from tests.registrationtests.registration_data import REGISTRATION_DATA_FOR_SUCCESSFUL_REGISTRATION
 from tests.activateaccounttests.activate_account_data import *
 from pages.activateaccountpage.activate_account_page import ActivateAccountPage
-from framework.utils.database_manager import DatabaseManager
+from framework.utils.database_manager_postgres import DatabaseManager
 
 
 class TestActivateAccount(BaseTest):
@@ -32,7 +32,7 @@ class TestActivateAccount(BaseTest):
             couchwrapper.deleteDb(dbname)
         except TypeError as e:
             pass
-    @SkipTest
+
     @attr('functional_test', 'smoke')
     def test_successful_activation_of_account(self):
         """
